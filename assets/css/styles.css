@@ -1,0 +1,838 @@
+/* =====================================================
+   VARIABLES BASE
+===================================================== */
+
+:root {
+    --bendito-primary: #111111;
+    --bendito-accent: #6C63FF;
+    --bendito-bg: #f5f7fb;
+    --bendito-card: #ffffff;
+    --bendito-border: #e5e7eb;
+    --bendito-text: #1f2937;
+    --bendito-muted: #6b7280;
+    --bendito-radius: 14px;
+}
+
+/* =====================================================
+   WRAPPER GENERAL
+===================================================== */
+
+.benditoai-wrapper {
+    max-width: 900px;
+    margin: 60px auto;
+    padding: 40px;
+    background: var(--bendito-card);
+    border-radius: var(--bendito-radius);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--bendito-text);
+}
+
+/* =====================================================
+   TITULOS
+===================================================== */
+
+.benditoai-mockup__title,
+.benditoai-dashboard__title {
+    margin: 0 0 10px 0;
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.benditoai-dashboard__welcome {
+    color: var(--bendito-muted);
+    margin-bottom: 25px;
+}
+
+/* =====================================================
+   FORMULARIO
+===================================================== */
+
+.benditoai-form {
+    margin-top: 30px;
+}
+
+.benditoai-form__group {
+    margin-bottom: 22px;
+}
+
+.benditoai-form__label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Inputs modernos */
+
+.benditoai-form__select,
+.benditoai-form__input {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--bendito-border);
+    font-size: 14px;
+    background: #fafafa;
+    transition: all 0.2s ease;
+}
+
+.benditoai-form__select:focus,
+.benditoai-form__input:focus {
+    outline: none;
+    border-color: var(--bendito-accent);
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+}
+
+/* =====================================================
+   BOTONES
+===================================================== */
+
+.benditoai-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px 22px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    cursor: pointer;
+}
+
+.benditoai-btn--primary {
+    background: linear-gradient(135deg, var(--bendito-accent), #4f46e5);
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 6px 18px rgba(108, 99, 255, 0.25);
+}
+
+.benditoai-btn--primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(108, 99, 255, 0.35);
+}
+
+.benditoai-btn--primary:active {
+    transform: translateY(0px);
+}
+
+/* Estado loading */
+
+.benditoai-btn.is-loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* =====================================================
+   RESULTADO MOCKUP
+===================================================== */
+
+.benditoai-mockup__result {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.benditoai-mockup__result img {
+    max-width: 100%;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease;
+}
+
+.benditoai-mockup__result img:hover {
+    transform: scale(1.02);
+}
+
+/* =====================================================
+   MENSAJES
+===================================================== */
+
+.benditoai-auth-message {
+    max-width: 600px;
+    margin: 60px auto;
+    padding: 20px 25px;
+    background: #fff3f3;
+    border: 1px solid #ffc9c9;
+    border-radius: 12px;
+    color: #c92a2a;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* =====================================================
+   DASHBOARD ACTIONS
+===================================================== */
+
+.benditoai-dashboard__actions {
+    margin-top: 25px;
+}
+/* LOADING */
+.benditoai-loading {
+    margin-top: 30px;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* ERROR */
+.benditoai-error {
+    margin-top: 30px;
+    padding: 15px;
+    background: #fff3f3;
+    border: 1px solid #ffc9c9;
+    border-radius: 10px;
+    color: #c92a2a;
+    text-align: center;
+}
+
+/* WRAPPER IMAGEN */
+.benditoai-image-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 85%;
+}
+
+/* IMAGEN */
+.benditoai-generated-image {
+    max-width: 100%;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+}
+
+/* BOTÓN DESCARGA */
+.benditoai-download-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    padding: 0px;
+    border-radius: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.benditoai-download-btn img {
+    width: 18px;
+    height: 18px;
+}
+
+.benditoai-download-btn:hover {
+    transform: scale(1.1);
+}
+
+img.benditoai-download-icon {
+    border-radius: 0px;
+}
+.benditoai-download-btn {
+    border: none;
+}
+
+.benditoai-download-btn:focus,
+.benditoai-download-btn:focus-visible,
+.benditoai-download-btn:active {
+    outline: none;
+    box-shadow: none;
+}
+
+/* columnas */
+
+/* =====================================================
+   LAYOUT 2 COLUMNAS
+===================================================== */
+
+.benditoai-mockup__container {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 50px;
+    align-items: start;
+}
+
+/* El formulario queda en la izquierda */
+.benditoai-form {
+    margin-top: 20px;
+}
+
+/* El resultado queda en la derecha */
+.benditoai-mockup__result {
+    margin-top: 0;
+    text-align: center;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 900px) {
+    .benditoai-mockup__container {
+        grid-template-columns: 1fr;
+    }
+
+    .benditoai-mockup__result {
+        margin-top: 40px;
+    }
+}
+.benditoai-mockup__result {
+    background: #f9fafb;
+    border-radius: 16px;
+    padding: 10px;
+}
+
+/* historial */
+
+.benditoai-historial-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.benditoai-historial-item {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 10px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.benditoai-historial-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.benditoai-historial-img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 8px;
+}
+
+.benditoai-historial-info p {
+    margin: 4px 0;
+    font-size: 14px;
+}
+
+.benditoai-historial-title {
+    margin-bottom: 15px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.benditoai-historial-prompt pre {
+    white-space: pre-wrap;
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* historial */
+
+
+/* CONTENEDOR DEL CONTADOR TOKENS */
+.benditoai-token-counter-box{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+
+    background:#ffffff;
+    color:#000000;
+
+    padding:8px 14px;
+
+    border-radius:8px;
+
+    border:1px solid #e6e6e6;
+
+    font-size:14px;
+    font-weight:600;
+
+    box-shadow:0 2px 6px rgba(0,0,0,0.05);
+}
+
+/* TEXTO "Tokens:" */
+.benditoai-token-label{
+    color:#000000;
+}
+
+/* VALOR DE TOKENS */
+.benditoai-token-value{
+    font-weight:700;
+}
+
+/* TOGGLE ADMIN */
+.benditoai-admin-toggle-wrapper{
+    font-size:13px;
+}
+
+.benditoai-admin-toggle-label{
+    color:#333;
+}
+/* CONTENEDOR DEL CONTADOR TOKENS */
+
+
+/* CONTENEDOR */
+
+.benditoai-wrapper-tendencia{
+    max-width:100%;
+    margin-top:40px;
+    background:transparent;
+    box-shadow:none;
+    padding:0;
+
+    display:grid;
+    grid-template-columns:1fr 0fr;
+    gap:0;
+
+    align-items:center;
+
+    transition:grid-template-columns .45s ease, gap .45s ease;
+}
+
+/* CUANDO SE GENERA */
+
+.benditoai-wrapper-tendencia.benditoai-generating{
+    grid-template-columns:1fr 1fr;
+    gap:40px;
+}
+
+/* FORMULARIO */
+
+.benditoai-wrapper-tendencia #benditoai-trending-form{
+    width:100%;
+}
+
+.benditoai-wrapper-tendencia .benditoai-btn{
+    width:100%;
+}
+
+/* RESULTADO */
+
+.benditoai-wrapper-tendencia #benditoai-trending-result{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    min-height:0;
+
+    opacity:0;
+    transform:translateX(40px);
+
+    transition:all .45s ease;
+
+    position:relative;
+    overflow:hidden;
+}
+
+.benditoai-wrapper-tendencia.benditoai-generating #benditoai-trending-result{
+    opacity:1;
+    transform:translateX(0);
+    min-height:420px;
+}
+
+/* CUADRO IA (placeholder animado) */
+
+.benditoai-wrapper-tendencia #benditoai-trending-result::before{
+    content:"";
+    display:block;
+
+    width:100%;
+    max-width:420px;
+    aspect-ratio:1/1;
+
+    border-radius:12px;
+
+    background:
+        linear-gradient(
+            110deg,
+            #f2f2f2 25%,
+            #e8e8e8 35%,
+            #f2f2f2 45%
+        );
+
+    background-size:200% 100%;
+
+    animation:benditoai-shimmer 2.2s linear infinite;
+}
+
+/* PARTICULAS SUAVES */
+
+.benditoai-wrapper-tendencia #benditoai-trending-result::after{
+    content:"";
+    position:absolute;
+
+    width:100%;
+    max-width:420px;
+    aspect-ratio:1/1;
+
+    border-radius:12px;
+
+    background-image:
+        radial-gradient(circle, rgba(255,255,255,0.6) 1px, transparent 1px);
+
+    background-size:30px 30px;
+
+    animation:benditoai-particles 12s linear infinite;
+
+    opacity:.35;
+}
+
+/* ANIMACIONES */
+
+@keyframes benditoai-shimmer{
+    0%{background-position:200% 0;}
+    100%{background-position:-200% 0;}
+}
+
+@keyframes benditoai-particles{
+    0%{
+        background-position:0 0;
+    }
+    100%{
+        background-position:200px 200px;
+    }
+}
+
+/* LOADING TEXTO */
+
+.benditoai-wrapper-tendencia .benditoai-loading{
+    position:absolute;
+    font-size:16px;
+    color:#666;
+    z-index:2;
+}
+
+/* WRAPPER IMAGEN */
+
+.benditoai-wrapper-tendencia .benditoai-image-wrapper{
+    width:100%;
+    max-width:420px;
+    aspect-ratio:1/1;
+
+    border-radius:12px;
+    overflow:hidden;
+
+    position:absolute;
+    z-index:3;
+}
+
+/* IMAGEN */
+
+.benditoai-wrapper-tendencia .benditoai-generated-image{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+/* TIPS */
+
+.benditoai-tips{
+    background:#f8f9fb;
+    border-left:3px solid #dcdfe4;
+    padding:10px 14px;
+    border-radius:6px;
+    margin-top:12px;
+
+    display:none;
+}
+
+.benditoai-tips-title{
+    margin:0 !important;
+    font-size:13px;
+    color:#6b7280;
+    line-height:1.4;
+}
+
+/* MOBILE */
+
+@media (max-width:768px){
+
+.benditoai-wrapper-tendencia,
+.benditoai-wrapper-tendencia.benditoai-generating{
+    grid-template-columns:1fr;
+    gap:25px;
+}
+
+/* estado inicial */
+
+.benditoai-wrapper-tendencia #benditoai-trending-result{
+    opacity:0;
+    transform:translateY(15px);
+    min-height:0;
+    height:0;
+    overflow:hidden;
+}
+
+/* cuando genera */
+
+.benditoai-wrapper-tendencia.benditoai-generating #benditoai-trending-result{
+    opacity:1;
+    transform:none;
+    height:auto;
+    min-height:auto;
+}
+
+
+}
+
+/* Estilos creador de modelos AI */
+/* =====================================================
+WRAPPER GENERAL
+===================================================== */
+
+.benditoai-wrapper-modelos{
+max-width:1200px;
+margin:60px auto;
+padding:0 20px;
+}
+
+/* CARD PRINCIPAL */
+
+.benditoai-wrapper-modelos .benditoai-wrapper{
+background:#ffffff;
+padding:40px;
+border-radius:16px;
+box-shadow:0 10px 30px rgba(0,0,0,0.05);
+}
+
+/* =====================================================
+HEADER
+===================================================== */
+
+.benditoai-wrapper-modelos .benditoai-modelos-header{
+text-align:center;
+margin-bottom:35px;
+}
+
+.benditoai-wrapper-modelos .benditoai-modelos-header h2{
+font-size:28px;
+margin-bottom:8px;
+font-weight:700;
+}
+
+.benditoai-wrapper-modelos .benditoai-modelos-header p{
+color:#6b7280;
+font-size:14px;
+}
+
+/* =====================================================
+GRID SUPERIOR
+===================================================== */
+
+.benditoai-wrapper-modelos .benditoai-top-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:25px;
+margin-bottom:30px;
+}
+
+/* =====================================================
+GRID INFERIOR
+===================================================== */
+
+.benditoai-wrapper-modelos .benditoai-bottom-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:25px;
+}
+
+/* =====================================================
+CARDS
+===================================================== */
+
+.benditoai-wrapper-modelos .benditoai-card{
+background:#ffffff;
+padding:25px;
+border-radius:12px;
+border:1px solid #e5e7eb;
+display:flex;
+flex-direction:column;
+}
+
+.benditoai-wrapper-modelos .benditoai-card h3{
+font-size:18px;
+margin-bottom:15px;
+}
+
+/* =====================================================
+LABELS
+===================================================== */
+
+.benditoai-wrapper-modelos .benditoai-card label{
+font-size:13px;
+font-weight:600;
+margin-top:12px;
+margin-bottom:4px;
+}
+
+/* =====================================================
+INPUTS
+===================================================== */
+
+.benditoai-wrapper-modelos .benditoai-card input,
+.benditoai-wrapper-modelos .benditoai-card select,
+.benditoai-wrapper-modelos .benditoai-card textarea{
+
+width:100%;
+border:1px solid #e5e7eb;
+border-radius:8px;
+padding:10px;
+font-size:14px;
+background:#fafafa;
+transition:all .2s ease;
+}
+
+.benditoai-wrapper-modelos .benditoai-card textarea{
+min-height:70px;
+resize:vertical;
+}
+
+.benditoai-wrapper-modelos .benditoai-card input:focus,
+.benditoai-wrapper-modelos .benditoai-card select:focus,
+.benditoai-wrapper-modelos .benditoai-card textarea:focus{
+
+outline:none;
+border-color:#6C63FF;
+background:#ffffff;
+box-shadow:0 0 0 3px rgba(108,99,255,0.1);
+
+}
+
+/* =====================================================
+INFO
+===================================================== */
+
+.benditoai-wrapper-modelos .benditoai-info{
+font-size:14px;
+color:#6b7280;
+margin-bottom:15px;
+}
+
+/* =====================================================
+BOTON
+===================================================== */
+
+.benditoai-wrapper-modelos .benditoai-btn{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+padding:14px 22px;
+border:none;
+border-radius:10px;
+font-size:14px;
+font-weight:600;
+cursor:pointer;
+transition:all .25s ease;
+}
+
+.benditoai-wrapper-modelos .benditoai-btn--primary{
+background:linear-gradient(135deg,#6C63FF,#4f46e5);
+color:#ffffff;
+box-shadow:0 6px 18px rgba(108,99,255,0.25);
+}
+
+.benditoai-wrapper-modelos .benditoai-btn--primary:hover{
+transform:translateY(-2px);
+box-shadow:0 10px 25px rgba(108,99,255,0.35);
+}
+
+/* =====================================================
+LOADING
+===================================================== */
+
+.benditoai-wrapper-modelos .benditoai-loading{
+display:none;
+margin-top:20px;
+padding:15px;
+border-radius:10px;
+background:#f3f4f6;
+text-align:center;
+font-size:14px;
+color:#444;
+}
+
+/* =====================================================
+RESULTADO
+===================================================== */
+
+.benditoai-wrapper-modelos .benditoai-render{
+align-items:center;
+justify-content:center;
+text-align:center;
+}
+
+/* PLACEHOLDER */
+
+.benditoai-wrapper-modelos .benditoai-placeholder{
+font-size:14px;
+color:#9ca3af;
+margin-top:20px;
+}
+
+/* =====================================================
+IMAGEN GENERADA
+===================================================== */
+
+.benditoai-wrapper-modelos .benditoai-image-wrapper{
+position:relative;
+margin-top:15px;
+display:none;
+}
+
+.benditoai-wrapper-modelos .benditoai-generated-image{
+width:100%;
+border-radius:12px;
+box-shadow:0 10px 30px rgba(0,0,0,0.15);
+}
+
+/* =====================================================
+BOTON DESCARGA
+===================================================== */
+
+.benditoai-wrapper-modelos .benditoai-download-btn{
+position:absolute;
+top:12px;
+right:12px;
+width:38px;
+height:38px;
+background:#ffffff;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+box-shadow:0 6px 15px rgba(0,0,0,0.15);
+transition:transform .2s ease;
+}
+
+.benditoai-wrapper-modelos .benditoai-download-btn:hover{
+transform:scale(1.1);
+}
+.benditoai-wrapper-modelos .benditoai-download-icon{
+width:18px;
+height:18px;
+}
+
+/* =====================================================
+RESPONSIVE
+===================================================== */
+
+@media(max-width:900px){
+
+.benditoai-wrapper-modelos .benditoai-top-grid{
+grid-template-columns:1fr;
+}
+
+.benditoai-wrapper-modelos .benditoai-bottom-grid{
+grid-template-columns:1fr;
+}
+
+.benditoai-wrapper-modelos .benditoai-wrapper{
+padding:25px;
+}
+}
+
+.benditoai-btn--loading{
+opacity:0.6;
+cursor:not-allowed;
+pointer-events:none;
+}
