@@ -13,7 +13,7 @@ deben cumplir estas 2 reglas obligatorias:
 
    .benditoai-ai-button
 
-El archivo global:
+El archivo global.:
 assets/js/core/request-manager.js
 
 detecta automáticamente los formularios con
