@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
 
 function benditoai_call_gemini_text($prompt) {
 
-    $api_key = 'AIzaSyDr2DWui6PQpUMtOF4TkuEcmB2-LtCjlf8';
+    $api_key = defined('BENDITOAI_GEMINI_KEY') ? BENDITOAI_GEMINI_KEY : ''; //clave mario (ingenieromarior)
 
     $model = 'gemini-3.1-flash-image-preview';
 
