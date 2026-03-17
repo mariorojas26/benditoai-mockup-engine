@@ -131,6 +131,34 @@ photorealistic
 
     $url = $upload['url'] . '/' . $filename;
 
+    // -------------------------------------------------
+// GUARDAR DATOS EN BD
+// -------------------------------------------------
+
+    global $wpdb;
+$table_name = $wpdb->prefix . 'benditoai_modelos_ai';
+
+$wpdb->insert(
+    $table_name,
+    [
+        'user_id' => get_current_user_id(),
+        'nombre_modelo' => sanitize_text_field($_POST['nombre_modelo']),
+        'genero' => $genero,
+        'edad' => $edad,
+        'cuerpo' => $cuerpo,
+        'etnia' => $etnia,
+        'estilo' => $estilo,
+        'prenda_superior' => $prenda_superior,
+        'prenda_inferior' => $prenda_inferior,
+        'zapatos' => $zapatos,
+        'accesorios' => $accesorios,
+        'prompt' => $prompt,
+        'image_url' => $url,
+        'created_at' => current_time('mysql')
+    ],
+    ['%d','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s']
+);
+
 // -------------------------------------------------
 // DESCONTAR TOKEN SOLO SI TODO SALIÓ BIEN
 // -------------------------------------------------

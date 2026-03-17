@@ -1,0 +1,108 @@
+<?php
+/*
+=========================================================
+BendidoAI - Mínimos Viables y Reglas para Nuevas IA
+=========================================================
+
+📌 Objetivo:
+Cada nueva herramienta de IA (shortcode) debe cumplir
+estas reglas para integrarse correctamente al sistema.
+
+---------------------------------------------------------
+1️⃣ Formulario Obligatorio
+---------------------------------------------------------
+- Clase: .benditoai-ai-form
+- Todos los inputs del usuario deben estar dentro del form.
+- El form debe manejar la validación de login:
+    if (!is_user_logged_in()) { mostrar mensaje; return; }
+
+---------------------------------------------------------
+2️⃣ Botón de Ejecución Obligatorio
+---------------------------------------------------------
+- Clase: .benditoai-ai-button
+- Se bloquea automáticamente mientras la IA genera
+- Evita doble envío de solicitudes
+
+---------------------------------------------------------
+3️⃣ Manejo de Errores
+---------------------------------------------------------
+- Validar inputs con sanitize_text_field() o sanitize_textarea_field()
+- Enviar errores con wp_send_json_error()
+- Mostrar mensajes claros al usuario
+
+---------------------------------------------------------
+4️⃣ Conexión a API
+---------------------------------------------------------
+- Toda IA debe llamar a una API o función interna
+- Guardar resultados en BD si aplica
+- Ejemplo: $response = benditoai_call_gemini_text($prompt);
+
+---------------------------------------------------------
+5️⃣ Base de Datos
+---------------------------------------------------------
+- Crear tabla si la herramienta requiere historial
+- Función en includes/install.php
+    benditoai_create_mi_herramienta_table();
+- Registrar en hook de activación del plugin
+
+---------------------------------------------------------
+6️⃣ Shortcode
+---------------------------------------------------------
+- Debe tener su propio shortcode
+    add_shortcode('benditoai_mi_herramienta', 'funcion_shortcode');
+- Mostrar interfaz y resultados dentro de ob_start()/ob_get_clean()
+- Llamar funciones de historial si aplica
+
+---------------------------------------------------------
+7️⃣ Scripts y Estilos
+---------------------------------------------------------
+- Registrar JS y CSS en plugin principal:
+    wp_enqueue_script() y wp_enqueue_style()
+- JS opcional debe usar imports internos (tipo module)
+- JS mínimo: bloquear botón, enviar AJAX, mostrar resultados
+
+---------------------------------------------------------
+8️⃣ AJAX
+---------------------------------------------------------
+- Registrar acciones:
+    add_action('wp_ajax_benditoai_generar_mi_herramienta', 'handler');
+- Validar login antes de procesar
+- Retornar resultados con wp_send_json_success() o error
+- Descontar tokens solo si la generación fue exitosa
+
+---------------------------------------------------------
+9️⃣ Validación y Descuento de Tokens
+---------------------------------------------------------
+- Solo descontar tokens si la IA generó resultado correctamente
+- Obtener tokens restantes para mostrar al usuario
+- Ejemplo mínimo:
+
+// Después de procesar y guardar resultado
+if ($resultado_exitoso) {
+    benditoai_use_token(1); // Descontar 1 token
+    $tokens_restantes = benditoai_get_user_tokens(get_current_user_id());
+    wp_send_json_success([
+        'resultado' => $resultado,
+        'tokens' => $tokens_restantes
+    ]);
+} else {
+    wp_send_json_error('Error generando IA');
+}
+
+---------------------------------------------------------
+✅ Resumen:
+Todo nuevo módulo IA debe tener:
+- Formulario con .benditoai-ai-form
+- Botón con .benditoai-ai-button
+- Validación de usuario logueado
+- Manejo de errores y mensajes claros
+- Llamada a API o función generadora
+- Tabla en BD si aplica
+- Shortcode registrado
+- Scripts y estilos encolados
+- AJAX seguro y manejo de tokens
+
+=========================================================
+Fin de la guía de mínimos viables
+=========================================================
+*/
