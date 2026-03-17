@@ -1,0 +1,37 @@
+# --------------------------------------
+# BENDITOAI & WordPress .gitignore
+# --------------------------------------
+
+# Ignorar archivo de configuración con claves API
+wp-config.php
+
+# Ignorar directorios de WordPress que se generan dinámicamente
+wp-content/uploads/
+wp-content/cache/
+wp-content/upgrade/
+
+# Ignorar logs y temporales
+*.log
+*.tmp
+*.bak
+*.swp
+*.DS_Store
+
+# Ignorar node_modules y dependencias externas
+node_modules/
+vendor/
+
+# Ignorar archivos de build (si los hubiera)
+dist/
+build/
+
+# Ignorar IDEs y configuraciones locales
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Ignorar sistema operativo
+Thumbs.db
+ehthumbs.db
+Desktop.ini
