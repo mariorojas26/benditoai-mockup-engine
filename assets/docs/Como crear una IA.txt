@@ -1,0 +1,54 @@
+<?php
+/*
+===============================
+BendidoAI - Guía de implementación de nueva herramienta de IA
+===============================
+
+1️⃣ Crear la carpeta del módulo:
+    - Ruta: includes/modules/mi-nueva-herramienta/
+    - Archivos recomendados:
+        • ajax-mi-herramienta.php  -> para manejar peticiones AJAX
+        • shortcode-mi-herramienta.php -> para generar el shortcode y mostrar la UI
+        • mi-herramienta-script.js  -> JS personalizado (opcional)
+        • estilos.css  -> estilos propios (opcional)
+
+2️⃣ Crear la función para la base de datos (si aplica):
+    - Editar includes/install.php
+    - Ejemplo: benditoai_create_mi_herramienta_table()
+    - Registrar la tabla en la función de activación del plugin:
+        benditoai_create_mi_herramienta_table();
+
+3️⃣ Crear la función AJAX:
+    - Archivo ajax-mi-herramienta.php
+    - Registrar con add_action('wp_ajax_benditoai_generar_mi_herramienta', 'funcion_handler');
+    - Sanitizar inputs y llamar a la IA.
+    - Guardar el resultado en la base de datos si aplica.
+    - Enviar respuesta con wp_send_json_success() o wp_send_json_error().
+
+4️⃣ Crear el shortcode:
+    - Archivo shortcode-mi-herramienta.php
+    - Función benditoai_mi_herramienta_shortcode()
+    - Debe verificar que el usuario esté logueado.
+    - Mostrar la interfaz HTML con textarea/input y botón.
+    - Retornar ob_get_clean() para renderizar correctamente.
+    - Registrar con add_shortcode('benditoai_mi_herramienta', 'benditoai_mi_herramienta_shortcode');
+
+5️⃣ Cargar JS y CSS:
+    - En el archivo principal del plugin, usar wp_enqueue_script() y wp_enqueue_style().
+    - Asegurarse que el JS depende de 'benditoai-main' para usar imports.
+    - JS mínimo: enviar la petición AJAX al action correspondiente y mostrar el resultado.
+
+6️⃣ Registrar el shortcode y AJAX en el plugin principal:
+    - require_once BENDIDOAI_PLUGIN_PATH.'includes/modules/mi-nueva-herramienta/shortcode-mi-herramienta.php';
+    - require_once BENDIDOAI_PLUGIN_PATH.'includes/modules/mi-nueva-herramienta/ajax-mi-herramienta.php';
+
+7️⃣ Testear:
+    - Activar plugin.
+    - Revisar que la tabla se haya creado.
+    - Insertar el shortcode en una página.
+    - Probar que la herramienta funcione sin romper Elementor ni otros módulos.
+
+===============================
+Fin de la guía
+===============================
+*/

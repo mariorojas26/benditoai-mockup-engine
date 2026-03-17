@@ -1,0 +1,1 @@
+// ⚠️ Error Elementor se queda cargando: Undefined constant BENDITOAI_PLUGIN_URL → se arregla unificando install.php y evitando duplicar if(!defined('ABSPATH')) exit; **INCOMPATIBILIDAD CON ALGUN PLUGIN**

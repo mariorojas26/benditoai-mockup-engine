@@ -1,0 +1,145 @@
+/*
+=========================================================
+📌 README TÉCNICO – SISTEMA DE TOKENS BENDITOAI
+=========================================================
+
+Objetivo:
+----------
+Centralizar el manejo de tokens para todas las herramientas de IA
+(mockup, enhance, remove-bg, trending, modelos AI) y garantizar
+que cualquier IA nueva cumpla con las reglas de Request Manager.
+
+ARCHIVOS CLAVE DEL SISTEMA DE TOKENS:
+-------------------------------------
+
+1️⃣ ajax-get-tokens.php
+   - Endpoint AJAX: 'benditoai_get_tokens'
+   - Devuelve la cantidad actual de tokens de un usuario logueado.
+   - No modifica tokens, solo consulta.
+   - Uso en JS: refrescar contador en tiempo real.
+
+2️⃣ tokens-manager.php
+   - Funciones principales:
+        benditoai_get_user_tokens($user_id) -> Obtiene tokens actuales
+        benditoai_decrease_tokens($user_id, $amount) -> Descuenta tokens
+        benditoai_user_has_tokens($user_id, $amount) -> Valida tokens
+        benditoai_user_has_unlimited_tokens($user_id) -> Verifica admins ilimitados
+   - Puedes ajustar aquí:
+        - Tokens iniciales para nuevos usuarios
+        - Cantidad de tokens a descontar por herramienta
+        - Reglas especiales para administradores
+
+   - Para dar más tokens a nuevos usuarios:
+        Cambia el valor en benditoai_get_user_tokens():
+            if ($tokens === '') { $tokens = 50; update_user_meta($user_id, 'benditoai_tokens', $tokens); }
+
+3️⃣ tokens-shortcode.php
+   - Shortcode [benditoai_tokens]
+   - Muestra el contador de tokens en el frontend:
+        <span class="benditoai-user-tokens">30</span>
+   - Para admins muestra '∞' si tienen tokens ilimitados.
+   - También incluye toggle para activar/desactivar tokens ilimitados de admin (solo visual y pruebas).
+
+4️⃣ tokens-usage.php
+   - Función benditoai_use_token($tokens=1)
+   - Descuenta tokens si el usuario tiene suficientes.
+   - Verifica login, tokens disponibles y si es admin (no descuenta).
+   - Se puede llamar desde cualquier IA antes de procesar request.
+
+5️⃣ assets/js/core/tokens.js
+   - JS global que refresca tokens y actualiza contadores:
+        - window.benditoaiTokensManager.actualizar(tokens)
+        - window.benditoaiActualizarTokensInstantaneo(tokens)
+   - Recibe tokens desde AJAX o hace fetch a 'benditoai_get_tokens'
+   - Actualiza todos los elementos con clase .benditoai-user-tokens
+
+REGLAS OBLIGATORIAS PARA CUALQUIER IA NUEVA:
+--------------------------------------------
+
+1️⃣ Formulario de la IA debe tener clase:
+    .benditoai-ai-form
+
+2️⃣ Botón que ejecuta la IA debe tener clase:
+    .benditoai-ai-button
+    - Bloquea botón durante la ejecución (previene doble envío)
+    - JS global lo respeta para Request Manager
+
+3️⃣ Validación de usuario logueado:
+    if(!is_user_logged_in()){ return mensaje_error; }
+
+4️⃣ Manejo de errores:
+    - Si la IA falla, no se descuentan tokens
+    - Siempre retornar JSON con 'success' o 'error'
+
+5️⃣ Descuento de tokens:
+    - Solo si IA retorna resultado válido:
+        benditoai_use_token(1);
+    - Obtener tokens actualizados:
+        $tokens = benditoai_get_user_tokens(get_current_user_id());
+    - Devolver al frontend:
+        wp_send_json_success([
+            'resultado' => $resultado,
+            'tokens' => $tokens
+        ]);
+
+6️⃣ Actualización en frontend:
+    - JS recibe tokens y ejecuta:
+        benditoaiActualizarTokensInstantaneo(data.data.tokens);
+
+7️⃣ Registrar uso (opcional):
+    - Puedes guardar historial con tokens-usage.php para auditoría.
+
+CÓMO IMPLEMENTAR UNA NUEVA IA:
+------------------------------
+
+1️⃣ Crear carpeta del módulo:
+    includes/modules/mi-nueva-ia/
+
+2️⃣ Crear archivos:
+    - ajax-mi-nueva-ia.php
+    - mi-nueva-ia-shortcode.php
+    - mi-nueva-ia-script.js (opcional)
+    - mi-nueva-ia-style.css (opcional)
+
+3️⃣ Shortcode:
+    - Formulario .benditoai-ai-form
+    - Botón .benditoai-ai-button
+    - Validar login
+
+4️⃣ Llamada a API de IA:
+    - Preparar prompt/datos
+    - Ejecutar request
+    - Validar respuesta
+
+5️⃣ Guardar resultado si aplica:
+    - Imagen, URL, prompt, parámetros
+
+6️⃣ Descontar tokens solo si resultado válido:
+    benditoai_use_token(1);
+    $tokens = benditoai_get_user_tokens(get_current_user_id());
+    wp_send_json_success(['resultado'=>$resultado,'tokens'=>$tokens]);
+
+7️⃣ JS:
+    - Refrescar contador de tokens:
+        benditoaiActualizarTokensInstantaneo(tokens);
+
+8️⃣ Estilo y script:
+    - Enqueue en plugin principal:
+        wp_enqueue_script('mi-nueva-ia-script', BENDIDOAI_PLUGIN_URL.'includes/modules/mi-nueva-ia/mi-nueva-ia-script.js', array('benditoai-main'), '1.0', true);
+
+CÓMO AJUSTAR TOKENS:
+-------------------
+
+- Tokens iniciales nuevos usuarios:
+    - tokens-manager.php -> benditoai_get_user_tokens()
+        $tokens = 50; // Cambiar a la cantidad deseada
+
+- Descuento por herramienta:
+    - benditoai_use_token($cantidad)
+
+- Tokens ilimitados para admins:
+    - Toggle desde tokens-shortcode.php
+    - JS refresca contador automáticamente
+
+=========================================================
+*/

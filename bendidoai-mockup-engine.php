@@ -17,10 +17,15 @@ define('BENDIDOAI_PLUGIN_URL', plugin_dir_url(__FILE__));
 
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/install.php';
 
-/* ACTIVACIÓN */
+/* ACTIVACIÓN TABLAS BASES DE DATOS*/
 
 function bendidoai_activate_plugin() {
+    // Crear tabla historial de mockups
     benditoai_create_historial_table();
+
+    // Crear tabla de modelos AI
+    benditoai_create_modelos_ai_table();
+
     error_log('BendidoAI activado 🚀');
 }
 
@@ -63,6 +68,7 @@ require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/tendencias/trending-short
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/tendencias/trending-ajax.php';
 
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/modelos-ai/modelos-ai-shortcode.php';
+require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/modelos-ai/modelos-ai-historial-shortcode.php';
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/modelos-ai/modelos-ai-ajax.php';
 
 
