@@ -18,3 +18,6 @@ import "./enhance/enhance-image.js";
 import "./trending/trending-generator.js";
 import "./trending/trending-ui.js";
 
+/* auth */
+import "./auth/auth-dropdown.js";
+

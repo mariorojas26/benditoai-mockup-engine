@@ -20,12 +20,12 @@ function benditoai_modelos_ai_historial_shortcode() {
         <div class="benditoai-historial-grid">
             <?php foreach ($historial as $item): ?>
             <div class="benditoai-historial-item">
+                   <p class="benditoai-historial-name"> <?php echo esc_html($item->nombre_modelo); ?></p>
                 <?php if(!empty($item->image_url)): ?>
                     <img src="<?php echo esc_url($item->image_url); ?>" alt="<?php echo esc_attr($item->nombre_modelo); ?>" class="benditoai-historial-img"/>
                     <a href="<?php echo esc_url($item->image_url); ?>" download class="benditoai-btn benditoai-btn--download">⬇️ Descargar</a>
                 <?php endif; ?>
                 <div class="benditoai-historial-info">
-                    <p><strong>Nombre:</strong> <?php echo esc_html($item->nombre_modelo); ?></p>
                     <p><strong>Género:</strong> <?php echo esc_html($item->genero); ?></p>
                     <p><strong>Edad:</strong> <?php echo esc_html($item->edad); ?></p>
                     <p><strong>Estilo:</strong> <?php echo esc_html($item->estilo); ?></p>

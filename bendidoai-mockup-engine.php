@@ -71,6 +71,8 @@ require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/modelos-ai/modelos-ai-sho
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/modelos-ai/modelos-ai-historial-shortcode.php';
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/modelos-ai/modelos-ai-ajax.php';
 
+require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/auth/auth-dropdown.php';
+
 
 
 /* ESTILOS Y JS */
