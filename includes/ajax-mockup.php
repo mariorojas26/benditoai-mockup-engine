@@ -4,6 +4,7 @@ if (!defined('ABSPATH')) exit;
 
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/gemini-api.php';
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/prompts.php';
+require_once BENDIDOAI_PLUGIN_PATH . 'includes/gemini-api-multi-image.php';
 
 function benditoai_generar_mockup() {
 
@@ -31,12 +32,12 @@ function benditoai_generar_mockup() {
 
     $color    = isset($_POST['color']) ? sanitize_text_field($_POST['color']) : 'blanco';
 
-   // Solo para camisetas
+    // Solo para camisetas
     $estilo_camiseta = '';
     if ($producto === 'camiseta' && isset($_POST['estilo_camiseta'])) {
         $estilo_camiseta_input = sanitize_text_field($_POST['estilo_camiseta']);
         global $benditoai_estilos_camiseta;
-        // Si existe en el array, usamos la descripción; si no, usamos literal
+
         $estilo_camiseta = isset($benditoai_estilos_camiseta[$estilo_camiseta_input]) 
                             ? $benditoai_estilos_camiseta[$estilo_camiseta_input] 
                             : $estilo_camiseta_input;
@@ -45,23 +46,30 @@ function benditoai_generar_mockup() {
     // entorno
     global $benditoai_entornos;
     $entorno = isset($_POST['entorno']) ? sanitize_text_field($_POST['entorno']) : 'urbano';
-    // Si existe en el array, usamos la descripción; si no, usamos literal
     $entorno_texto = isset($benditoai_entornos[$entorno]) ? $benditoai_entornos[$entorno] : $entorno;
 
-    // Solo para mockup con modelo
-        $modelo_texto = '';
-        if (isset($_POST['modelo'])) {
-            $modelo_input = sanitize_text_field($_POST['modelo']);
+    // modelo (TU lógica original intacta)
+$modelo_texto = '';
 
-            global $benditoai_modelo;
+if (isset($_POST['modelo'])) {
 
-            // Ajuste para que siempre sea claro si se usa modelo o no
-            $modelo_texto = ($modelo_input === 'no') 
-                ? "No incluir personas; solo el mockup del producto." 
-                : "Incluir un modelo humano realista mostrando la camiseta.";
-        }
+    $modelo_input = sanitize_text_field($_POST['modelo']);
 
-    // 2️⃣ Subir imagen
+    if ($modelo_input === 'no') {
+
+        // 🚫 SIN MODELO (CASO 2)
+        $modelo_texto = "No debe aparecer ninguna persona, modelo o parte del cuerpo humano en la imagen. El mockup debe mostrar únicamente el producto de forma profesional, como fotografía de catálogo. La escena debe estar completamente libre de humanos.";
+
+    } else {
+
+        // ✅ CON MODELO (CASO 1)
+        $modelo_texto = "Usa la IMAGEN 2 como referencia del modelo humano. Debes mantener exactamente su rostro, identidad, rasgos, accesorios, gafas si tiene y proporciones. No cambiar la cara, no generar otra persona, no mezclar rostros.";
+    }
+}
+
+    /*
+     * 2️⃣ SUBIR IMAGEN PRINCIPAL (DISEÑO)
+     */
     if (!isset($_FILES['diseno'])) {
         wp_send_json_error("No se recibió ninguna imagen.");
     }
@@ -76,11 +84,57 @@ function benditoai_generar_mockup() {
     $image_data = file_get_contents($movefile['file']);
     $base64_image = base64_encode($image_data);
 
-    // 3️⃣ Obtener prompt dinámico desde includes/prompts.php
-    $prompt = benditoai_get_prompt($producto, $formato, $color, $estilo_camiseta, $entorno_texto, $modelo_texto);
+    /**
+     * 🆕 2.1️⃣ MODELO AI DESDE BD (REEMPLAZA REFERENCIA)
+     */
+    $base64_image_2 = null;
 
-    // 4️⃣ Llamar a Gemini con prompt dinámico
-    $response = benditoai_call_gemini($base64_image, $prompt);
+    if (
+    isset($_POST['modelo']) && $_POST['modelo'] === 'si' &&
+    isset($_POST['modelo_avatar']) && !empty($_POST['modelo_avatar'])
+) {
+        global $wpdb;
+
+        $modelo_id = intval($_POST['modelo_avatar']);
+        $table = $wpdb->prefix . 'benditoai_modelos_ai';
+
+        $modelo = $wpdb->get_row(
+            $wpdb->prepare(
+                "SELECT image_url FROM $table WHERE id = %d",
+                $modelo_id
+            )
+        );
+
+        if ($modelo && !empty($modelo->image_url)) {
+
+            $image_data2 = file_get_contents($modelo->image_url);
+
+            if ($image_data2) {
+                $base64_image_2 = base64_encode($image_data2);
+            }
+        }
+    }
+
+    /**
+     * 3️⃣ OBTENER PROMPT (SIN CAMBIOS)
+     */
+    $prompt = benditoai_get_prompt(
+        $producto,
+        $formato,
+        $color,
+        $estilo_camiseta,
+        $entorno_texto,
+        $modelo_texto
+    );
+
+    /**
+     * 4️⃣ LLAMAR A GEMINI (AUTO 1 O 2 IMÁGENES)
+     */
+    if ($base64_image_2) {
+        $response = benditoai_call_gemini_multi($base64_image, $base64_image_2, $prompt);
+    } else {
+        $response = benditoai_call_gemini($base64_image, $prompt);
+    }
 
     if (is_wp_error($response)) {
         wp_send_json_error("Error llamando a Gemini");
@@ -92,7 +146,9 @@ function benditoai_generar_mockup() {
         wp_send_json_error("No se encontró imagen en respuesta.");
     }
 
-    // 5️⃣ Decodificar y guardar imagen en uploads
+    /**
+     * 5️⃣ GUARDAR IMAGEN GENERADA
+     */
     $generated_base64 = $body_response['candidates'][0]['content']['parts'][0]['inlineData']['data'];
     $generated_image_data = base64_decode($generated_base64);
 
@@ -104,7 +160,9 @@ function benditoai_generar_mockup() {
 
     $url = $upload_dir['url'] . '/' . $filename;
 
-    // 5.1️⃣ Guardar historial en la DB
+    /**
+     * 5.1️⃣ HISTORIAL (100% intacto)
+     */
     global $wpdb;
 
     $wpdb->insert(
@@ -128,11 +186,13 @@ function benditoai_generar_mockup() {
      */
     benditoai_decrease_tokens($user_id, 1);
 
-    // 6️⃣ Retornar URL de la imagen generada
+    /**
+     * 6️⃣ RESPUESTA FINAL
+     */
     wp_send_json_success(array(
         'image_url' => $url
     ));
 }
 
-// Registrar AJAX para usuarios logueados
+// AJAX
 add_action('wp_ajax_benditoai_generar_mockup', 'benditoai_generar_mockup');

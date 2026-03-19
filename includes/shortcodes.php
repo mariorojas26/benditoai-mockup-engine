@@ -157,6 +157,39 @@ function benditoai_crear_mockup_shortcode() {
                     </select>
                 </div>
 
+
+<!-- 🔥 CONTENEDOR MODELOS -->
+<div class="benditoai-form__group benditoai-modelo-wrap" id="modeloWrap">
+
+    <label class="benditoai-form__label">
+        Elegir modelo AI (avatar)
+    </label>
+
+    <!-- 🔥 INPUT OCULTO (esto reemplaza el select) -->
+    <input type="hidden" name="modelo_avatar" id="modeloAvatarInput">
+
+    <!-- 🔥 GRID VISUAL -->
+    <div class="benditoai-modelos-grid">
+
+        <?php
+        global $wpdb;
+
+        $table = $wpdb->prefix . 'benditoai_modelos_ai';
+
+        // ⚠️ IMPORTANTE: necesitamos image_url también
+        $modelos = $wpdb->get_results("SELECT id, nombre_modelo, image_url FROM $table ORDER BY id DESC");
+
+        foreach ($modelos as $modelo) {
+            echo '<div class="benditoai-modelo-card" data-id="'.esc_attr($modelo->id).'">';
+            echo '<img src="'.esc_url($modelo->image_url).'" alt="'.esc_attr($modelo->nombre_modelo).'">';
+            echo '</div>';
+        }
+        ?>
+
+    </div>
+
+</div>
+
                 <label class="benditoai-form__label" >Formato de imagen:</label>
 
                 <div class="benditoai-form__group">

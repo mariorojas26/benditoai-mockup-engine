@@ -76,3 +76,49 @@ Error inesperado. Intenta nuevamente.
 });
 
 });
+
+// Lógica para mostrar/ocultar sección de modelo en el formulario
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const selectModelo = document.getElementById("modelo");
+    const modeloWrap = document.getElementById("modeloWrap");
+
+    function toggleModelo() {
+
+        if (selectModelo.value === "no") {
+            modeloWrap.classList.add("benditoai-modelo-wrap--hidden");
+        } else {
+            modeloWrap.classList.remove("benditoai-modelo-wrap--hidden");
+        }
+    }
+
+    // Ejecutar al cargar
+    toggleModelo();
+
+    // Ejecutar al cambiar
+    selectModelo.addEventListener("change", toggleModelo);
+
+});
+
+//cards de avatars en genrador de mockups
+document.addEventListener("DOMContentLoaded", function () {
+
+    const cards = document.querySelectorAll(".benditoai-modelo-card");
+    const input = document.getElementById("modeloAvatarInput");
+
+    cards.forEach(card => {
+
+        card.addEventListener("click", () => {
+
+            cards.forEach(c => c.classList.remove("active"));
+
+            card.classList.add("active");
+
+            input.value = card.getAttribute("data-id");
+
+        });
+
+    });
+
+});
