@@ -21,3 +21,6 @@ import "./trending/trending-ui.js";
 /* auth */
 import "./auth/auth-dropdown.js";
 
+/* modelos */
+import "./modelos/delete-modelo.js";
+

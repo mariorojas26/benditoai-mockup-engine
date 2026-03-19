@@ -176,6 +176,7 @@
 }
 
 /* ERROR */
+.benditoai-error-message,
 .benditoai-error {
     margin-top: 30px;
     padding: 15px;
@@ -1003,4 +1004,11 @@ p.benditoai-historial-name {
     font-size: 12px;
     padding: 2px 6px;
     border-radius: 6px;
+}
+
+.benditoai-error-message{
+    color:#ff4d4f;
+    font-size:14px;
+    margin-top:10px;
+    font-weight:500;
 }

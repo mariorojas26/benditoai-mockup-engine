@@ -30,6 +30,12 @@ function benditoai_modelos_ai_historial_shortcode() {
                     <p><strong>Edad:</strong> <?php echo esc_html($item->edad); ?></p>
                     <p><strong>Estilo:</strong> <?php echo esc_html($item->estilo); ?></p>
                     <p><strong>Fecha:</strong> <?php echo esc_html($item->created_at); ?></p>
+<button 
+    class="benditoai-delete-modelo-btn" 
+    data-id="<?php echo esc_attr($item->id); ?>">
+    🗑 Eliminar
+</button>
+                    
                 </div>
             </div>
             <?php endforeach; ?>

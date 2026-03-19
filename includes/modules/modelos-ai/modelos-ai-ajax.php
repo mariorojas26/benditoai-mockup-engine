@@ -12,6 +12,32 @@ function benditoai_generar_modelo_ai(){
         wp_send_json_error("Debes iniciar sesión");
     }
 
+    $user_id = get_current_user_id();
+
+    // -------------------------------------------------
+    // 🔥 VALIDAR LÍMITE DE MODELOS SEGÚN PLAN
+    // -------------------------------------------------
+
+    $plan_data = benditoai_get_user_plan_data($user_id);
+    $max_modelos = $plan_data['max_modelos'];
+
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'benditoai_modelos_ai';
+
+    $total_modelos = $wpdb->get_var(
+        $wpdb->prepare(
+            "SELECT COUNT(*) FROM $table_name WHERE user_id = %d",
+            $user_id
+        )
+    );
+
+    if($total_modelos >= $max_modelos){
+       wp_send_json_error([
+    'message' => 'Has alcanzado el límite de modelos de tu plan. Elimina un avatar o mejora tu plan para crear más.',
+    'code' => 'limit_reached'
+]);
+    }
+
     // -------------------------------------------------
     // SANITIZAR DATOS
     // -------------------------------------------------
@@ -31,7 +57,7 @@ function benditoai_generar_modelo_ai(){
     // PROMPT
     // -------------------------------------------------
 
-$prompt = "
+    $prompt = "
 
 Ultra realistic human avatar.
 
@@ -132,49 +158,45 @@ photorealistic
     $url = $upload['url'] . '/' . $filename;
 
     // -------------------------------------------------
-// GUARDAR DATOS EN BD
-// -------------------------------------------------
+    // GUARDAR DATOS EN BD
+    // -------------------------------------------------
 
-    global $wpdb;
-$table_name = $wpdb->prefix . 'benditoai_modelos_ai';
+    $wpdb->insert(
+        $table_name,
+        [
+            'user_id' => $user_id,
+            'nombre_modelo' => sanitize_text_field($_POST['nombre_modelo']),
+            'genero' => $genero,
+            'edad' => $edad,
+            'cuerpo' => $cuerpo,
+            'etnia' => $etnia,
+            'estilo' => $estilo,
+            'prenda_superior' => $prenda_superior,
+            'prenda_inferior' => $prenda_inferior,
+            'zapatos' => $zapatos,
+            'accesorios' => $accesorios,
+            'prompt' => $prompt,
+            'image_url' => $url,
+            'created_at' => current_time('mysql')
+        ],
+        ['%d','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s']
+    );
 
-$wpdb->insert(
-    $table_name,
-    [
-        'user_id' => get_current_user_id(),
-        'nombre_modelo' => sanitize_text_field($_POST['nombre_modelo']),
-        'genero' => $genero,
-        'edad' => $edad,
-        'cuerpo' => $cuerpo,
-        'etnia' => $etnia,
-        'estilo' => $estilo,
-        'prenda_superior' => $prenda_superior,
-        'prenda_inferior' => $prenda_inferior,
-        'zapatos' => $zapatos,
-        'accesorios' => $accesorios,
-        'prompt' => $prompt,
+    // -------------------------------------------------
+    // TOKENS
+    // -------------------------------------------------
+
+    benditoai_use_token(1);
+
+    $tokens_restantes = benditoai_get_user_tokens($user_id);
+
+    // -------------------------------------------------
+    // RESPUESTA
+    // -------------------------------------------------
+
+    wp_send_json_success([
         'image_url' => $url,
-        'created_at' => current_time('mysql')
-    ],
-    ['%d','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s']
-);
-
-// -------------------------------------------------
-// DESCONTAR TOKEN SOLO SI TODO SALIÓ BIEN
-// -------------------------------------------------
-
-benditoai_use_token(1);
-
-// obtener tokens restantes
-$tokens_restantes = benditoai_get_user_tokens(get_current_user_id());
-
-// -------------------------------------------------
-// RESPUESTA
-// -------------------------------------------------
-
-wp_send_json_success([
-    'image_url' => $url,
-    'tokens' => $tokens_restantes
-]);
+        'tokens' => $tokens_restantes
+    ]);
 
 }

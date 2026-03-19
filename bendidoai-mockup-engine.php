@@ -44,6 +44,8 @@ register_deactivation_hook(__FILE__, 'bendidoai_deactivate_plugin');
 /* CARGAR MÓDULOS */
 
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/admin-menu.php';
+require_once BENDIDOAI_PLUGIN_PATH . 'includes/admin/admin-users-plans.php';
+
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/ajax-mockup.php';
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/auth-redirect.php';
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/gemini-api.php';
@@ -61,6 +63,13 @@ require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/tokens/tokens-manager.php
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/tokens/ajax-get-tokens.php';
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/tokens/tokens-usage.php';
 
+/* PLANES (SISTEMA DE SUSCRIPCIÓN) */
+
+require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/plans/plans-config.php';
+require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/plans/plans-functions.php';
+require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/plans/plans-init.php';
+require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/plans/ajax-update-plan.php';
+
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/enhance-image/ajax-enhance-image.php';
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/enhance-image/shortcode-enhance-image.php';
 
@@ -70,8 +79,10 @@ require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/tendencias/trending-ajax.
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/modelos-ai/modelos-ai-shortcode.php';
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/modelos-ai/modelos-ai-historial-shortcode.php';
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/modelos-ai/modelos-ai-ajax.php';
+require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/modelos-ai/modelos-ai-delete.php';
 
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/auth/auth-dropdown.php';
+
 
 
 

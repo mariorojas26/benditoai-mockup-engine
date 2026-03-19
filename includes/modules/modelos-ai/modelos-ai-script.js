@@ -1,3 +1,32 @@
+/*
+REGLA BENDITOAI - RESPUESTAS AJAX
+
+Siempre acceder a errores así:
+res.data.message
+
+Nunca usar:
+res.data
+
+Porque el backend devuelve objetos.
+
+Esto evita errores tipo:
+[object Object]
+
+--------------------------------------
+
+REGLA BENDITOAI UI:
+
+Todo formulario de IA debe tener:
+
+.benditoai-error-message
+
+Este contenedor se usa para mostrar errores
+sin usar alert().
+
+Siempre va debajo del botón principal.
+--------------------------------------
+*/
+
 document.addEventListener("DOMContentLoaded", function(){
 
 const form = document.getElementById("benditoai-form-modelo-ai")
@@ -10,14 +39,23 @@ const imageWrapper = document.querySelector(".benditoai-image-wrapper")
 const image = document.querySelector(".benditoai-generated-image")
 const downloadBtn = document.querySelector(".benditoai-download-btn")
 
+/* 🔥 CONTENEDOR DE ERROR */
+const errorBox = form.querySelector(".benditoai-error-message")
+
 form.addEventListener("submit", function(e){
 
 e.preventDefault()
 
 const data = new FormData(form)
-
 data.append("action","benditoai_generar_modelo_ai")
 
+/* limpiar errores */
+if(errorBox){
+    errorBox.style.display = "none"
+    errorBox.innerText = ""
+}
+
+/* UI loading */
 loading.style.display = "block"
 placeholder.style.display = "none"
 
@@ -57,13 +95,27 @@ downloadBtn.download = `benditoAI-${nombreModelo}.png`
 
 }else{
 
-alert(res.data)
+/* 🔥 MENSAJE DE ERROR PRO (SIN ALERT) */
+const errorMsg = res?.data?.message || "Ocurrió un error. Intenta nuevamente."
+
+if(errorBox){
+    errorBox.innerHTML = "⚠️ " + errorMsg
+    errorBox.style.display = "block"
+}
 
 }
 
 })
 .catch(err=>{
+
 console.error(err)
+
+/* error inesperado real */
+if(errorBox){
+    errorBox.innerHTML = "⚠️ Error inesperado. Intenta nuevamente."
+    errorBox.style.display = "block"
+}
+
 })
 
 })

@@ -134,6 +134,8 @@ function benditoai_modelos_ai_shortcode() {
                         Generar modelo
                     </button>
 
+                    <p class="benditoai-error-message" style="display:none;"></p>
+
                     <p class="benditoai-loading" id="benditoai-modelo-loading">
                         🤖 Generando modelo...
                     </p>
