@@ -171,20 +171,29 @@ function benditoai_crear_mockup_shortcode() {
     <!-- 🔥 GRID VISUAL -->
     <div class="benditoai-modelos-grid">
 
-        <?php
-        global $wpdb;
+     <?php
+global $wpdb;
 
-        $table = $wpdb->prefix . 'benditoai_modelos_ai';
+$user_id = get_current_user_id(); // 🔥 clave
 
-        // ⚠️ IMPORTANTE: necesitamos image_url también
-        $modelos = $wpdb->get_results("SELECT id, nombre_modelo, image_url FROM $table ORDER BY id DESC");
+$table = $wpdb->prefix . 'benditoai_modelos_ai';
 
-        foreach ($modelos as $modelo) {
-            echo '<div class="benditoai-modelo-card" data-id="'.esc_attr($modelo->id).'">';
-            echo '<img src="'.esc_url($modelo->image_url).'" alt="'.esc_attr($modelo->nombre_modelo).'">';
-            echo '</div>';
-        }
-        ?>
+$modelos = $wpdb->get_results(
+    $wpdb->prepare(
+        "SELECT id, nombre_modelo, image_url 
+         FROM $table 
+         WHERE user_id = %d 
+         ORDER BY id DESC",
+        $user_id
+    )
+);
+
+foreach ($modelos as $modelo) {
+    echo '<div class="benditoai-modelo-card" data-id="'.esc_attr($modelo->id).'">';
+    echo '<img src="'.esc_url($modelo->image_url).'" alt="'.esc_attr($modelo->nombre_modelo).'">';
+    echo '</div>';
+}
+?>
 
     </div>
 
