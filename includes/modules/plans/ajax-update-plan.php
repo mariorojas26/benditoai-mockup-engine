@@ -15,6 +15,10 @@ function benditoai_update_user_plan(){
     // guardar plan
     update_user_meta($user_id,'benditoai_plan',$plan);
 
+    // 🔥 limpiar cache usuario
+    clean_user_cache($user_id);
+    wp_cache_delete($user_id, 'user_meta');
+
     // 🔥 obtener configuración del plan
     $plans = benditoai_get_plans();
 
