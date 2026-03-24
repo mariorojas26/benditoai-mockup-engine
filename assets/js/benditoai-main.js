@@ -23,4 +23,5 @@ import "./auth/auth-dropdown.js";
 
 /* modelos */
 import "./modelos/delete-modelo.js";
+import "./modelos/edit-modelo.js";
 

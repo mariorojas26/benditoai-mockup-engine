@@ -8,22 +8,6 @@ Nunca usar:
 res.data
 
 Porque el backend devuelve objetos.
-
-Esto evita errores tipo:
-[object Object]
-
---------------------------------------
-
-REGLA BENDITOAI UI:
-
-Todo formulario de IA debe tener:
-
-.benditoai-error-message
-
-Este contenedor se usa para mostrar errores
-sin usar alert().
-
-Siempre va debajo del botón principal.
 --------------------------------------
 */
 
@@ -49,15 +33,51 @@ e.preventDefault()
 const data = new FormData(form)
 data.append("action","benditoai_generar_modelo_ai")
 
+/* =========================================
+🔥 RESET UI LIMPIO (SIN MOSTRAR IMAGEN)
+========================================= */
+
 /* limpiar errores */
 if(errorBox){
     errorBox.style.display = "none"
     errorBox.innerText = ""
 }
 
-/* UI loading */
+/* ocultar TODO */
+if(imageWrapper){
+    imageWrapper.style.display = "none"
+    imageWrapper.classList.remove(
+        "benditoai-image-loading",
+        "benditoai-image-enter",
+        "benditoai-image-loaded"
+    )
+}
+
+if(image){
+    image.src = ""
+}
+
+/* ocultar descarga */
+if(downloadBtn){
+    downloadBtn.href = ""
+    downloadBtn.style.display = "none"
+}
+
+/* mostrar placeholder */
+if(placeholder){
+    placeholder.style.display = "block"
+}
+
+/* =========================================
+🔥 LOADING
+========================================= */
+
 loading.style.display = "block"
 placeholder.style.display = "none"
+
+/* =========================================
+🔥 PETICIÓN
+========================================= */
 
 fetch(benditoai_ajax.ajax_url,{
 method:"POST",
@@ -72,30 +92,44 @@ if(res.success){
 
 const imageUrl = res.data.image_url
 
-image.src = imageUrl
+/* 🔥 mostrar wrapper SOLO cuando ya hay imagen */
 imageWrapper.style.display = "block"
-downloadBtn.href = imageUrl
 
-/* ACTUALIZAR TOKENS EN VIVO */
+/* 🔥 animación entrada elegante */
+imageWrapper.classList.add("benditoai-image-enter")
+
+/* cargar imagen */
+image.src = imageUrl
+
+/* cuando carga realmente */
+image.onload = () => {
+
+    imageWrapper.classList.remove("benditoai-image-enter")
+    imageWrapper.classList.add("benditoai-image-loaded")
+
+}
+
+/* 🔥 mostrar descarga SOLO aquí */
+downloadBtn.href = imageUrl
+downloadBtn.style.display = "inline-block"
+
+/* actualizar tokens */
 if(res.data.tokens !== undefined){
     benditoaiActualizarTokensInstantaneo(res.data.tokens)
 }
 
-/* nombre del modelo */
+/* nombre archivo */
 let nombreModelo = form.querySelector('input[name="nombre_modelo"]').value
 
-/* limpiar nombre */
 nombreModelo = nombreModelo
 .toLowerCase()
 .replace(/[^a-z0-9]/gi,"-")
 .replace(/-+/g,"-")
 
-/* nombre final descarga */
 downloadBtn.download = `benditoAI-${nombreModelo}.png`
 
 }else{
 
-/* 🔥 MENSAJE DE ERROR PRO (SIN ALERT) */
 const errorMsg = res?.data?.message || "Ocurrió un error. Intenta nuevamente."
 
 if(errorBox){
@@ -110,7 +144,6 @@ if(errorBox){
 
 console.error(err)
 
-/* error inesperado real */
 if(errorBox){
     errorBox.innerHTML = "⚠️ Error inesperado. Intenta nuevamente."
     errorBox.style.display = "block"

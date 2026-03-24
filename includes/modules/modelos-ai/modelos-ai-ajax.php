@@ -32,10 +32,10 @@ function benditoai_generar_modelo_ai(){
     );
 
     if($total_modelos >= $max_modelos){
-       wp_send_json_error([
-    'message' => 'Has alcanzado el límite de modelos de tu plan. Elimina un avatar o mejora tu plan para crear más.',
-    'code' => 'limit_reached'
-]);
+        wp_send_json_error([
+            'message' => 'Has alcanzado el límite de modelos de tu plan. Elimina un avatar o mejora tu plan para crear más.',
+            'code' => 'limit_reached'
+        ]);
     }
 
     // -------------------------------------------------
@@ -158,6 +158,12 @@ photorealistic
     $url = $upload['url'] . '/' . $filename;
 
     // -------------------------------------------------
+    // 🔥 FECHA (FIX REAL)
+    // -------------------------------------------------
+
+    $created_at = date('Y-m-d H:i:s');
+
+    // -------------------------------------------------
     // GUARDAR DATOS EN BD
     // -------------------------------------------------
 
@@ -177,9 +183,24 @@ photorealistic
             'accesorios' => $accesorios,
             'prompt' => $prompt,
             'image_url' => $url,
-            'created_at' => current_time('mysql')
+            'created_at' => $created_at
         ],
-        ['%d','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s']
+        [
+            '%d',
+            '%s',
+            '%s',
+            '%s',
+            '%s',
+            '%s',
+            '%s',
+            '%s',
+            '%s',
+            '%s',
+            '%s',
+            '%s',
+            '%s',
+            '%s' // 🔥 ESTE FALTABA (created_at)
+        ]
     );
 
     // -------------------------------------------------

@@ -1012,3 +1012,84 @@ p.benditoai-historial-name {
     margin-top:10px;
     font-weight:500;
 }
+/* =========================================
+BENDITOAI LOADING IMAGE EFFECT (SHIMMER SOLO IMG)
+========================================= */
+
+.benditoai-img-wrap {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+}
+
+/* estado loading más sutil */
+.benditoai-img-wrap.benditoai-image-loading img {
+    filter: grayscale(40%) brightness(0.85);
+    transition: all 0.4s ease;
+}
+
+/* shimmer elegante */
+.benditoai-img-wrap.benditoai-image-loading::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -150%;
+    width: 70%;
+    height: 200%;
+
+    background: linear-gradient(
+        120deg,
+        transparent 0%,
+        rgba(255,255,255,0.25) 45%,
+        rgba(255,255,255,0.4) 50%,
+        rgba(255,255,255,0.25) 55%,
+        transparent 100%
+    );
+
+    transform: rotate(15deg);
+    animation: benditoai-shimmer-soft 2.2s ease-in-out infinite;
+}
+
+@keyframes benditoai-shimmer-soft {
+    0% {
+        left: -150%;
+        opacity: 0;
+    }
+    30% {
+        opacity: 1;
+    }
+    100% {
+        left: 150%;
+        opacity: 0;
+    }
+}
+
+/* =========================================
+BENDITOAI IMAGE TRANSITION (FADE + BLUR)
+========================================= */
+
+.benditoai-img-wrap img {
+    transition: all 0.4s ease;
+}
+
+/* estado mientras genera */
+.benditoai-img-wrap.benditoai-image-loading img {
+    filter: blur(6px) grayscale(100%) brightness(0.7);
+    opacity: 0.5;
+    transform: scale(0.98);
+}
+
+/* entrada de nueva imagen */
+.benditoai-img-wrap.benditoai-image-enter img {
+    filter: blur(10px);
+    opacity: 0;
+    transform: scale(1.02);
+}
+
+/* estado final limpio */
+.benditoai-img-wrap.benditoai-image-loaded img {
+    filter: blur(0);
+    opacity: 1;
+    transform: scale(1);
+}
+

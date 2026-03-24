@@ -14,9 +14,10 @@ function benditoai_generar_mockup() {
 
     $user_id = get_current_user_id();
 
-    /**
-     * VERIFICAR CRÉDITOS
-     */
+    // -------------------------------------------------
+    // 🔥 VERIFICAR CRÉDITOS
+    // -------------------------------------------------
+
     if (!benditoai_user_has_tokens($user_id, 1)) {
         wp_send_json_error("No tienes créditos disponibles.");
     }
@@ -25,51 +26,51 @@ function benditoai_generar_mockup() {
         require_once(ABSPATH . 'wp-admin/includes/file.php');
     }
 
-    // 1️⃣ Recibir variables desde el formulario
+    // -------------------------------------------------
+    // 1️⃣ VARIABLES
+    // -------------------------------------------------
+
     $producto = isset($_POST['producto']) ? sanitize_text_field($_POST['producto']) : 'mug';
+    $formato = isset($_POST['formato']) ? sanitize_text_field($_POST['formato']) : 'instagram';
+    $color = isset($_POST['color']) ? sanitize_text_field($_POST['color']) : 'blanco';
 
-    $formato  = isset($_POST['formato']) ? sanitize_text_field($_POST['formato']) : 'instagram';
-
-    $color    = isset($_POST['color']) ? sanitize_text_field($_POST['color']) : 'blanco';
-
-    // Solo para camisetas
     $estilo_camiseta = '';
     if ($producto === 'camiseta' && isset($_POST['estilo_camiseta'])) {
         $estilo_camiseta_input = sanitize_text_field($_POST['estilo_camiseta']);
         global $benditoai_estilos_camiseta;
-
         $estilo_camiseta = isset($benditoai_estilos_camiseta[$estilo_camiseta_input]) 
-                            ? $benditoai_estilos_camiseta[$estilo_camiseta_input] 
-                            : $estilo_camiseta_input;
+            ? $benditoai_estilos_camiseta[$estilo_camiseta_input] 
+            : $estilo_camiseta_input;
     }
 
-    // entorno
     global $benditoai_entornos;
     $entorno = isset($_POST['entorno']) ? sanitize_text_field($_POST['entorno']) : 'urbano';
     $entorno_texto = isset($benditoai_entornos[$entorno]) ? $benditoai_entornos[$entorno] : $entorno;
 
-    // modelo (TU lógica original intacta)
-$modelo_texto = '';
+    // -------------------------------------------------
+    // MODELO
+    // -------------------------------------------------
 
-if (isset($_POST['modelo'])) {
+    $modelo_texto = '';
 
-    $modelo_input = sanitize_text_field($_POST['modelo']);
+    if (isset($_POST['modelo'])) {
 
-    if ($modelo_input === 'no') {
+        $modelo_input = sanitize_text_field($_POST['modelo']);
 
-        // 🚫 SIN MODELO (CASO 2)
-        $modelo_texto = "No debe aparecer ninguna persona, modelo o parte del cuerpo humano en la imagen. El mockup debe mostrar únicamente el producto de forma profesional, como fotografía de catálogo. La escena debe estar completamente libre de humanos.";
+        if ($modelo_input === 'no') {
 
-    } else {
+            $modelo_texto = "No debe aparecer ninguna persona...";
 
-        // ✅ CON MODELO (CASO 1)
-        $modelo_texto = "Usa la IMAGEN 2 como referencia del modelo humano. Debes mantener exactamente su rostro, identidad, rasgos, accesorios, gafas si tiene y proporciones. No cambiar la cara, no generar otra persona, no mezclar rostros.";
+        } else {
+
+            $modelo_texto = "Usa la IMAGEN 2 como referencia del modelo humano...";
+        }
     }
-}
 
-    /*
-     * 2️⃣ SUBIR IMAGEN PRINCIPAL (DISEÑO)
-     */
+    // -------------------------------------------------
+    // 2️⃣ SUBIR IMAGEN
+    // -------------------------------------------------
+
     if (!isset($_FILES['diseno'])) {
         wp_send_json_error("No se recibió ninguna imagen.");
     }
@@ -84,25 +85,26 @@ if (isset($_POST['modelo'])) {
     $image_data = file_get_contents($movefile['file']);
     $base64_image = base64_encode($image_data);
 
-    /**
-     * 🆕 2.1️⃣ MODELO AI DESDE BD (REEMPLAZA REFERENCIA)
-     */
+    // -------------------------------------------------
+    // 2.1 MODELO AI
+    // -------------------------------------------------
+
     $base64_image_2 = null;
 
     if (
-    isset($_POST['modelo']) && $_POST['modelo'] === 'si' &&
-    isset($_POST['modelo_avatar']) && !empty($_POST['modelo_avatar'])
-) {
+        isset($_POST['modelo']) &&
+        $_POST['modelo'] === 'si' &&
+        isset($_POST['modelo_avatar']) &&
+        !empty($_POST['modelo_avatar'])
+    ) {
+
         global $wpdb;
 
         $modelo_id = intval($_POST['modelo_avatar']);
         $table = $wpdb->prefix . 'benditoai_modelos_ai';
 
         $modelo = $wpdb->get_row(
-            $wpdb->prepare(
-                "SELECT image_url FROM $table WHERE id = %d",
-                $modelo_id
-            )
+            $wpdb->prepare("SELECT image_url FROM $table WHERE id = %d", $modelo_id)
         );
 
         if ($modelo && !empty($modelo->image_url)) {
@@ -115,9 +117,10 @@ if (isset($_POST['modelo'])) {
         }
     }
 
-    /**
-     * 3️⃣ OBTENER PROMPT (SIN CAMBIOS)
-     */
+    // -------------------------------------------------
+    // 3️⃣ PROMPT
+    // -------------------------------------------------
+
     $prompt = benditoai_get_prompt(
         $producto,
         $formato,
@@ -127,9 +130,10 @@ if (isset($_POST['modelo'])) {
         $modelo_texto
     );
 
-    /**
-     * 4️⃣ LLAMAR A GEMINI (AUTO 1 O 2 IMÁGENES)
-     */
+    // -------------------------------------------------
+    // 4️⃣ GEMINI
+    // -------------------------------------------------
+
     if ($base64_image_2) {
         $response = benditoai_call_gemini_multi($base64_image, $base64_image_2, $prompt);
     } else {
@@ -146,29 +150,37 @@ if (isset($_POST['modelo'])) {
         wp_send_json_error("No se encontró imagen en respuesta.");
     }
 
-    /**
-     * 5️⃣ GUARDAR IMAGEN GENERADA
-     */
+    // -------------------------------------------------
+    // 5️⃣ GUARDAR IMAGEN
+    // -------------------------------------------------
+
     $generated_base64 = $body_response['candidates'][0]['content']['parts'][0]['inlineData']['data'];
     $generated_image_data = base64_decode($generated_base64);
 
     $upload_dir = wp_upload_dir();
-    $filename   = 'mockup_' . time() . '.png';
-    $path       = $upload_dir['path'] . '/' . $filename;
+    $filename = 'mockup_' . time() . '.png';
+    $path = $upload_dir['path'] . '/' . $filename;
 
     file_put_contents($path, $generated_image_data);
 
     $url = $upload_dir['url'] . '/' . $filename;
 
-    /**
-     * 5.1️⃣ HISTORIAL (100% intacto)
-     */
+    // -------------------------------------------------
+    // 🔥 FIX FECHA
+    // -------------------------------------------------
+
+    $created_at = current_time('mysql');
+
+    // -------------------------------------------------
+    // 5.1️⃣ HISTORIAL (FIX REAL)
+    // -------------------------------------------------
+
     global $wpdb;
 
     $wpdb->insert(
         $wpdb->prefix . 'benditoai_historial',
         array(
-            'user_id' => get_current_user_id(),
+            'user_id' => $user_id,
             'producto' => $producto,
             'color' => $color,
             'estilo_camiseta' => $estilo_camiseta,
@@ -176,19 +188,31 @@ if (isset($_POST['modelo'])) {
             'entorno' => $entorno,
             'prompt' => $prompt,
             'image_url' => $url,
-            'created_at' => current_time('mysql')
+            'created_at' => $created_at
         ),
-        array('%d','%s','%s','%s','%s','%s','%s','%s')
+        array(
+            '%d',
+            '%s',
+            '%s',
+            '%s',
+            '%s',
+            '%s',
+            '%s',
+            '%s',
+            '%s' // 🔥 ESTE FALTABA
+        )
     );
 
-    /**
-     * DESCONTAR CRÉDITO
-     */
+    // -------------------------------------------------
+    // TOKENS
+    // -------------------------------------------------
+
     benditoai_decrease_tokens($user_id, 1);
 
-    /**
-     * 6️⃣ RESPUESTA FINAL
-     */
+    // -------------------------------------------------
+    // RESPUESTA
+    // -------------------------------------------------
+
     wp_send_json_success(array(
         'image_url' => $url
     ));
