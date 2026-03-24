@@ -50,6 +50,38 @@ alt="Descargar"/>
 </div>
 `;
 
+
+// 🔥 NUEVO: INSERTAR EN HISTORIAL SIN RECARGAR
+const grid = document.querySelector(".benditoai-historial-grid");
+
+if(grid){
+
+const nuevoItem = `
+<div class="benditoai-historial-item nuevo">
+
+<img src="${data.data.image_url}" 
+class="benditoai-historial-img">
+
+<a href="${data.data.image_url}" 
+download="mockup.png"
+class="benditoai-btn benditoai-btn--download">
+⬇️ Descargar
+</a>
+
+<div class="benditoai-historial-info">
+<p><strong>Producto:</strong> ${data.data.producto}</p>
+<p><strong>Color:</strong> ${data.data.color}</p>
+<p><strong>Entorno:</strong> ${data.data.entorno}</p>
+<p><strong>Fecha:</strong> ${data.data.fecha}</p>
+</div>
+
+</div>
+`;
+
+grid.insertAdjacentHTML("afterbegin", nuevoItem);
+}
+
+
 if(typeof benditoaiActualizarTokensInstantaneo === "function"){
 benditoaiActualizarTokensInstantaneo();
 }
@@ -77,6 +109,7 @@ Error inesperado. Intenta nuevamente.
 
 });
 
+
 // Lógica para mostrar/ocultar sección de modelo en el formulario
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -93,15 +126,15 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Ejecutar al cargar
     toggleModelo();
 
-    // Ejecutar al cambiar
     selectModelo.addEventListener("change", toggleModelo);
 
 });
 
-//cards de avatars en genrador de mockups
+
+// cards de avatars en generador de mockups
+
 document.addEventListener("DOMContentLoaded", function () {
 
     const cards = document.querySelectorAll(".benditoai-modelo-card");

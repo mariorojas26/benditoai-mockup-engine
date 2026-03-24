@@ -14,10 +14,6 @@ function benditoai_generar_mockup() {
 
     $user_id = get_current_user_id();
 
-    // -------------------------------------------------
-    // 🔥 VERIFICAR CRÉDITOS
-    // -------------------------------------------------
-
     if (!benditoai_user_has_tokens($user_id, 1)) {
         wp_send_json_error("No tienes créditos disponibles.");
     }
@@ -25,10 +21,6 @@ function benditoai_generar_mockup() {
     if (!function_exists('wp_handle_upload')) {
         require_once(ABSPATH . 'wp-admin/includes/file.php');
     }
-
-    // -------------------------------------------------
-    // 1️⃣ VARIABLES
-    // -------------------------------------------------
 
     $producto = isset($_POST['producto']) ? sanitize_text_field($_POST['producto']) : 'mug';
     $formato = isset($_POST['formato']) ? sanitize_text_field($_POST['formato']) : 'instagram';
@@ -47,10 +39,6 @@ function benditoai_generar_mockup() {
     $entorno = isset($_POST['entorno']) ? sanitize_text_field($_POST['entorno']) : 'urbano';
     $entorno_texto = isset($benditoai_entornos[$entorno]) ? $benditoai_entornos[$entorno] : $entorno;
 
-    // -------------------------------------------------
-    // MODELO
-    // -------------------------------------------------
-
     $modelo_texto = '';
 
     if (isset($_POST['modelo'])) {
@@ -58,18 +46,11 @@ function benditoai_generar_mockup() {
         $modelo_input = sanitize_text_field($_POST['modelo']);
 
         if ($modelo_input === 'no') {
-
             $modelo_texto = "No debe aparecer ninguna persona...";
-
         } else {
-
             $modelo_texto = "Usa la IMAGEN 2 como referencia del modelo humano...";
         }
     }
-
-    // -------------------------------------------------
-    // 2️⃣ SUBIR IMAGEN
-    // -------------------------------------------------
 
     if (!isset($_FILES['diseno'])) {
         wp_send_json_error("No se recibió ninguna imagen.");
@@ -84,10 +65,6 @@ function benditoai_generar_mockup() {
 
     $image_data = file_get_contents($movefile['file']);
     $base64_image = base64_encode($image_data);
-
-    // -------------------------------------------------
-    // 2.1 MODELO AI
-    // -------------------------------------------------
 
     $base64_image_2 = null;
 
@@ -117,10 +94,6 @@ function benditoai_generar_mockup() {
         }
     }
 
-    // -------------------------------------------------
-    // 3️⃣ PROMPT
-    // -------------------------------------------------
-
     $prompt = benditoai_get_prompt(
         $producto,
         $formato,
@@ -129,10 +102,6 @@ function benditoai_generar_mockup() {
         $entorno_texto,
         $modelo_texto
     );
-
-    // -------------------------------------------------
-    // 4️⃣ GEMINI
-    // -------------------------------------------------
 
     if ($base64_image_2) {
         $response = benditoai_call_gemini_multi($base64_image, $base64_image_2, $prompt);
@@ -150,10 +119,6 @@ function benditoai_generar_mockup() {
         wp_send_json_error("No se encontró imagen en respuesta.");
     }
 
-    // -------------------------------------------------
-    // 5️⃣ GUARDAR IMAGEN
-    // -------------------------------------------------
-
     $generated_base64 = $body_response['candidates'][0]['content']['parts'][0]['inlineData']['data'];
     $generated_image_data = base64_decode($generated_base64);
 
@@ -165,17 +130,9 @@ function benditoai_generar_mockup() {
 
     $url = $upload_dir['url'] . '/' . $filename;
 
-    // -------------------------------------------------
-    // 🔥 FIX FECHA
-    // -------------------------------------------------
+    global $wpdb;
 
     $created_at = current_time('mysql');
-
-    // -------------------------------------------------
-    // 5.1️⃣ HISTORIAL (FIX REAL)
-    // -------------------------------------------------
-
-    global $wpdb;
 
     $wpdb->insert(
         $wpdb->prefix . 'benditoai_historial',
@@ -190,33 +147,19 @@ function benditoai_generar_mockup() {
             'image_url' => $url,
             'created_at' => $created_at
         ),
-        array(
-            '%d',
-            '%s',
-            '%s',
-            '%s',
-            '%s',
-            '%s',
-            '%s',
-            '%s',
-            '%s' // 🔥 ESTE FALTABA
-        )
+        array('%d','%s','%s','%s','%s','%s','%s','%s','%s')
     );
-
-    // -------------------------------------------------
-    // TOKENS
-    // -------------------------------------------------
 
     benditoai_decrease_tokens($user_id, 1);
 
-    // -------------------------------------------------
-    // RESPUESTA
-    // -------------------------------------------------
-
+    // 🔥 AQUÍ ESTÁ LA MAGIA (NO TENÍAS ESTO)
     wp_send_json_success(array(
-        'image_url' => $url
+        'image_url' => $url,
+        'producto' => $producto,
+        'color' => $color,
+        'entorno' => $entorno,
+        'fecha' => date('d M Y - H:i', strtotime($created_at))
     ));
 }
 
-// AJAX
 add_action('wp_ajax_benditoai_generar_mockup', 'benditoai_generar_mockup');

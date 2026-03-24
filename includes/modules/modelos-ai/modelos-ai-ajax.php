@@ -15,7 +15,7 @@ function benditoai_generar_modelo_ai(){
     $user_id = get_current_user_id();
 
     // -------------------------------------------------
-    // 🔥 VALIDAR LÍMITE DE MODELOS SEGÚN PLAN
+    // VALIDAR LÍMITE
     // -------------------------------------------------
 
     $plan_data = benditoai_get_user_plan_data($user_id);
@@ -33,13 +33,13 @@ function benditoai_generar_modelo_ai(){
 
     if($total_modelos >= $max_modelos){
         wp_send_json_error([
-            'message' => 'Has alcanzado el límite de modelos de tu plan. Elimina un avatar o mejora tu plan para crear más.',
+            'message' => 'Has alcanzado el límite de modelos de tu plan.',
             'code' => 'limit_reached'
         ]);
     }
 
     // -------------------------------------------------
-    // SANITIZAR DATOS
+    // DATOS
     // -------------------------------------------------
 
     $genero = sanitize_text_field($_POST['genero']);
@@ -52,6 +52,8 @@ function benditoai_generar_modelo_ai(){
     $prenda_inferior = sanitize_textarea_field($_POST['prenda_inferior']);
     $zapatos = sanitize_textarea_field($_POST['zapatos']);
     $accesorios = sanitize_textarea_field($_POST['accesorios']);
+
+    $nombre_modelo = sanitize_text_field($_POST['nombre_modelo']);
 
     // -------------------------------------------------
     // PROMPT
@@ -111,7 +113,7 @@ photorealistic
 ";
 
     // -------------------------------------------------
-    // LLAMAR GEMINI
+    // IA
     // -------------------------------------------------
 
     $response = benditoai_call_gemini_text($prompt);
@@ -125,16 +127,12 @@ photorealistic
     $image_base64 = null;
 
     if(isset($body['candidates'][0]['content']['parts'])){
-
         foreach($body['candidates'][0]['content']['parts'] as $part){
-
             if(isset($part['inlineData']['data'])){
                 $image_base64 = $part['inlineData']['data'];
                 break;
             }
-
         }
-
     }
 
     if(!$image_base64){
@@ -150,7 +148,6 @@ photorealistic
     $upload = wp_upload_dir();
 
     $filename = 'modelo_' . time() . '.png';
-
     $path = $upload['path'] . '/' . $filename;
 
     file_put_contents($path,$image);
@@ -158,20 +155,20 @@ photorealistic
     $url = $upload['url'] . '/' . $filename;
 
     // -------------------------------------------------
-    // 🔥 FECHA (FIX REAL)
+    // FECHA
     // -------------------------------------------------
 
-    $created_at = date('Y-m-d H:i:s');
+    $created_at = current_time('mysql');
 
     // -------------------------------------------------
-    // GUARDAR DATOS EN BD
+    // INSERT
     // -------------------------------------------------
 
     $wpdb->insert(
         $table_name,
         [
             'user_id' => $user_id,
-            'nombre_modelo' => sanitize_text_field($_POST['nombre_modelo']),
+            'nombre_modelo' => $nombre_modelo,
             'genero' => $genero,
             'edad' => $edad,
             'cuerpo' => $cuerpo,
@@ -186,38 +183,33 @@ photorealistic
             'created_at' => $created_at
         ],
         [
-            '%d',
-            '%s',
-            '%s',
-            '%s',
-            '%s',
-            '%s',
-            '%s',
-            '%s',
-            '%s',
-            '%s',
-            '%s',
-            '%s',
-            '%s',
-            '%s' // 🔥 ESTE FALTABA (created_at)
+            '%d','%s','%s','%s','%s','%s','%s',
+            '%s','%s','%s','%s','%s','%s','%s'
         ]
     );
+
+    // 🔥 ID DEL NUEVO MODELO
+    $modelo_id = $wpdb->insert_id;
 
     // -------------------------------------------------
     // TOKENS
     // -------------------------------------------------
 
     benditoai_use_token(1);
-
     $tokens_restantes = benditoai_get_user_tokens($user_id);
 
     // -------------------------------------------------
-    // RESPUESTA
+    // RESPUESTA FINAL
     // -------------------------------------------------
 
     wp_send_json_success([
+        'id' => $modelo_id,
         'image_url' => $url,
-        'tokens' => $tokens_restantes
+        'tokens' => $tokens_restantes,
+        'nombre_modelo' => $nombre_modelo,
+        'genero' => $genero,
+        'edad' => $edad,
+        'estilo' => $estilo,
+        'fecha' => date('d/m/Y H:i', strtotime($created_at))
     ]);
-
 }

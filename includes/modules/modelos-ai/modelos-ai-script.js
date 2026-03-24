@@ -1,16 +1,3 @@
-/*
-REGLA BENDITOAI - RESPUESTAS AJAX
-
-Siempre acceder a errores así:
-res.data.message
-
-Nunca usar:
-res.data
-
-Porque el backend devuelve objetos.
---------------------------------------
-*/
-
 document.addEventListener("DOMContentLoaded", function(){
 
 const form = document.getElementById("benditoai-form-modelo-ai")
@@ -22,8 +9,6 @@ const placeholder = document.querySelector(".benditoai-placeholder")
 const imageWrapper = document.querySelector(".benditoai-image-wrapper")
 const image = document.querySelector(".benditoai-generated-image")
 const downloadBtn = document.querySelector(".benditoai-download-btn")
-
-/* 🔥 CONTENEDOR DE ERROR */
 const errorBox = form.querySelector(".benditoai-error-message")
 
 form.addEventListener("submit", function(e){
@@ -33,17 +18,11 @@ e.preventDefault()
 const data = new FormData(form)
 data.append("action","benditoai_generar_modelo_ai")
 
-/* =========================================
-🔥 RESET UI LIMPIO (SIN MOSTRAR IMAGEN)
-========================================= */
-
-/* limpiar errores */
 if(errorBox){
     errorBox.style.display = "none"
     errorBox.innerText = ""
 }
 
-/* ocultar TODO */
 if(imageWrapper){
     imageWrapper.style.display = "none"
     imageWrapper.classList.remove(
@@ -53,31 +32,17 @@ if(imageWrapper){
     )
 }
 
-if(image){
-    image.src = ""
-}
+if(image){ image.src = "" }
 
-/* ocultar descarga */
 if(downloadBtn){
     downloadBtn.href = ""
     downloadBtn.style.display = "none"
 }
 
-/* mostrar placeholder */
-if(placeholder){
-    placeholder.style.display = "block"
-}
-
-/* =========================================
-🔥 LOADING
-========================================= */
+if(placeholder){ placeholder.style.display = "block" }
 
 loading.style.display = "block"
 placeholder.style.display = "none"
-
-/* =========================================
-🔥 PETICIÓN
-========================================= */
 
 fetch(benditoai_ajax.ajax_url,{
 method:"POST",
@@ -90,47 +55,93 @@ loading.style.display="none"
 
 if(res.success){
 
-const imageUrl = res.data.image_url
+const d = res.data
+const imageUrl = d.image_url
 
-/* 🔥 mostrar wrapper SOLO cuando ya hay imagen */
 imageWrapper.style.display = "block"
-
-/* 🔥 animación entrada elegante */
 imageWrapper.classList.add("benditoai-image-enter")
 
-/* cargar imagen */
 image.src = imageUrl
 
-/* cuando carga realmente */
 image.onload = () => {
-
     imageWrapper.classList.remove("benditoai-image-enter")
     imageWrapper.classList.add("benditoai-image-loaded")
-
 }
 
-/* 🔥 mostrar descarga SOLO aquí */
 downloadBtn.href = imageUrl
 downloadBtn.style.display = "inline-block"
 
-/* actualizar tokens */
-if(res.data.tokens !== undefined){
-    benditoaiActualizarTokensInstantaneo(res.data.tokens)
+if(d.tokens !== undefined){
+    benditoaiActualizarTokensInstantaneo(d.tokens)
 }
 
-/* nombre archivo */
-let nombreModelo = form.querySelector('input[name="nombre_modelo"]').value
+// 🔥 ELIMINAR MENSAJE DE VACÍO
+const emptyMsg = document.getElementById("benditoai-empty-message")
+if(emptyMsg){
+    emptyMsg.remove()
+}
 
-nombreModelo = nombreModelo
-.toLowerCase()
-.replace(/[^a-z0-9]/gi,"-")
-.replace(/-+/g,"-")
+// 🔥 INSERTAR EN HISTORIAL
+const grid = document.querySelector("#benditoai-historial-mockups")
 
-downloadBtn.download = `benditoAI-${nombreModelo}.png`
+if(grid){
+
+const nuevoItem = `
+<div class="benditoai-historial-item" data-id="${d.id}">
+
+<p class="benditoai-historial-name">${d.nombre_modelo}</p>
+
+<div class="benditoai-img-wrap">
+<img src="${d.image_url}" class="benditoai-historial-img"/>
+</div>
+
+<a href="${d.image_url}" download class="benditoai-btn benditoai-btn--download">
+⬇️ Descargar
+</a>
+
+<div class="benditoai-historial-info">
+
+<p><strong>Género:</strong> ${d.genero}</p>
+<p><strong>Edad:</strong> ${d.edad}</p>
+<p><strong>Estilo:</strong> ${d.estilo}</p>
+<p><strong>Creado:</strong> ${d.fecha}</p>
+
+<button 
+class="benditoai-delete-modelo-btn" 
+data-id="${d.id}">
+🗑 Eliminar
+</button>
+
+<button 
+class="benditoai-edit-modelo-btn" 
+data-id="${d.id}"
+data-image="${d.image_url}">
+✏️ Editar
+</button>
+
+<div class="benditoai-edit-box" style="display:none;">
+<textarea 
+class="benditoai-edit-text"
+placeholder="Ej: cámbiale el pantalón por uno jean oscuro..."
+></textarea>
+
+<button class="benditoai-save-edit-btn">
+Guardar cambios
+</button>
+</div>
+
+</div>
+
+</div>
+`;
+
+grid.insertAdjacentHTML("afterbegin", nuevoItem);
+
+}
 
 }else{
 
-const errorMsg = res?.data?.message || "Ocurrió un error. Intenta nuevamente."
+const errorMsg = res?.data?.message || "Error inesperado"
 
 if(errorBox){
     errorBox.innerHTML = "⚠️ " + errorMsg
@@ -145,7 +156,7 @@ if(errorBox){
 console.error(err)
 
 if(errorBox){
-    errorBox.innerHTML = "⚠️ Error inesperado. Intenta nuevamente."
+    errorBox.innerHTML = "⚠️ Error inesperado."
     errorBox.style.display = "block"
 }
 
