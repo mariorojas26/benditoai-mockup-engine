@@ -327,6 +327,102 @@ img.benditoai-download-icon {
     border-radius: 5px;
 }
 
+@media (max-width:768px){
+
+    .benditoai-historial-grid{
+        display: flex;              /* 🔥 CAMBIO CLAVE */
+        gap: 12px;
+
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+
+        padding-bottom: 10px;
+    }
+
+    .benditoai-historial-item{
+        flex: 0 0 80%;              /* 🔥 TODAS IGUALES */
+        scroll-snap-align: start;
+    }
+
+    /* ocultar scrollbar */
+    .benditoai-historial-grid::-webkit-scrollbar{
+        display: none;
+    }
+
+    .benditoai-historial-grid{
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+}
+
+/* SOLO posicionar botones, nada más */
+.benditoai-img-wrap{
+    position: relative;
+}
+
+.benditoai-card-actions{
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    z-index: 5;
+}
+
+/* botón limpio sin heredar estilos raros */
+.benditoai-action-btn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    width: 26px;
+    height: 26px;
+
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+/* iconos */
+.benditoai-action-btn img{
+    width: 20px;
+    height: 14px;
+    display: block;
+}
+
+/* 🔥 evitar el azul sin tocar nada más */
+.benditoai-action-btn:hover,
+.benditoai-action-btn:focus,
+.benditoai-action-btn:active{
+    background: transparent !important;
+    color: inherit !important;
+    border: none !important;
+    outline: none;
+    box-shadow: none;
+}
+/* 🔥 botón */
+.benditoai-toggle-info{
+    cursor: pointer;
+    font-size: 13px;
+    background: none;
+    border: none;
+    padding: 0;
+    color: #000;
+}
+
+/* 🔥 dropdown SIEMPRE ocupa espacio pero oculto visualmente */
+/* 🔥 dropdown */
+.benditoai-info-dropdown{
+    display: none;
+}
+
+/* 🔥 activo */
+.benditoai-info-dropdown.active{
+    display: block;
+    margin-top: 8px;
+}
+
+
 /* historial */
 
 
@@ -1093,3 +1189,79 @@ BENDITOAI IMAGE TRANSITION (FADE + BLUR)
     transform: scale(1);
 }
 
+/*Maquina de escribir*/
+
+
+/* ===========================
+   CONTENEDOR PADRE FLEX (ELEMENTOR)
+   =========================== */
+.elementor-element-fc9ad11.e-flex.e-con-boxed.e-con.e-parent {
+    display: flex !important;               /* forzar flex */
+    align-items: center !important;         /* centra verticalmente */
+    justify-content: center !important;     /* centra horizontalmente */
+    height: 600px !important;               /* altura fija del hero */
+    min-height: 600px !important;           /* altura mínima */
+    overflow: hidden !important;            /* no crece aunque el texto salte de línea */
+    position: relative !important;
+}
+
+/* ===========================
+   WRAPPER DEL TEXTO
+   =========================== */
+#maquina-texto-wrapper {
+    display: inline-block !important;      /* permite ajuste del texto sin romper flex */
+    max-width: 100% !important;            /* ocupa todo el ancho disponible */
+    text-align: center !important;  
+        padding-top: 48px;       /* centra multilínea */
+}
+/* ===========================
+   TEXTO MÁQUINA DE ESCRIBIR
+   =========================== */
+#maquina-texto {
+    display: inline-block !important;
+    font-family: monospace !important;
+    font-size: 100px !important;
+    line-height: 1.2 !important;
+    color: white !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+    white-space: normal !important;
+    text-align: left !important;
+    font-weight: 600;
+}
+
+/* ===========================
+   CURSOR PARPADEANTE
+   =========================== */
+#maquina-texto::after {
+    content: "|" !important;           /* el cursor es un | */
+    display: inline-block !important;
+    margin-left: 2px !important;
+    animation: parpadeo 1s infinite !important;
+    color: white !important;
+}
+
+@keyframes parpadeo {
+    0%, 50%, 100% { opacity: 0; }
+    25%, 75% { opacity: 1; }
+}
+@media screen and (max-width: 768px) {
+
+    .elementor-element-fc9ad11.e-flex.e-con-boxed.e-con.e-parent {
+    display: flex !important;               /* forzar flex */
+    align-items: center !important;         /* centra verticalmente */
+    justify-content: center !important;     /* centra horizontalmente */
+    height: 380px !important;               /* altura fija del hero */
+    min-height: 380px !important;           /* altura mínima */
+    overflow: hidden !important;            /* no crece aunque el texto salte de línea */
+    position: relative !important;
+}
+
+
+    #maquina-texto {
+        font-size: 70px !important; /* responsive y más pequeño en mobile */
+    }
+    #maquina-texto-wrapper {
+    padding: 0px 27px;
+}
+}

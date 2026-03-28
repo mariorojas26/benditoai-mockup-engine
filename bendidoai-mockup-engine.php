@@ -63,6 +63,8 @@ require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/tokens/tokens-manager.php
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/tokens/ajax-get-tokens.php';
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/tokens/tokens-usage.php';
 
+require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/ux/maquinaEscribir.php';
+
 /* PLANES (SISTEMA DE SUSCRIPCIÓN) */
 
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/plans/plans-config.php';
