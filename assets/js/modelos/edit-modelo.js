@@ -26,7 +26,6 @@ document.addEventListener("click", async function(e){
         const imgWrap = item.querySelector(".benditoai-img-wrap");
         const img = item.querySelector("img");
 
-        /* 🔥 estado loading (imagen actual se degrada) */
         if(imgWrap){
             imgWrap.classList.add("benditoai-image-loading");
         }
@@ -50,16 +49,14 @@ document.addEventListener("click", async function(e){
 
                 const newUrl = data.data.image_url + "?t=" + new Date().getTime();
 
-                /* 🔥 preparar entrada */
                 if(imgWrap){
                     imgWrap.classList.remove("benditoai-image-loading");
                     imgWrap.classList.add("benditoai-image-enter");
                 }
 
-                /* 🔥 cambiar imagen */
+                // 🔥 cambiar imagen
                 img.src = newUrl;
 
-                /* 🔥 cuando carga la nueva */
                 img.onload = () => {
 
                     if(imgWrap){
@@ -73,6 +70,18 @@ document.addEventListener("click", async function(e){
                         }
                     }, 400);
                 };
+
+                // 🔥 actualizar dataset
+                const editBtn = item.querySelector(".benditoai-edit-modelo-btn");
+                if(editBtn){
+                    editBtn.dataset.image = data.data.image_url;
+                }
+
+                // 🔥🔥🔥 FIX CLAVE: actualizar botón de descarga
+                const downloadBtn = item.querySelector(".benditoai-btn--download");
+                if(downloadBtn){
+                   downloadBtn.href = data.data.image_url + "?t=" + new Date().getTime();
+                }
 
                 // reset UI
                 item.querySelector(".benditoai-edit-box").style.display = "none";

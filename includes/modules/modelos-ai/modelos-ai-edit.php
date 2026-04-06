@@ -1,4 +1,4 @@
-<?php
+<?php 
 if (!defined('ABSPATH')) exit;
 
 add_action('wp_ajax_benditoai_edit_modelo','benditoai_edit_modelo');
@@ -12,12 +12,11 @@ function benditoai_edit_modelo(){
     $user_id = get_current_user_id();
     $modelo_id = intval($_POST['modelo_id']);
     $texto = sanitize_text_field($_POST['texto']);
-    $image_url = esc_url_raw($_POST['image_url']);
 
     global $wpdb;
     $table = $wpdb->prefix . 'benditoai_modelos_ai';
 
-    // 🔒 validar que el modelo es del usuario
+    // 🔒 validar modelo
     $modelo = $wpdb->get_row($wpdb->prepare(
         "SELECT * FROM $table WHERE id = %d AND user_id = %d",
         $modelo_id,
@@ -28,7 +27,14 @@ function benditoai_edit_modelo(){
         wp_send_json_error(['message'=>'Modelo no válido']);
     }
 
-    // 🔥 construir prompt inteligente
+    // 🔥🔥🔥 CLAVE: SIEMPRE USAR LA ÚLTIMA IMAGEN DE LA BD
+    $image_url = $modelo->image_url;
+
+    if(empty($image_url)){
+        wp_send_json_error(['message'=>'Modelo sin imagen']);
+    }
+
+    // 🔥 PROMPT
     $prompt = "Edit this image.
 
 KEEP EXACT SAME PERSON.
@@ -68,7 +74,7 @@ Only perform a precise in-place edit.
 
 High quality, photorealistic, 4K.";
 
-    // convertir imagen a base64
+    // 🔥 convertir imagen actual (la última)
     $image_data = file_get_contents($image_url);
     $base64 = base64_encode($image_data);
 
@@ -99,7 +105,7 @@ High quality, photorealistic, 4K.";
 
     $new_url = $upload['url'].'/'.$filename;
 
-    // 🔥 REEMPLAZAR MODELO (NO crear nuevo)
+    // 🔥 REEMPLAZAR MODELO
     $wpdb->update(
         $table,
         [
