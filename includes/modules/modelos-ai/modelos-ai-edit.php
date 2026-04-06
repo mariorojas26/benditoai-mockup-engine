@@ -29,21 +29,44 @@ function benditoai_edit_modelo(){
     }
 
     // 🔥 construir prompt inteligente
-    $prompt = "
-    Edit this image.
+    $prompt = "Edit this image.
 
-    KEEP EXACT SAME PERSON.
-    KEEP same face, body, identity, proportions.
+KEEP EXACT SAME PERSON.
+KEEP same face, body, identity, proportions.
+KEEP same pose, background, lighting, framing, and camera angle.
 
-    Only modify:
-    $texto
+LOCK all clothing and elements in the image.
 
-    Do not change identity.
-    Do not create new person.
-    Maintain realism and lighting.
+Only modify the following specific element:
+$texto
 
-    High quality, photorealistic, 4k.
-    ";
+Strict editing rules:
+- Do NOT change any other clothing items
+- Do NOT remove, replace, or restyle any existing garments
+- Do NOT modify colors, textures, or fit of other clothes
+- Do NOT add new accessories unless explicitly requested in $texto
+- Do NOT change hairstyle, expression, or skin tone
+- Do NOT alter body shape or proportions
+- Do NOT reinterpret the outfit
+
+The change must be isolated ONLY to what is described in $texto.
+
+If $texto refers to shoes:
+- Replace ONLY the footwear
+- Keep pants exactly the same (no length change, no overlap issues)
+- Ensure natural contact with the ground
+- Match perspective and lighting perfectly
+
+Preserve full realism:
+- Maintain shadows, lighting direction, and reflections
+- Match textures and materials accurately
+- Keep the edit seamless and natural
+
+Do not generate a new image from scratch.
+Do not redesign the scene.
+Only perform a precise in-place edit.
+
+High quality, photorealistic, 4K.";
 
     // convertir imagen a base64
     $image_data = file_get_contents($image_url);

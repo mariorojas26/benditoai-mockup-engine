@@ -86,6 +86,8 @@ require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/modelos-ai/modelos-ai-edi
 
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/auth/auth-dropdown.php';
 
+require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/Home/antes-y-despues/before-after-shortcode.php';
+
 
 
 

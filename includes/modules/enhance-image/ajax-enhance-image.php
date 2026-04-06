@@ -39,7 +39,17 @@ function benditoai_enhance_image() {
      * Prompt para mejorar imagen
      */
 
-    $prompt = "Professional photo enhancement. Using the uploaded image as reference, create an improved version of the same photo while preserving the exact subject and composition. Enhance sharpness, texture details, lighting, contrast, and color balance. Correct exposure and white balance. Improve dynamic range and shadows while keeping natural highlights. Reduce noise, blur, and compression artifacts. Make the image look like it was edited by a professional photographer. Maintain realistic skin tones, natural lighting, and photographic realism. Do not modify the subject, pose, objects, or environment. Output a high-resolution photorealistic image with superior clarity and color quality. Ultra detailed, 4k quality, professional photography, natural lighting, high dynamic range.";
+    $prompt = "Professional image enhancement and restoration. Using the uploaded image as reference, recreate the same image with significantly improved visual quality while strictly preserving the original subject, composition, structure, and scene.
+
+Enhance sharpness, clarity, and fine details. Improve lighting, contrast, and color balance to achieve a natural and visually appealing result. Correct exposure, white balance, and dynamic range.
+
+Remove blur, noise, pixelation, compression artifacts, stains, scratches, dust, and any visible damage or imperfections. Restore missing or degraded details in a realistic way.
+
+Improve textures, edges, and overall definition while maintaining a natural, photorealistic appearance. Ensure realistic colors, materials, and surfaces depending on the subject.
+
+Do not alter the subject, shapes, proportions, or layout. Keep everything consistent with the original image, only improving quality.
+
+High quality, clean, sharp, and professional result. Photorealistic, high detail, natural lighting, premium image quality.";
 
     /**
      * Consumir API Gemini
