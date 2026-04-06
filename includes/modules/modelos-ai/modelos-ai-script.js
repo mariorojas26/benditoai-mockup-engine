@@ -86,17 +86,22 @@ const grid = document.querySelector("#benditoai-historial-mockups")
 
 if(grid){
 
+const noCacheUrl = d.image_url + "?t=" + new Date().getTime();
+
 const nuevoItem = `
 <div class="benditoai-historial-item" data-id="${d.id}">
 
 <p class="benditoai-historial-name">${d.nombre_modelo}</p>
 
 <div class="benditoai-img-wrap">
-<img src="${d.image_url}" class="benditoai-historial-img"/>
+    <img src="${noCacheUrl}" class="benditoai-historial-img"/>
 </div>
 
-<a href="${d.image_url}" download class="benditoai-btn benditoai-btn--download">
-⬇️ Descargar
+<a href="${noCacheUrl}" download class="benditoai-btn benditoai-btn--download">
+    <img 
+        src="/wp-content/plugins/bendidoai-mockup-engine/assets/images/icon-download.png" 
+        class="benditoai-btn-icon"
+    >
 </a>
 
 <div class="benditoai-historial-info">
@@ -115,7 +120,7 @@ data-id="${d.id}">
 <button 
 class="benditoai-edit-modelo-btn" 
 data-id="${d.id}"
-data-image="${d.image_url}">
+data-image="${noCacheUrl}">
 ✏️ Editar
 </button>
 

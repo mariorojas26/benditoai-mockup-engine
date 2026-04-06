@@ -56,7 +56,7 @@ function benditoai_generar_modelo_ai(){
     $nombre_modelo = sanitize_text_field($_POST['nombre_modelo']);
 
     // -------------------------------------------------
-    // PROMPT
+    // PROMPT (FORZADO 9:16)
     // -------------------------------------------------
 
     $prompt = "
@@ -110,6 +110,11 @@ high detail
 photorealistic
 4k quality
 
+CRITICAL:
+vertical image (9:16 aspect ratio)
+full body centered
+no cropping
+subject fully visible head to feet
 ";
 
     // -------------------------------------------------
@@ -140,17 +145,57 @@ photorealistic
     }
 
     // -------------------------------------------------
-    // GUARDAR IMAGEN
+    // 🔥 NORMALIZAR IMAGEN A 9:16 (CLAVE)
     // -------------------------------------------------
 
     $image = base64_decode($image_base64);
 
+    $src = imagecreatefromstring($image);
+
+    if(!$src){
+        wp_send_json_error("Error procesando imagen");
+    }
+
+    // tamaño final 9:16
+    $final_width = 1024;
+    $final_height = 1792;
+
+    $dst = imagecreatetruecolor($final_width, $final_height);
+
+    // fondo blanco
+    $white = imagecolorallocate($dst, 255, 255, 255);
+    imagefill($dst, 0, 0, $white);
+
+    $width = imagesx($src);
+    $height = imagesy($src);
+
+    // escala proporcional
+    $scale = min($final_width / $width, $final_height / $height);
+
+    $new_width = $width * $scale;
+    $new_height = $height * $scale;
+
+    // centrar
+    $x = ($final_width - $new_width) / 2;
+    $y = ($final_height - $new_height) / 2;
+
+    imagecopyresampled(
+        $dst, $src,
+        $x, $y, 0, 0,
+        $new_width, $new_height,
+        $width, $height
+    );
+
+    // guardar
     $upload = wp_upload_dir();
 
-    $filename = 'modelo_' . time() . '.png';
+    $filename = 'modelo_' . time() . '.jpg';
     $path = $upload['path'] . '/' . $filename;
 
-    file_put_contents($path,$image);
+    imagejpeg($dst, $path, 90);
+
+    imagedestroy($src);
+    imagedestroy($dst);
 
     $url = $upload['url'] . '/' . $filename;
 
@@ -188,7 +233,6 @@ photorealistic
         ]
     );
 
-    // 🔥 ID DEL NUEVO MODELO
     $modelo_id = $wpdb->insert_id;
 
     // -------------------------------------------------

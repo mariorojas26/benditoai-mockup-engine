@@ -54,9 +54,17 @@ function benditoai_modelos_ai_historial_shortcode() {
                             />
                         </div>
 
-                        <a href="<?php echo esc_url($item->image_url); ?>" download class="benditoai-btn benditoai-btn--download">
-                            ⬇️ Descargar
-                        </a>
+<a 
+    href="<?php echo esc_url($item->image_url); ?>" 
+    download
+    class="benditoai-btn benditoai-btn--download"
+>
+    <img 
+        src="<?php echo plugin_dir_url(__FILE__) . '../../../assets/images/icon-download.png'; ?>" 
+        alt="Descargar"
+        class="benditoai-btn-icon"
+    >
+</a>
 
                     <?php endif; ?>
 
