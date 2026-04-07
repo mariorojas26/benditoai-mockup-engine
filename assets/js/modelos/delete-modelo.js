@@ -1,14 +1,17 @@
 document.addEventListener("click", async function(e){
 
-    if(!e.target.classList.contains("benditoai-delete-modelo-btn")) return;
+    const btn = e.target.closest(".benditoai-delete-modelo-btn");
 
-    const btn = e.target;
+    if(!btn) return;
+
     const modeloId = btn.dataset.id;
 
     if(!confirm("¿Eliminar este modelo?")) return;
 
     btn.disabled = true;
-    btn.innerText = "Eliminando...";
+
+    const img = btn.querySelector("img");
+    if(img) img.style.opacity = "0.5";
 
     try{
 
@@ -24,15 +27,22 @@ document.addEventListener("click", async function(e){
 
         if(data.success){
 
-            // eliminar del DOM
-            btn.closest(".benditoai-historial-item").remove();
+            const card = btn.closest(".benditoai-historial-item");
+
+            // animación suave 🔥
+            card.style.opacity = "0";
+            card.style.transform = "scale(0.95)";
+
+            setTimeout(()=>{
+                card.remove();
+            },200);
 
         }else{
 
             alert(data.data.message || "Error al eliminar");
 
             btn.disabled = false;
-            btn.innerText = "🗑 Eliminar";
+            if(img) img.style.opacity = "1";
 
         }
 
@@ -41,7 +51,7 @@ document.addEventListener("click", async function(e){
         alert("Error inesperado");
 
         btn.disabled = false;
-        btn.innerText = "🗑 Eliminar";
+        if(img) img.style.opacity = "1";
 
     }
 

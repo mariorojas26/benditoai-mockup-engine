@@ -383,12 +383,6 @@ img.benditoai-download-icon {
     padding: 0;
 }
 
-/* iconos */
-.benditoai-action-btn img{
-    width: 20px;
-    height: 14px;
-    display: block;
-}
 
 /* 🔥 evitar el azul sin tocar nada más */
 .benditoai-action-btn:hover,
@@ -1345,6 +1339,21 @@ BENDITOAI IMAGE TRANSITION (FADE + BLUR)
 
 /* botones en cards de avatar */
 a.benditoai-btn.benditoai-btn--download {
-    z-index: 9;
+    z-index: 100;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    padding: 0px;
+    width: 30px;
+    height: 30px;
+}
+button.benditoai-delete-modelo-btn.benditoai-action-btn{
+    z-index: 100;
+    position: absolute;
+    top: 30px;
+    right: 0px;
+    padding: 0px;
+    width: 30px;
+    height: 30px;
 }
 /* botones en cards de avatar */
