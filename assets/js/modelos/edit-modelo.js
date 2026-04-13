@@ -115,3 +115,24 @@ document.addEventListener("click", async function(e){
     }
 
 });
+
+// DROPDOWN INFO
+document.addEventListener("click", function(e){
+
+const btn = e.target.closest(".benditoai-toggle-info")
+if(!btn) return
+
+const box = btn.nextElementSibling
+
+if(!box) return
+
+if(box.style.display === "none" || box.style.display === ""){
+    box.style.display = "block"
+    btn.innerHTML = "Ocultar detalles ⌃"
+}else{
+    box.style.display = "none"
+    btn.innerHTML = "Ver detalles ⌄"
+}
+
+})
+// DROPDOWN INFO

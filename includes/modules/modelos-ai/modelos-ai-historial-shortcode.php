@@ -82,24 +82,28 @@ function benditoai_modelos_ai_historial_shortcode() {
 
                     <?php endif; ?>
 
-                    <div class="benditoai-historial-info">
+            <button class="benditoai-toggle-info">
+    Ver detalles ⌄
+</button>
 
-                        <p><strong>Género:</strong> <?php echo esc_html($item->genero); ?></p>
-                        <p><strong>Edad:</strong> <?php echo esc_html($item->edad); ?></p>
-                        <p><strong>Estilo:</strong> <?php echo esc_html($item->estilo); ?></p>
+<div class="benditoai-historial-info" style="display:none;">
 
-                        <p>
-                            <strong>Creado:</strong> 
-                            <?php 
-                            echo (!empty($item->created_at) && $item->created_at !== '0000-00-00 00:00:00')
-                                ? esc_html(date('d/m/Y H:i', strtotime($item->created_at)))
-                                : 'Fecha no disponible';
-                            ?>
-                        </p>
+    <p><strong>Género:</strong> <?php echo esc_html($item->genero); ?></p>
+    <p><strong>Edad:</strong> <?php echo esc_html($item->edad); ?></p>
+    <p><strong>Estilo:</strong> <?php echo esc_html($item->estilo); ?></p>
 
-                      
+    <p>
+        <strong>Creado:</strong> 
+        <?php 
+        echo (!empty($item->created_at) && $item->created_at !== '0000-00-00 00:00:00')
+            ? esc_html(date('d/m/Y H:i', strtotime($item->created_at)))
+            : 'Fecha no disponible';
+        ?>
+    </p>
 
-                        <button 
+</div>
+
+                         <button 
                             class="benditoai-edit-modelo-btn" 
                             data-id="<?php echo esc_attr($item->id); ?>"
                             data-image="<?php echo esc_url($item->image_url); ?>">
@@ -116,8 +120,6 @@ function benditoai_modelos_ai_historial_shortcode() {
                                 Guardar cambios
                             </button>
                         </div>
-
-                    </div>
 
                 </div>
 

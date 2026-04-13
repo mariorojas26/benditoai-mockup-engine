@@ -1341,19 +1341,74 @@ BENDITOAI IMAGE TRANSITION (FADE + BLUR)
 a.benditoai-btn.benditoai-btn--download {
     z-index: 100;
     position: absolute;
-    top: 0px;
-    right: 0px;
+    top: 11px;
+    right: 13px;
     padding: 0px;
-    width: 30px;
-    height: 30px;
+    width: 25px;
+    height: 25px;
 }
 button.benditoai-delete-modelo-btn.benditoai-action-btn{
     z-index: 100;
     position: absolute;
-    top: 30px;
-    right: 0px;
+    top: 43px;
+    right: 13px;
     padding: 0px;
-    width: 30px;
-    height: 30px;
+    width: 25px;
+    height: 25px;
+}
+img.benditoai-btn-icon {
+    width: 100%;
 }
 /* botones en cards de avatar */
+
+/* DROPDOWN INFO */
+.benditoai-toggle-info{
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: 10px;
+    color: #333;
+    width: 100%;
+}
+
+.benditoai-historial-info{
+    margin-top: 10px;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 8px;
+}
+
+
+.benditoai-toggle-info:hover{
+    color: #000; 
+    background-color: transparent;
+}
+
+/* 🔥 evitar azul al hacer click (focus) */
+.benditoai-toggle-info:focus,
+.benditoai-toggle-info:active{
+    outline: none;
+    box-shadow: none;
+    color: #333;
+}
+
+/* 🔥 evitar estilos raros de botones globales */
+.benditoai-toggle-info:visited{
+    color: #333;
+}
+/* DROPDOWN INFO */
+.benditoai-toggle-info:focus-visible {
+    outline: none;
+    box-shadow: none;
+    background-color: transparent;
+}
+button.benditoai-toggle-info:focus,
+button.benditoai-toggle-info:focus-visible,
+button.benditoai-toggle-info:active {
+    outline: none !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+    color: #333 !important;
+    border-color: transparent !important;
+}
