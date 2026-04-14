@@ -1,13 +1,25 @@
 document.addEventListener("click", async function(e){
 
-    if(e.target.classList.contains("benditoai-edit-modelo-btn")){
+const editBtn = e.target.closest(".benditoai-edit-modelo-btn");
+if(editBtn){
+    const item = editBtn.closest(".benditoai-historial-item");
+    const box = item.querySelector(".benditoai-edit-box");
+    
+    const abriendo = box.style.display === "none";
 
-        const item = e.target.closest(".benditoai-historial-item");
-        const box = item.querySelector(".benditoai-edit-box");
+    // 🔥 cerrar todos los demás primero
+    document.querySelectorAll(".benditoai-edit-box").forEach(b => {
+        b.style.display = "none";
+    });
 
-        box.style.display = box.style.display === "none" ? "block" : "none";
+    box.style.display = abriendo ? "block" : "none";
+
+    if(abriendo){
+        setTimeout(() => {
+            box.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 50);
     }
-
+}
     if(e.target.classList.contains("benditoai-save-edit-btn")){
 
         const item = e.target.closest(".benditoai-historial-item");
@@ -128,10 +140,10 @@ if(!box) return
 
 if(box.style.display === "none" || box.style.display === ""){
     box.style.display = "block"
-    btn.innerHTML = "Ocultar detalles ⌃"
+    btn.innerHTML = "Ocultar detalles"
 }else{
     box.style.display = "none"
-    btn.innerHTML = "Ver detalles ⌄"
+    btn.innerHTML = "Ver detalles"
 }
 
 })

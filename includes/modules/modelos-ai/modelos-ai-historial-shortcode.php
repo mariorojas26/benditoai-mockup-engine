@@ -52,29 +52,50 @@ function benditoai_modelos_ai_historial_shortcode() {
                                 alt="<?php echo esc_attr($item->nombre_modelo); ?>" 
                                 class="benditoai-historial-img"
                             />
-<!-- boton descargar -->
-                            <a 
-    href="<?php echo esc_url($item->image_url); ?>" 
-    download
-    class="benditoai-btn benditoai-btn--download"
->
-    <img 
-        src="<?php echo plugin_dir_url(__FILE__) . '../../../assets/images/icon-download.png'; ?>" 
-        alt="Descargar"
-        class="benditoai-btn-icon"
-    >
-</a>
-<!-- boton eliminar -->
 
-<button 
-    class="benditoai-delete-modelo-btn benditoai-action-btn" 
-    data-id="<?php echo esc_attr($item->id); ?>"
->
-    <img 
-        src="<?php echo plugin_dir_url(__FILE__) . '../../../assets/images/icon-delete.png'; ?>" 
-        alt="Eliminar"
-    >
-</button>
+        <div class="benditoai-action-buttons">
+            <!-- boton descargar -->
+                                        <a 
+                href="<?php echo esc_url($item->image_url); ?>" 
+                download
+                class="benditoai-btn benditoai-btn--download"
+            >
+                <img 
+                    src="<?php echo plugin_dir_url(__FILE__) . '../../../assets/images/icon-download.png'; ?>" 
+                    alt="Descargar"
+                    class="benditoai-btn-icon"
+                >
+            </a>
+
+                        <!-- boton editar -->
+
+
+            <button 
+                class="benditoai-edit-modelo-btn" 
+                data-id="<?php echo esc_attr($item->id); ?>"
+                data-image="<?php echo esc_url($item->image_url); ?>">
+                <img 
+                    src="<?php echo plugin_dir_url(__FILE__) . '../../../assets/images/icon-edit.png'; ?>" 
+                    alt="Editar"
+                >
+
+            </button>
+            
+            <!-- boton eliminar -->
+
+            <button 
+                class="benditoai-delete-modelo-btn benditoai-action-btn" 
+                data-id="<?php echo esc_attr($item->id); ?>"
+            >
+                <img 
+                    src="<?php echo plugin_dir_url(__FILE__) . '../../../assets/images/icon-delete.png'; ?>" 
+                    alt="Eliminar"
+                >
+            </button>
+
+
+        </div>
+
 
                         </div>
 
@@ -82,8 +103,8 @@ function benditoai_modelos_ai_historial_shortcode() {
 
                     <?php endif; ?>
 
-            <button class="benditoai-toggle-info">
-    Ver detalles ⌄
+<button class="benditoai-toggle-info">
+    Ver detalles
 </button>
 
 <div class="benditoai-historial-info" style="display:none;">
@@ -102,13 +123,6 @@ function benditoai_modelos_ai_historial_shortcode() {
     </p>
 
 </div>
-
-                         <button 
-                            class="benditoai-edit-modelo-btn" 
-                            data-id="<?php echo esc_attr($item->id); ?>"
-                            data-image="<?php echo esc_url($item->image_url); ?>">
-                            ✏️ Editar
-                        </button>
 
                         <div class="benditoai-edit-box" style="display:none;">
                             <textarea 

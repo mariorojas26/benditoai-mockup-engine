@@ -1350,7 +1350,7 @@ a.benditoai-btn.benditoai-btn--download {
 button.benditoai-delete-modelo-btn.benditoai-action-btn{
     z-index: 100;
     position: absolute;
-    top: 43px;
+    top: 75px;
     right: 13px;
     padding: 0px;
     width: 25px;
@@ -1359,17 +1359,132 @@ button.benditoai-delete-modelo-btn.benditoai-action-btn{
 img.benditoai-btn-icon {
     width: 100%;
 }
+
+button.benditoai-edit-modelo-btn{
+    z-index: 100;
+    position: absolute;
+    top: 43px;
+    right: 13px;
+    padding: 0px;
+    width: 25px;
+    height: 25px;
+
+}
+button.benditoai-save-edit-btn{
+    width: 100%;
+}
+/* ===== EDIT BOX WRAPPER ===== */
+.benditoai-edit-box {
+    display: none;
+    padding: 12px 0 4px 0;
+    animation: fadeSlideIn 0.2s ease;
+}
+
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+/* ===== TEXTAREA ===== */
+.benditoai-edit-text {
+    width: 100%;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: #374151;
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+    min-height: 80px;
+}
+
+.benditoai-edit-text:focus {
+    border-color: #5E1DF7;
+}
+
+/* ===== BOTÓN GUARDAR CAMBIOS ===== */
+.benditoai-save-edit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 10px 18px;
+    background: transparent;
+    border: 1.5px solid #5E1DF7;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: #5E1DF7;
+    letter-spacing: 0.3px;
+    transition: all 0.2s ease;
+    margin-top: 8px;
+}
+
+.benditoai-save-edit-btn:hover {
+    background: #5E1DF7;
+    color: #ffffff;
+}
+
+.benditoai-save-edit-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: transparent;
+    color: #5E1DF7;
+}
+
+/* Desktop: botones ocultos, aparecen en hover */
+@media (hover: hover) {
+    .benditoai-action-buttons {
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+    .benditoai-img-wrap:hover .benditoai-action-buttons {
+        opacity: 1;
+    }
+}
+
+/* Mobile: botones siempre visibles debajo */
+@media (hover: none) {
+    .benditoai-action-buttons {
+        opacity: 1;
+        position: static;
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 8px;
+    }
+}
+.benditoai-action-buttons {
+    background: #aeaeae;
+    width: 18%;
+    height: 113px;
+    position: absolute;
+    top: 10px;
+    right: 13px;
+    border-radius: 10px;
+}
 /* botones en cards de avatar */
 
 /* DROPDOWN INFO */
 .benditoai-toggle-info{
-    background: none;
+      background: transparent;
     border: none;
-    cursor: pointer;
+    font-size: 12px;
     font-weight: 600;
-    margin-top: 10px;
-    color: #333;
-    width: 100%;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 6px 0;
+    letter-spacing: 0.5px;
+    transition: color 0.2s ease;
 }
 
 .benditoai-historial-info{
@@ -1381,7 +1496,7 @@ img.benditoai-btn-icon {
 
 
 .benditoai-toggle-info:hover{
-    color: #000; 
+     color: #5E1DF7;
     background-color: transparent;
 }
 
@@ -1403,6 +1518,7 @@ img.benditoai-btn-icon {
     box-shadow: none;
     background-color: transparent;
 }
+button.benditoai-edit-modelo-btn,
 button.benditoai-toggle-info:focus,
 button.benditoai-toggle-info:focus-visible,
 button.benditoai-toggle-info:active {
