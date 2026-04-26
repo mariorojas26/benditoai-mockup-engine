@@ -64,6 +64,7 @@ require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/tokens/ajax-get-tokens.ph
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/tokens/tokens-usage.php';
 
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/ux/maquinaEscribir.php';
+require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/ux/CardsSkills.php';
 
 /* PLANES (SISTEMA DE SUSCRIPCIÓN) */
 
@@ -94,6 +95,15 @@ require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/Home/antes-y-despues/befo
 /* ESTILOS Y JS */
 
 function benditoai_enqueue_assets() {
+
+
+    // 🔥 Font Awesome version gratuita solo aceptan 5.0 https://fontawesome.com/v5/search
+    wp_enqueue_style(
+        'font-awesome',
+        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css',
+        array(),
+        '6.7.2'
+    );
 
     wp_enqueue_style(
         'benditoai-styles',
