@@ -53,49 +53,25 @@ function benditoai_modelos_ai_historial_shortcode() {
                                 class="benditoai-historial-img"
                             />
 
-        <div class="benditoai-action-buttons">
-            <!-- boton descargar -->
-                                        <a 
-                href="<?php echo esc_url($item->image_url); ?>" 
-                download
-                class="benditoai-btn benditoai-btn--download"
-            >
-                <img 
-                    src="<?php echo plugin_dir_url(__FILE__) . '../../../assets/images/icon-download.png'; ?>" 
-                    alt="Descargar"
-                    class="benditoai-btn-icon"
-                >
-            </a>
+<div class="benditoai-action-buttons">
+    <div class="hoverselect">
+        <a href="<?php echo esc_url($item->image_url); ?>" download class="benditoai-btn benditoai-btn--download">
+            <img src="<?php echo plugin_dir_url(__FILE__) . '../../../assets/images/icon-download.png'; ?>" alt="Descargar" class="benditoai-btn-icon">
+        </a>
+    </div>
 
-                        <!-- boton editar -->
+    <div class="hoverselect">
+        <button class="benditoai-edit-modelo-btn" data-id="<?php echo esc_attr($item->id); ?>" data-image="<?php echo esc_url($item->image_url); ?>">
+            <img src="<?php echo plugin_dir_url(__FILE__) . '../../../assets/images/icon-edit.png'; ?>" alt="Editar" class="benditoai-btn-icon">
+        </button>
+    </div>
 
-
-            <button 
-                class="benditoai-edit-modelo-btn" 
-                data-id="<?php echo esc_attr($item->id); ?>"
-                data-image="<?php echo esc_url($item->image_url); ?>">
-                <img 
-                    src="<?php echo plugin_dir_url(__FILE__) . '../../../assets/images/icon-edit.png'; ?>" 
-                    alt="Editar"
-                >
-
-            </button>
-            
-            <!-- boton eliminar -->
-
-            <button 
-                class="benditoai-delete-modelo-btn benditoai-action-btn" 
-                data-id="<?php echo esc_attr($item->id); ?>"
-            >
-                <img 
-                    src="<?php echo plugin_dir_url(__FILE__) . '../../../assets/images/icon-delete.png'; ?>" 
-                    alt="Eliminar"
-                >
-            </button>
-
-
-        </div>
-
+    <div class="hoverselect">
+        <button class="benditoai-delete-modelo-btn benditoai-action-btn" data-id="<?php echo esc_attr($item->id); ?>">
+            <img src="<?php echo plugin_dir_url(__FILE__) . '../../../assets/images/icon-delete.png'; ?>" alt="Eliminar" class="benditoai-btn-icon">
+        </button>
+    </div>
+</div>
 
                         </div>
 
@@ -103,6 +79,18 @@ function benditoai_modelos_ai_historial_shortcode() {
 
                     <?php endif; ?>
 
+
+                        <div class="benditoai-edit-box" style="display:none;">
+                            <textarea 
+                                class="benditoai-edit-text"
+                                placeholder="Ej: cámbiale el pantalón por uno jean oscuro..."
+                            ></textarea>
+
+                            <button class="benditoai-save-edit-btn">
+                                Guardar cambios
+                            </button>
+                        </div>
+                        
 <button class="benditoai-toggle-info">
     Ver detalles
 </button>
@@ -123,17 +111,6 @@ function benditoai_modelos_ai_historial_shortcode() {
     </p>
 
 </div>
-
-                        <div class="benditoai-edit-box" style="display:none;">
-                            <textarea 
-                                class="benditoai-edit-text"
-                                placeholder="Ej: cámbiale el pantalón por uno jean oscuro..."
-                            ></textarea>
-
-                            <button class="benditoai-save-edit-btn">
-                                Guardar cambios
-                            </button>
-                        </div>
 
                 </div>
 

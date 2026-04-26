@@ -1338,42 +1338,62 @@ BENDITOAI IMAGE TRANSITION (FADE + BLUR)
 /* antes y despues home */
 
 /* botones en cards de avatar */
-a.benditoai-btn.benditoai-btn--download {
-    z-index: 100;
+/* ===== CONTENEDOR DE BOTONES (El que se posiciona) ===== */
+.benditoai-action-buttons {
     position: absolute;
-    top: 11px;
+    top: 10px;
     right: 13px;
-    padding: 0px;
-    width: 25px;
-    height: 25px;
-}
-button.benditoai-delete-modelo-btn.benditoai-action-btn{
     z-index: 100;
-    position: absolute;
-    top: 75px;
-    right: 13px;
-    padding: 0px;
-    width: 25px;
-    height: 25px;
+    /* Apilamiento vertical automático */
+    display: flex;
+    flex-direction: column;
+    gap: 6px; /* Espacio uniforme entre botones */
+    width: 42px;
+    background: rgba(255, 255, 255, 0.75);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    padding: 6px 0; /* Espacio interno arriba y abajo */
+    align-items: center;
 }
+
+/* ===== ESTILO INDIVIDUAL (Tu hoverselect) ===== */
+.hoverselect {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.466);
+    border-radius: 8px;
+    transition: background 0.2s ease;
+}
+
+.hoverselect:hover {
+    background: rgb(204 204 204 / 91%);
+}
+
+/* Reset para que los botones y links no rompan el diseño */
+.hoverselect button, 
+.hoverselect a {
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
 img.benditoai-btn-icon {
-    width: 100%;
+    width: 18px; /* Ajusta el tamaño del icono aquí */
+    height: auto;
 }
 
-button.benditoai-edit-modelo-btn{
-    z-index: 100;
-    position: absolute;
-    top: 43px;
-    right: 13px;
-    padding: 0px;
-    width: 25px;
-    height: 25px;
-
-}
-button.benditoai-save-edit-btn{
-    width: 100%;
-}
-/* ===== EDIT BOX WRAPPER ===== */
+/* ===== TU BLOQUE DE EDICIÓN (Sin cambios) ===== */
 .benditoai-edit-box {
     display: none;
     padding: 12px 0 4px 0;
@@ -1381,16 +1401,10 @@ button.benditoai-save-edit-btn{
 }
 
 @keyframes fadeSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-6px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
 }
-/* ===== TEXTAREA ===== */
+
 .benditoai-edit-text {
     width: 100%;
     border: 1.5px solid #e5e7eb;
@@ -1405,11 +1419,8 @@ button.benditoai-save-edit-btn{
     min-height: 80px;
 }
 
-.benditoai-edit-text:focus {
-    border-color: #5E1DF7;
-}
+.benditoai-edit-text:focus { border-color: #5E1DF7; }
 
-/* ===== BOTÓN GUARDAR CAMBIOS ===== */
 .benditoai-save-edit-btn {
     display: inline-flex;
     align-items: center;
@@ -1440,6 +1451,8 @@ button.benditoai-save-edit-btn{
     color: #5E1DF7;
 }
 
+/* ===== RESPONSIVE / HOVER LOGIC ===== */
+
 /* Desktop: botones ocultos, aparecen en hover */
 @media (hover: hover) {
     .benditoai-action-buttons {
@@ -1452,25 +1465,22 @@ button.benditoai-save-edit-btn{
     }
 }
 
-/* Mobile: botones siempre visibles debajo */
+/* Mobile: botones siempre visibles y en fila */
 @media (hover: none) {
     .benditoai-action-buttons {
         opacity: 1;
         position: static;
         display: flex;
+        flex-direction: row; /* En fila para móvil */
         justify-content: center;
         gap: 12px;
         margin-top: 8px;
+        width: auto;
+        height: auto;
+        background: none;
+        box-shadow: none;
+        backdrop-filter: none;
     }
-}
-.benditoai-action-buttons {
-    background: #aeaeae;
-    width: 18%;
-    height: 113px;
-    position: absolute;
-    top: 10px;
-    right: 13px;
-    border-radius: 10px;
 }
 /* botones en cards de avatar */
 
@@ -1485,6 +1495,7 @@ button.benditoai-save-edit-btn{
     padding: 6px 0;
     letter-spacing: 0.5px;
     transition: color 0.2s ease;
+    width: 100%;
 }
 
 .benditoai-historial-info{
@@ -1525,6 +1536,6 @@ button.benditoai-toggle-info:active {
     outline: none !important;
     box-shadow: none !important;
     background-color: transparent !important;
-    color: #333 !important;
+      color: #9ca3af !important;
     border-color: transparent !important;
 }
