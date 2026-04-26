@@ -23,6 +23,9 @@ function bendidoai_activate_plugin() {
     // Crear tabla historial de mockups
     benditoai_create_historial_table();
 
+    // Crear tabla de campañas AI
+    benditoai_create_campanas_ai_table();
+
     // Crear tabla de modelos AI
     benditoai_create_modelos_ai_table();
 

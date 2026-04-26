@@ -44,6 +44,41 @@ function benditoai_create_historial_table() {
 }
 
 /**
+ * Crear tabla campañas AI
+ */
+function benditoai_create_campanas_ai_table() {
+    global $wpdb;
+
+    $table_name = $wpdb->prefix . 'benditoai_campanas_ai';
+    $charset_collate = $wpdb->get_charset_collate();
+
+    $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+        id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+        user_id BIGINT UNSIGNED NOT NULL,
+
+        producto_url TEXT,
+        modelo_id BIGINT UNSIGNED DEFAULT NULL,
+
+        estilo VARCHAR(50) DEFAULT '',
+        colores VARCHAR(100) DEFAULT '',
+        ambiente VARCHAR(100) DEFAULT '',
+        mood VARCHAR(100) DEFAULT '',
+
+        prompt TEXT,
+        image_url TEXT,
+
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+        PRIMARY KEY (id)
+    ) $charset_collate;";
+
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+    dbDelta($sql);
+
+    error_log("✅ benditoai_create_campanas_ai_table ejecutada: $table_name");
+}
+
+/**
  * Crear tabla modelos AI
  */
 function benditoai_create_modelos_ai_table() {
