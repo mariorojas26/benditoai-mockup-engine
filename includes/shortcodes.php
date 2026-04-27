@@ -189,9 +189,14 @@ $modelos = $wpdb->get_results(
 );
 
 foreach ($modelos as $modelo) {
-    echo '<div class="benditoai-modelo-card" data-id="'.esc_attr($modelo->id).'">';
-    echo '<img src="'.esc_url($modelo->image_url).'" alt="'.esc_attr($modelo->nombre_modelo).'">';
-    echo '</div>';
+echo '<div class="benditoai-modelo-card" 
+        data-id="'.esc_attr($modelo->id).'"
+        data-url="'.esc_url($modelo->image_url).'"
+        data-nombre="'.esc_attr($modelo->nombre_modelo).'">';
+
+echo '<img src="'.esc_url($modelo->image_url).'" alt="'.esc_attr($modelo->nombre_modelo).'">';
+
+echo '</div>';
 }
 ?>
 

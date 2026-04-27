@@ -58,6 +58,9 @@ require_once BENDIDOAI_PLUGIN_PATH . 'includes/shortcode-historial.php';
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/shortcodes.php';
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/variables.php';
 
+require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/campanas-ai/campanas-ai-shortcode.php';
+require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/campanas-ai/campanas-ai-ajax.php';
+
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/remove-bg/ajax-remove-bg.php';
 require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/remove-bg/shortcode-remove-bg.php';
 

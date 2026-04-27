@@ -25,3 +25,6 @@ import "./auth/auth-dropdown.js";
 import "./modelos/delete-modelo.js";
 import "./modelos/edit-modelo.js";
 
+/* campañas */
+import "./campanas/campanas-ai-script.js";
+
