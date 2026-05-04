@@ -97,9 +97,16 @@ function benditoai_modelos_ai_historial_shortcode() {
 
 <div class="benditoai-historial-info" style="display:none;">
 
+    <?php if(property_exists($item, 'descripcion_modelo') && !empty($item->descripcion_modelo)): ?>
+    <p><strong>Descripción:</strong> <?php echo esc_html($item->descripcion_modelo); ?></p>
+    <?php endif; ?>
+
     <p><strong>Género:</strong> <?php echo esc_html($item->genero); ?></p>
     <p><strong>Edad:</strong> <?php echo esc_html($item->edad); ?></p>
     <p><strong>Estilo:</strong> <?php echo esc_html($item->estilo); ?></p>
+    <?php if(property_exists($item, 'is_public')): ?>
+    <p><strong>Público:</strong> <?php echo ((int)$item->is_public === 1) ? 'Sí' : 'No'; ?></p>
+    <?php endif; ?>
 
     <p>
         <strong>Creado:</strong> 

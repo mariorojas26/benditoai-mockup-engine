@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined('ABSPATH')) exit;
 
 add_action('wp_ajax_benditoai_generar_campana','benditoai_generar_campana');
@@ -33,7 +33,7 @@ function benditoai_generar_campana(){
     $product_image = preg_replace('#^data:image/\w+;base64,#i', '', $product_image);
 
     if(empty($product_image)){
-        wp_send_json_error("Imagen inválida");
+        wp_send_json_error("Imagen invÃ¡lida");
     }
 
     // -----------------------------
@@ -53,14 +53,14 @@ function benditoai_generar_campana(){
         $body_img = wp_remote_retrieve_body($response);
 
         if(empty($body_img)){
-            wp_send_json_error("Modelo vacío");
+            wp_send_json_error("Modelo vacÃ­o");
         }
 
         $model_base64 = base64_encode($body_img);
     }
 
     // -----------------------------
-    // PROMPT DINÁMICO 🔥
+    // PROMPT DINÃMICO ðŸ”¥
     // -----------------------------
 
     $prompt = "
@@ -86,12 +86,12 @@ RULES:
     }
 
     // -----------------------------
-    // GEMINI (CONDICIONAL 🔥)
+    // GEMINI (CONDICIONAL ðŸ”¥)
     // -----------------------------
 
     if($use_model == "1" && $model_base64){
 
-        // 👉 CON MODELO (2 imágenes)
+        // ðŸ‘‰ CON MODELO (2 imÃ¡genes)
         $response = benditoai_call_gemini_multi(
             $product_image,
             $model_base64,
@@ -100,7 +100,7 @@ RULES:
 
     }else{
 
-        // 👉 SOLO PRODUCTO (1 imagen)
+        // ðŸ‘‰ SOLO PRODUCTO (1 imagen)
         $response = benditoai_call_gemini(
             $product_image,
             $prompt
@@ -109,10 +109,17 @@ RULES:
     }
 
     if(is_wp_error($response)){
-        wp_send_json_error("Error IA");
+        wp_send_json_error('Error llamando a Gemini: ' . $response->get_error_message());
     }
 
     $body = json_decode(wp_remote_retrieve_body($response), true);
+    $api_error = function_exists('benditoai_extract_gemini_error_message')
+        ? benditoai_extract_gemini_error_message($body)
+        : '';
+
+    if(!empty($api_error)){
+        wp_send_json_error('Gemini devolvió un error: ' . $api_error);
+    }
 
     $image_base64 = null;
 
@@ -126,7 +133,7 @@ RULES:
     }
 
     if(!$image_base64){
-        wp_send_json_error("La IA no devolvió imagen");
+        wp_send_json_error('Gemini no devolvió imagen.');
     }
 
     // -----------------------------
@@ -144,7 +151,7 @@ RULES:
     $url = $upload['url'] . '/' . $filename;
 
     // -----------------------------
-    // TOKENS 🔥 (tu sistema)
+    // TOKENS ðŸ”¥ (tu sistema)
     // -----------------------------
 
     benditoai_use_token(1);
@@ -159,3 +166,5 @@ RULES:
         'tokens' => $tokens
     ]);
 }
+
+

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 if (!defined('ABSPATH')) exit;
 
@@ -15,7 +15,7 @@ function benditoai_generar_mockup() {
     $user_id = get_current_user_id();
 
     if (!benditoai_user_has_tokens($user_id, 1)) {
-        wp_send_json_error("No tienes créditos disponibles.");
+        wp_send_json_error("No tienes crÃ©ditos disponibles.");
     }
 
     if (!function_exists('wp_handle_upload')) {
@@ -53,7 +53,7 @@ function benditoai_generar_mockup() {
     }
 
     if (!isset($_FILES['diseno'])) {
-        wp_send_json_error("No se recibió ninguna imagen.");
+        wp_send_json_error("No se recibiÃ³ ninguna imagen.");
     }
 
     $uploadedfile = $_FILES['diseno'];
@@ -110,13 +110,20 @@ function benditoai_generar_mockup() {
     }
 
     if (is_wp_error($response)) {
-        wp_send_json_error("Error llamando a Gemini");
+        wp_send_json_error('Error llamando a Gemini: ' . $response->get_error_message());
     }
 
     $body_response = json_decode(wp_remote_retrieve_body($response), true);
+    $api_error = function_exists('benditoai_extract_gemini_error_message')
+        ? benditoai_extract_gemini_error_message($body_response)
+        : '';
+
+    if (!empty($api_error)) {
+        wp_send_json_error('Gemini devolvió un error: ' . $api_error);
+    }
 
     if (!isset($body_response['candidates'][0]['content']['parts'][0]['inlineData']['data'])) {
-        wp_send_json_error("No se encontró imagen en respuesta.");
+        wp_send_json_error('Gemini no devolvió imagen.');
     }
 
     $generated_base64 = $body_response['candidates'][0]['content']['parts'][0]['inlineData']['data'];
@@ -152,7 +159,7 @@ function benditoai_generar_mockup() {
 
     benditoai_decrease_tokens($user_id, 1);
 
-    // 🔥 AQUÍ ESTÁ LA MAGIA (NO TENÍAS ESTO)
+    // ðŸ”¥ AQUÃ ESTÃ LA MAGIA (NO TENÃAS ESTO)
     wp_send_json_success(array(
         'image_url' => $url,
         'producto' => $producto,
@@ -163,3 +170,5 @@ function benditoai_generar_mockup() {
 }
 
 add_action('wp_ajax_benditoai_generar_mockup', 'benditoai_generar_mockup');
+
+

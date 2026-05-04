@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined('ABSPATH')) exit;
 
 /**
@@ -8,11 +8,11 @@ if (!defined('ABSPATH')) exit;
 function benditoai_enhance_image() {
 
     if (!is_user_logged_in()) {
-        wp_send_json_error("No autorizado");
+        wp_send_json_error('No autorizado');
     }
 
     if (!isset($_FILES['imagen'])) {
-        wp_send_json_error("No se recibió imagen.");
+        wp_send_json_error('No se recibió imagen.');
     }
 
     require_once ABSPATH . 'wp-admin/includes/file.php';
@@ -22,22 +22,14 @@ function benditoai_enhance_image() {
     $movefile = wp_handle_upload($uploadedfile, ['test_form' => false]);
 
     if (!$movefile || isset($movefile['error'])) {
-        wp_send_json_error("Error subiendo imagen.");
+        wp_send_json_error('Error subiendo imagen.');
     }
 
     $upload_dir = wp_upload_dir();
-    $input_path  = $movefile['file'];
-
-    /**
-     * Convertir imagen a base64
-     */
+    $input_path = $movefile['file'];
 
     $image_data = file_get_contents($input_path);
     $base64_image = base64_encode($image_data);
-
-    /**
-     * Prompt para mejorar imagen
-     */
 
     $prompt = "Professional image enhancement and restoration. Using the uploaded image as reference, recreate the same image with significantly improved visual quality while strictly preserving the original subject, composition, structure, and scene.
 
@@ -51,50 +43,44 @@ Do not alter the subject, shapes, proportions, or layout. Keep everything consis
 
 High quality, clean, sharp, and professional result. Photorealistic, high detail, natural lighting, premium image quality.";
 
-    /**
-     * Consumir API Gemini
-     */
-
-    require_once plugin_dir_path(dirname(__FILE__,2)) . "gemini-api.php";
+    require_once plugin_dir_path(dirname(__FILE__, 2)) . 'gemini-api.php';
 
     $response = benditoai_call_gemini($base64_image, $prompt);
 
     if (is_wp_error($response)) {
-        wp_send_json_error("Error llamando a Gemini.");
+        wp_send_json_error('Error llamando a Gemini: ' . $response->get_error_message());
     }
 
     $body = json_decode(wp_remote_retrieve_body($response), true);
+    $api_error = function_exists('benditoai_extract_gemini_error_message')
+        ? benditoai_extract_gemini_error_message($body)
+        : '';
 
-    if (!isset($body['candidates'][0]['content']['parts'][0]['inlineData']['data'])) {
-        wp_send_json_error("Gemini no devolvió imagen.");
+    if (!empty($api_error)) {
+        wp_send_json_error('Gemini devolvió un error: ' . $api_error);
     }
 
-    /**
-     * Guardar imagen generada
-     */
+    if (!isset($body['candidates'][0]['content']['parts'][0]['inlineData']['data'])) {
+        wp_send_json_error('Gemini no devolvió imagen.');
+    }
 
     $generated_base64 = $body['candidates'][0]['content']['parts'][0]['inlineData']['data'];
 
     $image_data = base64_decode($generated_base64);
 
     $output_filename = 'enhanced_' . time() . '.png';
-
     $output_path = $upload_dir['path'] . '/' . $output_filename;
 
     file_put_contents($output_path, $image_data);
 
     $url = $upload_dir['url'] . '/' . $output_filename;
 
-    /**
-     * Descontar token SOLO si todo salió bien
-     */
-
     benditoai_use_token(1);
 
     wp_send_json_success([
         'image_url' => $url
     ]);
-
 }
 
 add_action('wp_ajax_benditoai_enhance_image', 'benditoai_enhance_image');
+

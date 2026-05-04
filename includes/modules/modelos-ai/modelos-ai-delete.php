@@ -6,11 +6,15 @@ add_action('wp_ajax_benditoai_delete_modelo','benditoai_delete_modelo');
 function benditoai_delete_modelo(){
 
     if(!is_user_logged_in()){
-        wp_send_json_error("No autorizado");
+        wp_send_json_error(['message' => 'No autorizado']);
     }
 
     $user_id = get_current_user_id();
-    $modelo_id = intval($_POST['modelo_id']);
+    $modelo_id = isset($_POST['modelo_id']) ? (int) $_POST['modelo_id'] : 0;
+
+    if ($modelo_id <= 0) {
+        wp_send_json_error(['message' => 'ID de modelo inválido.']);
+    }
 
     global $wpdb;
     $table = $wpdb->prefix . 'benditoai_modelos_ai';
@@ -25,10 +29,13 @@ function benditoai_delete_modelo(){
         ['%d','%d']
     );
 
-    if($deleted){
-        wp_send_json_success();
-    } else {
-        wp_send_json_error("No se pudo eliminar");
+    if ($deleted === false) {
+        wp_send_json_error(['message' => 'No se pudo eliminar']);
     }
+
+    wp_send_json_success([
+        'message' => 'Modelo eliminado',
+        'modelo_id' => $modelo_id,
+    ]);
 
 }

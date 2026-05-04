@@ -1,262 +1,237 @@
-document.addEventListener("DOMContentLoaded", function(){
+function benditoaiParseJsonResponse(raw) {
+    if (!raw) return null;
 
-/* =========================
-   🧭 WIZARD
-========================= */
+    try {
+        return JSON.parse(raw);
+    } catch (_e) {}
 
-let step = 1
-const steps = document.querySelectorAll(".benditoai-step")
+    const first = raw.indexOf("{");
+    const last = raw.lastIndexOf("}");
+    if (first === -1 || last === -1 || last <= first) return null;
 
-function showStep(n){
-    steps.forEach(s => s.classList.remove("active"))
-    const target = document.querySelector(`.benditoai-step[data-step="${n}"]`)
-    if(target) target.classList.add("active")
+    try {
+        return JSON.parse(raw.slice(first, last + 1).trim());
+    } catch (_e) {
+        return null;
+    }
 }
 
-/* NEXT */
-document.addEventListener("click", e => {
-    if(e.target.classList.contains("benditoai-next")){
-        step++
-        showStep(step)
-    }
-})
+document.addEventListener("DOMContentLoaded", function () {
+    let step = 1;
+    const steps = document.querySelectorAll(".benditoai-step");
 
-/* PREV */
-document.addEventListener("click", e => {
-    if(e.target.classList.contains("benditoai-prev")){
-        step--
-        showStep(step)
-    }
-})
-
-/* =========================
-   🖼️ PRODUCTO (BASE64)
-========================= */
-
-let productBase64 = null
-
-const productInput = document.getElementById("benditoai-product-image")
-
-if(productInput){
-    productInput.addEventListener("change", function(){
-        const file = this.files[0]
-        if(!file) return
-        const reader = new FileReader()
-        reader.onload = e => {
-            productBase64 = e.target.result
-        }
-        reader.readAsDataURL(file)
-    })
-}
-
-/* =========================
-   👤 USAR MODELO
-========================= */
-
-let useModel = "0"
-let modelUrl = null
-
-document.querySelectorAll("input[name='use_model']").forEach(r => {
-    r.addEventListener("change", () => {
-
-        useModel = r.value
-
-        const container = document.getElementById("benditoai-modelos-container")
-        if(container){
-            container.style.display = (useModel === "1") ? "block" : "none"
-        }
-
-        if(useModel === "0"){
-            modelUrl = null
-            document.getElementById("model_url").value = ""
-            document.querySelectorAll(".benditoai-modelo-card")
-                .forEach(c => c.classList.remove("active"))
-            const label = document.getElementById("benditoai-modelo-seleccionado")
-            if(label) label.style.display = "none"
-        }
-
-    })
-})
-
-/* =========================
-   🎯 SELECCIONAR MODELO
-========================= */
-
-document.addEventListener("click", function(e){
-
-    const card = e.target.closest(".benditoai-modelo-card")
-    if(!card) return
-
-    const url = card.dataset.url
-    const nombre = card.dataset.nombre
-
-    document.querySelectorAll(".benditoai-modelo-card")
-        .forEach(c => c.classList.remove("active"))
-
-    card.classList.add("active")
-
-    modelUrl = url
-    document.getElementById("model_url").value = url
-
-    const box = document.getElementById("benditoai-modelo-seleccionado")
-    if(box){
-        box.style.display = "block"
-        box.querySelector("strong").innerText = nombre
+    function showStep(nextStep) {
+        steps.forEach((stepEl) => stepEl.classList.remove("active"));
+        const target = document.querySelector(`.benditoai-step[data-step="${nextStep}"]`);
+        if (target) target.classList.add("active");
     }
 
-})
-
-/* =========================
-   🧠 STORAGE
-========================= */
-
-let lastPayload = null
-
-/* =========================
-   🚀 GENERAR
-========================= */
-
-async function generarCampana(payload){
-
-    // 🔥 ir al paso 6 (resultado) — esto oculta el paso 5 automáticamente
-    step = 6
-    showStep(6)
-
-    const resultImg = document.getElementById("benditoai-result-img")
-    const loading = document.getElementById("benditoai-loading")
-    const errorBox = document.getElementById("benditoai-error")
-
-    loading.style.display = "block"
-    resultImg.style.display = "none"
-    errorBox.style.display = "none"
-
-    try{
-
-        const data = new FormData()
-        data.append("action", "benditoai_generar_campana")
-
-        Object.keys(payload).forEach(key => {
-            data.append(key, payload[key])
-        })
-
-        const response = await fetch(benditoai_ajax.ajax_url, {
-            method: "POST",
-            body: data
-        })
-
-        const res = await response.json()
-
-        loading.style.display = "none"
-
-        if(res.success){
-            const url = res.data.image_url + "?t=" + new Date().getTime()
-            resultImg.src = url
-            resultImg.style.display = "block"
-        } else {
-            errorBox.style.display = "block"
-            errorBox.innerText = res.data || "Error generando campaña"
+    document.addEventListener("click", (event) => {
+        if (event.target.classList.contains("benditoai-next")) {
+            step += 1;
+            showStep(step);
         }
+    });
 
-    } catch(err){
-        console.error(err)
-        loading.style.display = "none"
-        errorBox.style.display = "block"
-        errorBox.innerText = "Error inesperado, intenta de nuevo"
+    document.addEventListener("click", (event) => {
+        if (event.target.classList.contains("benditoai-prev")) {
+            step -= 1;
+            showStep(step);
+        }
+    });
+
+    let productBase64 = null;
+    const productInput = document.getElementById("benditoai-product-image");
+
+    if (productInput) {
+        productInput.addEventListener("change", function () {
+            const file = this.files?.[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                productBase64 = event.target?.result || null;
+            };
+            reader.readAsDataURL(file);
+        });
     }
 
-}
+    let useModel = "0";
+    let modelUrl = null;
 
-/* =========================
-   📤 SUBMIT
-========================= */
+    document.querySelectorAll("input[name='use_model']").forEach((radio) => {
+        radio.addEventListener("change", () => {
+            useModel = radio.value;
 
-const form = document.getElementById("benditoai-form-campana-ai")
+            const container = document.getElementById("benditoai-modelos-container");
+            if (container) {
+                container.style.display = useModel === "1" ? "block" : "none";
+            }
 
-if(form){
+            if (useModel === "0") {
+                modelUrl = null;
+                const modelUrlInput = document.getElementById("model_url");
+                if (modelUrlInput) modelUrlInput.value = "";
 
-    form.addEventListener("submit", async function(e){
+                document.querySelectorAll(".benditoai-modelo-card").forEach((card) => {
+                    card.classList.remove("active");
+                });
 
-        e.preventDefault()
+                const label = document.getElementById("benditoai-modelo-seleccionado");
+                if (label) label.style.display = "none";
+            }
+        });
+    });
 
-        // 🔥 leer valores ANTES de cambiar de paso
-        const producto = form.querySelector("textarea[name='producto']").value.trim()
-        const estilo = form.querySelector("select[name='estilo']").value
-        const tono = form.querySelector("select[name='tono']").value
+    document.addEventListener("click", function (event) {
+        const card = event.target.closest(".benditoai-modelo-card");
+        if (!card) return;
 
-        if(!producto){
-            alert("Escribe el nombre del producto")
-            return
+        const url = card.dataset.url || "";
+        const nombre = card.dataset.nombre || "";
+
+        document.querySelectorAll(".benditoai-modelo-card").forEach((item) => {
+            item.classList.remove("active");
+        });
+
+        card.classList.add("active");
+
+        modelUrl = url;
+        const modelUrlInput = document.getElementById("model_url");
+        if (modelUrlInput) modelUrlInput.value = url;
+
+        const box = document.getElementById("benditoai-modelo-seleccionado");
+        if (box) {
+            box.style.display = "block";
+            const strong = box.querySelector("strong");
+            if (strong) strong.innerText = nombre;
         }
+    });
 
-        if(!productBase64){
-            alert("Sube una imagen del producto")
-            return
+    const previewStage = document.getElementById("benditoai-campana-preview-stage");
+    const resultImage = document.getElementById("benditoai-result-img");
+
+    let lastPayload = null;
+
+    async function generarCampana(payload) {
+        step = 6;
+        showStep(6);
+
+        window.BenditoAIUX?.preview?.loading(previewStage, { label: "Generando campaña..." });
+
+        try {
+            const requestData = new FormData();
+            requestData.append("action", "benditoai_generar_campana");
+
+            Object.keys(payload).forEach((key) => {
+                requestData.append(key, payload[key]);
+            });
+
+            const response = await fetch(benditoai_ajax.ajax_url, {
+                method: "POST",
+                body: requestData
+            });
+
+            const raw = await response.text();
+            const parsed = benditoaiParseJsonResponse(raw);
+
+            if (parsed?.success === true && parsed?.data?.image_url) {
+                const url = `${parsed.data.image_url}?t=${Date.now()}`;
+
+                if (resultImage) resultImage.src = url;
+                window.BenditoAIUX?.preview?.image(previewStage, { imageUrl: url });
+
+                if (typeof benditoaiActualizarTokensInstantaneo === "function") {
+                    benditoaiActualizarTokensInstantaneo(parsed?.data?.tokens);
+                }
+
+                return;
+            }
+
+            const message = window.BenditoAIUX?.getErrorMessage(parsed, "Error generando campaña.");
+            window.BenditoAIUX?.preview?.error(previewStage, {
+                title: "No se pudo generar la campaña",
+                message
+            });
+        } catch (_error) {
+            window.BenditoAIUX?.preview?.error(previewStage, {
+                title: "Error generando campaña",
+                message: "Error inesperado, intenta de nuevo."
+            });
         }
-
-        if(useModel === "1" && !modelUrl){
-            alert("Selecciona un modelo")
-            return
-        }
-
-        lastPayload = {
-            producto,
-            product_image: productBase64,
-            use_model: useModel,
-            model_url: modelUrl || "",
-            estilo,
-            tono
-        }
-
-        await generarCampana(lastPayload)
-
-    })
-
-}
-
-/* =========================
-   🔁 RECREAR
-========================= */
-
-document.getElementById("benditoai-recrear")?.addEventListener("click", () => {
-
-    if(!lastPayload){
-        alert("No hay campaña previa")
-        return
     }
 
-    generarCampana(lastPayload)
+    const form = document.getElementById("benditoai-form-campana-ai");
 
-})
+    if (form) {
+        form.addEventListener("submit", async function (event) {
+            event.preventDefault();
 
-/* =========================
-   ⚙️ RESET
-========================= */
+            const producto = form.querySelector("textarea[name='producto']")?.value?.trim() || "";
+            const estilo = form.querySelector("select[name='estilo']")?.value || "";
+            const tono = form.querySelector("select[name='tono']")?.value || "";
 
-document.getElementById("benditoai-reset")?.addEventListener("click", () => {
+            if (!producto) {
+                alert("Escribe el nombre del producto");
+                return;
+            }
 
-    step = 1
-    showStep(1)
+            if (!productBase64) {
+                alert("Sube una imagen del producto");
+                return;
+            }
 
-    lastPayload = null
-    modelUrl = null
-    productBase64 = null
+            if (useModel === "1" && !modelUrl) {
+                alert("Selecciona un modelo");
+                return;
+            }
 
-    document.getElementById("model_url").value = ""
+            lastPayload = {
+                producto,
+                product_image: productBase64,
+                use_model: useModel,
+                model_url: modelUrl || "",
+                estilo,
+                tono
+            };
 
-    document.querySelectorAll(".benditoai-modelo-card")
-        .forEach(c => c.classList.remove("active"))
+            await generarCampana(lastPayload);
+        });
+    }
 
-    const label = document.getElementById("benditoai-modelo-seleccionado")
-    if(label) label.style.display = "none"
+    document.getElementById("benditoai-recrear")?.addEventListener("click", () => {
+        if (!lastPayload) {
+            alert("No hay campaña previa");
+            return;
+        }
+        generarCampana(lastPayload);
+    });
 
-    const radioNo = document.querySelector("input[name='use_model'][value='0']")
-    if(radioNo) radioNo.checked = true
+    document.getElementById("benditoai-reset")?.addEventListener("click", () => {
+        step = 1;
+        showStep(1);
 
-    const container = document.getElementById("benditoai-modelos-container")
-    if(container) container.style.display = "none"
+        lastPayload = null;
+        modelUrl = null;
+        productBase64 = null;
 
-    useModel = "0"
+        const modelUrlInput = document.getElementById("model_url");
+        if (modelUrlInput) modelUrlInput.value = "";
 
-})
+        document.querySelectorAll(".benditoai-modelo-card").forEach((card) => {
+            card.classList.remove("active");
+        });
 
-})
+        const label = document.getElementById("benditoai-modelo-seleccionado");
+        if (label) label.style.display = "none";
+
+        const radioNo = document.querySelector("input[name='use_model'][value='0']");
+        if (radioNo) radioNo.checked = true;
+
+        const container = document.getElementById("benditoai-modelos-container");
+        if (container) container.style.display = "none";
+
+        useModel = "0";
+        window.BenditoAIUX?.preview?.reset(previewStage);
+    });
+});

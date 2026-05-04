@@ -91,6 +91,7 @@ function benditoai_create_modelos_ai_table() {
         id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
         user_id BIGINT UNSIGNED NOT NULL,
         nombre_modelo VARCHAR(100) NOT NULL,
+        descripcion_modelo TEXT,
         genero VARCHAR(50) DEFAULT '',
         edad VARCHAR(50) DEFAULT '',
         cuerpo VARCHAR(50) DEFAULT '',
@@ -102,6 +103,9 @@ function benditoai_create_modelos_ai_table() {
         accesorios TEXT,
         prompt TEXT,
         image_url TEXT,
+        is_public TINYINT(1) NOT NULL DEFAULT 0,
+        reference_source VARCHAR(30) DEFAULT '',
+        traits_payload LONGTEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (id)
     ) $charset_collate;";

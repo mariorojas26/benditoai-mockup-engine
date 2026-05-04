@@ -1,4 +1,6 @@
-<?php
+﻿<?php
+
+if (!defined('ABSPATH')) exit;
 
 function benditoai_call_gemini($base64_image, $prompt) {
 
@@ -38,3 +40,29 @@ function benditoai_call_gemini($base64_image, $prompt) {
         )
     );
 }
+
+if (!function_exists('benditoai_extract_gemini_error_message')) {
+    function benditoai_extract_gemini_error_message($body) {
+        if (!is_array($body)) {
+            return '';
+        }
+
+        $api_message = trim((string) ($body['error']['message'] ?? ''));
+        if ($api_message !== '') {
+            return $api_message;
+        }
+
+        $block_reason = trim((string) ($body['promptFeedback']['blockReasonMessage'] ?? ''));
+        if ($block_reason !== '') {
+            return $block_reason;
+        }
+
+        $finish_reason = trim((string) ($body['candidates'][0]['finishReason'] ?? ''));
+        if ($finish_reason !== '' && strtoupper($finish_reason) !== 'STOP') {
+            return 'Gemini finalizÃ³ sin imagen. RazÃ³n: ' . $finish_reason;
+        }
+
+        return '';
+    }
+}
+

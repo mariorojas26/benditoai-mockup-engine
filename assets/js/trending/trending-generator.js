@@ -1,53 +1,70 @@
-document.addEventListener("submit", async function(e){
+function benditoaiParseJsonResponse(raw) {
+    if (!raw) return null;
 
-if(e.target.id !== "benditoai-trending-form") return;
+    try {
+        return JSON.parse(raw);
+    } catch (_e) {}
 
-e.preventDefault();
+    const first = raw.indexOf("{");
+    const last = raw.lastIndexOf("}");
+    if (first === -1 || last === -1 || last <= first) return null;
 
-let formData = new FormData(e.target);
-formData.append("action","benditoai_trending_generate");
-
-let result = document.getElementById("benditoai-trending-result");
-
-let loading = result.querySelector(".benditoai-loading");
-let wrapper = result.querySelector(".benditoai-image-wrapper");
-let img = result.querySelector(".benditoai-generated-image");
-let download = result.querySelector(".benditoai-download-btn");
-
-loading.style.display="block";
-wrapper.style.display="none";
-
-try{
-
-let response = await fetch(benditoai_ajax.ajax_url,{
-method:"POST",
-body:formData
-});
-
-let data = await response.json();
-
-if(data.success){
-
-img.src=data.data.image_url;
-download.href=data.data.image_url;
-
-loading.style.display="none";
-wrapper.style.display="block";
-
-if(typeof benditoaiActualizarTokensInstantaneo === "function"){
-benditoaiActualizarTokensInstantaneo();
+    try {
+        return JSON.parse(raw.slice(first, last + 1).trim());
+    } catch (_e) {
+        return null;
+    }
 }
 
-}else{
+document.addEventListener("submit", async function (event) {
+    if (event.target.id !== "benditoai-trending-form") return;
+    event.preventDefault();
 
-loading.innerHTML="Error: "+data.data;
+    const formData = new FormData(event.target);
+    formData.append("action", "benditoai_trending_generate");
 
-}
+    const result = document.getElementById("benditoai-trending-result");
+    if (!result) return;
 
-}catch(err){
+    const stage = result.querySelector("[data-ai-preview-stage]");
+    const image = result.querySelector(".benditoai-generated-image");
+    const download = result.querySelector(".benditoai-download-btn");
 
-loading.innerHTML="Error inesperado.";
+    window.BenditoAIUX?.preview?.loading(stage, { label: "Generando tendencia..." });
 
-}
+    try {
+        const response = await fetch(benditoai_ajax.ajax_url, {
+            method: "POST",
+            body: formData
+        });
 
+        const raw = await response.text();
+        const payload = benditoaiParseJsonResponse(raw);
+
+        if (payload?.success === true && payload?.data?.image_url) {
+            const imageUrl = payload.data.image_url;
+
+            if (image) image.src = imageUrl;
+            if (download) download.href = imageUrl;
+
+            window.BenditoAIUX?.preview?.image(stage, { imageUrl });
+
+            if (typeof benditoaiActualizarTokensInstantaneo === "function") {
+                benditoaiActualizarTokensInstantaneo(payload?.data?.tokens);
+            }
+
+            return;
+        }
+
+        const message = window.BenditoAIUX?.getErrorMessage(payload, "No se pudo generar la tendencia.");
+        window.BenditoAIUX?.preview?.error(stage, {
+            title: "No se pudo generar la tendencia",
+            message
+        });
+    } catch (_error) {
+        window.BenditoAIUX?.preview?.error(stage, {
+            title: "Error al generar tendencia",
+            message: "Error inesperado. Intenta nuevamente."
+        });
+    }
 });

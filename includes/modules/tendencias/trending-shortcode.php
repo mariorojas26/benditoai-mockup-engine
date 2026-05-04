@@ -18,60 +18,49 @@ function benditoai_trending_shortcode() {
           enctype="multipart/form-data">
 
         <div class="benditoai-form__group">
-
-
             <input class="benditoai-form__input"
                    type="file"
                    name="imagen"
                    accept="image/*"
                    required>
-
         </div>
 
         <div class="benditoai-form__actions benditoai-form__group">
-
             <button type="submit"
                     class="benditoai-btn benditoai-btn--primary">
-
                 Generar tendencia
-
             </button>
-
         </div>
 
-           <div class="benditoai-tips"> 
-                <p class="benditoai-tips-title">
-                    Nota: La vista previa puede verse recortada. Después de generar la imagen, descárgala para verla completa.
-                </p>
-            </div>
+        <div class="benditoai-tips">
+            <p class="benditoai-tips-title">
+                Nota: La vista previa puede verse recortada. Después de generar la imagen, descárgala para verla completa.
+            </p>
+        </div>
 
     </form>
 
     <div id="benditoai-trending-result">
-        
+        <div class="benditoai-ai-preview-stage" data-ai-preview-stage>
+            <div class="benditoai-ai-preview-placeholder" data-ai-preview-placeholder>
+                <i class="fa-regular fa-image"></i>
+                <span>Tu tendencia aparecerá aquí</span>
+            </div>
 
-        <p class="benditoai-loading" style="display:none;">
-            🔥 Generando tendencia...
-        </p>
+            <div class="benditoai-image-wrapper" style="display:none;">
+                <img class="benditoai-generated-image"
+                     src=""
+                     alt="Imagen generada con tendencia">
 
-        <div class="benditoai-image-wrapper" style="display:none;">
-
-            <img class="benditoai-generated-image"
-                 src=""
-                 alt="Imagen generada con tendencia">
-
-            <a class="benditoai-download-btn"
-               href=""
-               download="BenditoAI-trend.png">
-
-                <img class="benditoai-download-icon"
-                     src="<?php echo plugin_dir_url(dirname(__FILE__,3)) . 'assets/images/download-icon.png'; ?>"
-                     alt="Descargar">
-
-            </a>
-
+                <a class="benditoai-download-btn"
+                   href=""
+                   download="BenditoAI-trend.png">
+                    <img class="benditoai-download-icon"
+                         src="<?php echo plugin_dir_url(dirname(__FILE__, 3)) . 'assets/images/download-icon.png'; ?>"
+                         alt="Descargar">
+                </a>
+            </div>
         </div>
-
     </div>
 
 </div>
@@ -82,5 +71,3 @@ function benditoai_trending_shortcode() {
 }
 
 add_shortcode('benditoai_trending', 'benditoai_trending_shortcode');
-
-

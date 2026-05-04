@@ -1,5 +1,8 @@
 /* archivo principal BenditoAI JS */
 
+/* ui global de estados IA (skeleton, error, preview) */
+import "./core/ai-preview-state.js";
+
 /* tokens */
 import "./core/tokens.js";
 /* core bloquear multiples request boton */

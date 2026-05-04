@@ -61,7 +61,7 @@ function benditoai_campanas_ai_shortcode() {
 
     <div id="benditoai-modelos-container" style="display:none; margin-top:15px;">
 
-        <?php if(empty($modelos)): ?>
+        <?php if (empty($modelos)): ?>
 
             <p class="benditoai-message">
                 No tienes modelos aún.
@@ -86,6 +86,7 @@ function benditoai_campanas_ai_shortcode() {
                             <img 
                                 src="<?php echo esc_url($m->image_url); ?>" 
                                 class="benditoai-historial-img"
+                                alt="<?php echo esc_attr($m->nombre_modelo); ?>"
                             >
                         </div>
                         <p class="benditoai-historial-name">
@@ -140,35 +141,25 @@ function benditoai_campanas_ai_shortcode() {
     <button type="submit">Generar campaña</button>
 </div>
 
-<!-- 🔥 PASO 6 — RESULTADO (nuevo paso, reemplaza el div flotante) -->
+<!-- PASO 6 -->
 <div class="benditoai-step" data-step="6">
 
     <h2 class="benditoai-resultado-title">Tu campaña</h2>
 
-    <div class="benditoai-resultado-preview">
-
-        <div id="benditoai-loading" style="display:none;">
-            Generando campaña...
+    <div class="benditoai-resultado-preview benditoai-ai-preview-stage" id="benditoai-campana-preview-stage" data-ai-preview-stage>
+        <div class="benditoai-ai-preview-placeholder" data-ai-preview-placeholder>
+            <i class="fa-regular fa-image"></i>
+            <span>Tu campaña aparecerá aquí</span>
         </div>
 
-        <img id="benditoai-result-img" src="" style="display:none;" />
-
-        <p id="benditoai-error" style="display:none; color:red;">
-            No se pudo generar la imagen
-        </p>
-
+        <div class="benditoai-image-wrapper" style="display:none;">
+            <img id="benditoai-result-img" class="benditoai-generated-image" src="" alt="Campaña generada" />
+        </div>
     </div>
 
     <div class="benditoai-acciones">
-
-        <button type="button" id="benditoai-recrear">
-            🔁 Recrear campaña
-        </button>
-
-        <button type="button" id="benditoai-reset">
-            ⚙️ Configurar otra campaña
-        </button>
-
+        <button type="button" id="benditoai-recrear">🔁 Recrear campaña</button>
+        <button type="button" id="benditoai-reset">⚙️ Configurar otra campaña</button>
     </div>
 
 </div>

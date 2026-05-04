@@ -474,13 +474,9 @@ img.benditoai-download-icon {
     display:grid;
     grid-template-columns:1fr 0fr;
     gap:0;
-
-    align-items:center;
-
-    transition:grid-template-columns .45s ease, gap .45s ease;
+    align-items:start;
+    transition:grid-template-columns .35s ease, gap .35s ease;
 }
-
-/* CUANDO SE GENERA */
 
 .benditoai-wrapper-tendencia.benditoai-generating{
     grid-template-columns:1fr 1fr;
@@ -503,85 +499,20 @@ img.benditoai-download-icon {
     display:flex;
     justify-content:center;
     align-items:center;
-
     min-height:0;
-
     opacity:0;
-    transform:translateX(40px);
-
-    transition:all .45s ease;
-
+    transform:translateX(22px);
+    pointer-events:none;
+    transition:opacity .3s ease, transform .3s ease, min-height .3s ease;
     position:relative;
     overflow:hidden;
 }
 
 .benditoai-wrapper-tendencia.benditoai-generating #benditoai-trending-result{
+    min-height:420px;
     opacity:1;
     transform:translateX(0);
-    min-height:420px;
-}
-
-/* CUADRO IA (placeholder animado) */
-
-.benditoai-wrapper-tendencia #benditoai-trending-result::before{
-    content:"";
-    display:block;
-
-    width:100%;
-    max-width:420px;
-    aspect-ratio:1/1;
-
-    border-radius:12px;
-
-    background:
-        linear-gradient(
-            110deg,
-            #f2f2f2 25%,
-            #e8e8e8 35%,
-            #f2f2f2 45%
-        );
-
-    background-size:200% 100%;
-
-    animation:benditoai-shimmer 2.2s linear infinite;
-}
-
-/* PARTICULAS SUAVES */
-
-.benditoai-wrapper-tendencia #benditoai-trending-result::after{
-    content:"";
-    position:absolute;
-
-    width:100%;
-    max-width:420px;
-    aspect-ratio:1/1;
-
-    border-radius:12px;
-
-    background-image:
-        radial-gradient(circle, rgba(255,255,255,0.6) 1px, transparent 1px);
-
-    background-size:30px 30px;
-
-    animation:benditoai-particles 12s linear infinite;
-
-    opacity:.35;
-}
-
-/* ANIMACIONES */
-
-@keyframes benditoai-shimmer{
-    0%{background-position:200% 0;}
-    100%{background-position:-200% 0;}
-}
-
-@keyframes benditoai-particles{
-    0%{
-        background-position:0 0;
-    }
-    100%{
-        background-position:200px 200px;
-    }
+    pointer-events:auto;
 }
 
 /* LOADING TEXTO */
@@ -638,29 +569,19 @@ img.benditoai-download-icon {
 
 @media (max-width:768px){
 
-.benditoai-wrapper-tendencia,
-.benditoai-wrapper-tendencia.benditoai-generating{
+.benditoai-wrapper-tendencia{
     grid-template-columns:1fr;
     gap:25px;
 }
 
-/* estado inicial */
-
 .benditoai-wrapper-tendencia #benditoai-trending-result{
-    opacity:0;
-    transform:translateY(15px);
     min-height:0;
-    height:0;
-    overflow:hidden;
+    transform:translateY(12px);
 }
 
-/* cuando genera */
-
 .benditoai-wrapper-tendencia.benditoai-generating #benditoai-trending-result{
-    opacity:1;
-    transform:none;
-    height:auto;
-    min-height:auto;
+    min-height:320px;
+    transform:translateY(0);
 }
 
 
@@ -2138,4 +2059,2646 @@ button{
 .benditoai-step-text{
 color: white !important;
 }
-/* WIZARD */
+/* WIZARD *//* ===========================
+Modelos AI v2
+=========================== */
+.benditoai-wrapper-modelos.benditoai-v2{
+max-width:1900px;
+margin:28px auto;
+padding:0 10px;
+}
+
+.benditoai-v2 .benditoai-modelo-shell{
+display:grid;
+grid-template-columns:1fr 1.1fr;
+gap:30px;
+min-height:720px;
+}
+
+.benditoai-v2 .benditoai-modelo-stage{
+border:1px dashed #efb8c2;
+border-radius:12px;
+background:#f6f6f6;
+min-height:720px;
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
+}
+
+.benditoai-v2 .benditoai-modelo-stage img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.benditoai-v2 .benditoai-modelo-stage-placeholder{
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+text-align:center;
+color:#9ca3af;
+gap:14px;
+padding:20px;
+}
+
+.benditoai-v2 .benditoai-modelo-stage-placeholder i,
+.benditoai-v2 .benditoai-modal-stage-placeholder i{
+font-size:42px;
+opacity:0.6;
+}
+
+.benditoai-v2 #benditoai-form-modelo-ai{
+background:#f3f3f3;
+border:1px solid #e6e6e6;
+border-radius:12px;
+padding:18px;
+display:flex;
+flex-direction:column;
+gap:12px;
+}
+
+.benditoai-v2 .benditoai-entry-actions{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+margin-bottom:6px;
+}
+
+.benditoai-v2 .benditoai-entry-action{
+background:#fff;
+border:1px solid #f05278;
+border-radius:10px;
+min-height:108px;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+text-align:center;
+gap:6px;
+cursor:pointer;
+padding:10px;
+transition:all .2s ease;
+}
+
+.benditoai-v2 .benditoai-entry-action:hover{
+transform:translateY(-1px);
+box-shadow:0 8px 22px rgba(240,82,120,.12);
+}
+
+.benditoai-v2 .benditoai-entry-action i{
+font-size:30px;
+color:#ea2557;
+}
+
+.benditoai-v2 .benditoai-entry-action span{
+font-weight:700;
+font-size:17px;
+color:#ea2557;
+}
+
+.benditoai-v2 .benditoai-entry-action small{
+font-size:13px;
+line-height:1.3;
+color:#6b7280;
+max-width:300px;
+}
+
+.benditoai-v2 label{
+font-size:16px;
+font-weight:600;
+color:#111827;
+}
+
+.benditoai-v2 .benditoai-input-wrap{
+position:relative;
+}
+
+.benditoai-v2 input[type="text"],
+.benditoai-v2 textarea,
+.benditoai-v2 select{
+width:100%;
+border:1px solid #d2d5da;
+border-radius:10px;
+background:#f8f8f8;
+padding:12px;
+font-size:15px;
+}
+
+.benditoai-v2 textarea{
+resize:vertical;
+min-height:88px;
+}
+
+.benditoai-v2 .benditoai-counter{
+position:absolute;
+right:10px;
+bottom:8px;
+font-size:12px;
+color:#98a2b3;
+}
+
+.benditoai-v2 .benditoai-public-row{
+display:flex;
+align-items:center;
+gap:12px;
+margin-top:4px;
+}
+
+.benditoai-v2 .benditoai-switch{
+position:relative;
+width:62px;
+height:34px;
+display:inline-block;
+}
+
+.benditoai-v2 .benditoai-switch input{display:none;}
+
+.benditoai-v2 .benditoai-slider{
+position:absolute;
+inset:0;
+background:#c8c8c8;
+border-radius:999px;
+transition:all .2s ease;
+}
+
+.benditoai-v2 .benditoai-slider:before{
+content:"";
+position:absolute;
+width:26px;
+height:26px;
+left:4px;
+top:4px;
+background:#fff;
+border-radius:50%;
+transition:all .2s ease;
+}
+
+.benditoai-v2 .benditoai-switch input:checked + .benditoai-slider{
+background:#ea2557;
+}
+
+.benditoai-v2 .benditoai-switch input:checked + .benditoai-slider:before{
+transform:translateX(28px);
+}
+
+.benditoai-v2 .benditoai-create-btn{
+border:none;
+border-radius:10px;
+background:#d3d3d3;
+color:#fff;
+padding:14px;
+font-size:18px;
+font-weight:600;
+cursor:not-allowed;
+transition:all .2s ease;
+}
+
+.benditoai-v2 .benditoai-create-btn:not(:disabled){
+background:#ea2557;
+cursor:pointer;
+}
+
+.benditoai-v2 .benditoai-create-btn:not(:disabled):hover{
+filter:brightness(.96);
+}
+
+.benditoai-v2 .benditoai-error-message{
+font-size:14px;
+margin:2px 0;
+}
+
+.benditoai-v2 .benditoai-loading{
+display:none;
+font-size:14px;
+background:#fff;
+border:1px solid #ececec;
+color:#555;
+border-radius:10px;
+padding:10px;
+}
+
+.benditoai-v2 .benditoai-prompt-debug{
+margin-top:6px;
+background:#fff;
+border:1px solid #e5e7eb;
+border-radius:10px;
+padding:10px;
+}
+
+.benditoai-v2 .benditoai-prompt-debug textarea{
+font-family:Consolas, "Courier New", monospace;
+font-size:12px;
+background:#f8fafc;
+}
+
+.benditoai-influencer-modal{
+position:fixed;
+inset:0;
+display:none;
+z-index:999999;
+}
+
+.benditoai-influencer-modal.is-open{
+display:block;
+}
+
+.benditoai-modal-open{overflow:hidden;}
+
+.benditoai-influencer-backdrop{
+position:absolute;
+inset:0;
+background:rgba(15,23,42,.45);
+}
+
+.benditoai-influencer-dialog{
+position:relative;
+margin:26px auto;
+width:min(1260px,calc(100% - 28px));
+height:calc(100vh - 52px);
+background:#efefef;
+border-radius:14px;
+overflow:hidden;
+display:flex;
+flex-direction:column;
+}
+
+.benditoai-influencer-header{
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:16px 18px;
+border-bottom:1px solid #dedede;
+background:#f8f8f8;
+}
+
+.benditoai-influencer-header h3{
+margin:0;
+font-size:36px;
+font-weight:700;
+}
+
+.benditoai-close-modal{
+border:none;
+background:transparent;
+font-size:34px;
+cursor:pointer;
+color:#7b7b7b;
+}
+
+.benditoai-influencer-body{
+flex:1;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:22px;
+padding:16px;
+min-height:0;
+}
+
+.benditoai-modal-preview-col,
+.benditoai-modal-controls-col{
+min-height:0;
+}
+
+.benditoai-modal-label{
+margin:0 0 8px;
+font-size:14px;
+color:#475467;
+font-weight:600;
+}
+
+.benditoai-modal-stage{
+border:1px dashed #c7c7c7;
+border-radius:10px;
+background:#f4f4f4;
+height:calc(100% - 64px);
+min-height:420px;
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
+}
+
+.benditoai-modal-stage img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.benditoai-modal-stage-placeholder{
+display:flex;
+flex-direction:column;
+text-align:center;
+gap:10px;
+color:#8b94a5;
+}
+
+.benditoai-select-ref-btn{
+width:100%;
+margin-top:12px;
+border:none;
+border-radius:11px;
+background:#cfced2;
+color:#fff;
+padding:12px;
+font-weight:700;
+cursor:not-allowed;
+}
+
+.benditoai-select-ref-btn:not(:disabled){
+background:#ea2557;
+cursor:pointer;
+}
+
+.benditoai-modal-controls-col{
+overflow:auto;
+padding-right:4px;
+}
+
+.benditoai-random-btn,
+.benditoai-generate-btn{
+width:100%;
+border:none;
+border-radius:10px;
+background:#ea2557;
+color:#fff;
+font-weight:700;
+padding:10px 14px;
+cursor:pointer;
+}
+
+.benditoai-random-btn{
+margin-bottom:14px;
+}
+
+.benditoai-generate-btn{
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+line-height:1.1;
+}
+
+.benditoai-generate-btn small{
+font-size:11px;
+opacity:.9;
+}
+
+.benditoai-field-block{
+margin-bottom:10px;
+}
+
+.benditoai-field-title{
+display:block;
+font-size:13px;
+font-weight:700;
+margin-bottom:5px;
+color:#475467;
+}
+
+.benditoai-gender-row{
+display:grid;
+grid-template-columns:repeat(3,minmax(0,1fr));
+gap:10px;
+}
+
+.benditoai-gender-pill{
+position:relative;
+}
+
+.benditoai-gender-pill input{
+position:absolute;
+opacity:0;
+pointer-events:none;
+}
+
+.benditoai-gender-pill span{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:8px;
+border:1px solid #d2d5da;
+border-radius:8px;
+min-height:38px;
+background:#fff;
+color:#4b5563;
+font-weight:600;
+cursor:pointer;
+}
+
+.benditoai-gender-pill input:checked + span{
+border-color:#111827;
+color:#111827;
+box-shadow:0 0 0 2px rgba(17,24,39,.08);
+}
+
+.benditoai-range-head{
+display:flex;
+justify-content:space-between;
+font-size:14px;
+margin-bottom:4px;
+}
+
+.benditoai-modal-controls-col input[type="range"]{
+width:100%;
+accent-color:#ea2557;
+}
+
+.benditoai-two-cols{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.benditoai-trait-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:8px;
+}
+
+.benditoai-trait-btn{
+border:1px solid #d2d5da;
+border-radius:9px;
+background:#fff;
+min-height:44px;
+padding:6px 8px;
+text-align:left;
+font-size:13px;
+display:flex;
+align-items:center;
+gap:8px;
+cursor:pointer;
+}
+
+.benditoai-trait-btn:before{
+content:"";
+width:28px;
+height:28px;
+border-radius:50%;
+background:linear-gradient(145deg,#d1d5db,#9ca3af);
+flex-shrink:0;
+border:1px solid rgba(0,0,0,.08);
+}
+
+.benditoai-trait-btn[data-thumb="fit"]:before{background:linear-gradient(145deg,#f9a8d4,#ec4899);}
+.benditoai-trait-btn[data-thumb="slim"]:before{background:linear-gradient(145deg,#fda4af,#fb7185);}
+.benditoai-trait-btn[data-thumb="curvy"]:before{background:linear-gradient(145deg,#fbbf24,#f59e0b);}
+.benditoai-trait-btn[data-thumb="amber"]:before{background:radial-gradient(circle,#f59e0b,#7c2d12);}
+.benditoai-trait-btn[data-thumb="brown"]:before{background:radial-gradient(circle,#92400e,#451a03);}
+.benditoai-trait-btn[data-thumb="green"]:before{background:radial-gradient(circle,#34d399,#14532d);}
+.benditoai-trait-btn[data-thumb="blue"]:before{background:radial-gradient(circle,#60a5fa,#1e3a8a);}
+.benditoai-trait-btn[data-thumb="pixie"]:before{background:linear-gradient(145deg,#6b7280,#111827);}
+.benditoai-trait-btn[data-thumb="long"]:before{background:linear-gradient(145deg,#a78bfa,#7c3aed);}
+.benditoai-trait-btn[data-thumb="bob"]:before{background:linear-gradient(145deg,#94a3b8,#475569);}
+.benditoai-trait-btn[data-thumb="curly"]:before{background:linear-gradient(145deg,#92400e,#78350f);}
+.benditoai-trait-btn[data-thumb="honey"]:before{background:linear-gradient(145deg,#f6c453,#b45309);}
+.benditoai-trait-btn[data-thumb="black"]:before{background:linear-gradient(145deg,#374151,#030712);}
+.benditoai-trait-btn[data-thumb="brown-hair"]:before{background:linear-gradient(145deg,#92400e,#7c2d12);}
+.benditoai-trait-btn[data-thumb="blonde"]:before{background:linear-gradient(145deg,#fde68a,#f59e0b);}
+
+.benditoai-trait-btn.is-active{
+border-color:#ea2557;
+box-shadow:0 0 0 2px rgba(234,37,87,.15);
+}
+
+.benditoai-check-row{
+display:grid;
+grid-template-columns:repeat(3,minmax(0,1fr));
+gap:10px;
+margin:8px 0;
+}
+
+.benditoai-check-row label{
+font-size:13px;
+font-weight:600;
+display:flex;
+align-items:center;
+gap:6px;
+}
+
+.benditoai-modal-actions{
+display:flex;
+justify-content:flex-end;
+gap:10px;
+margin-top:8px;
+}
+
+.benditoai-reset-btn{
+border:none;
+border-radius:999px;
+background:#d1d5db;
+color:#374151;
+padding:10px 18px;
+font-weight:700;
+cursor:pointer;
+}
+
+.benditoai-v2 .benditoai-influencer-modal .benditoai-error-message,
+.benditoai-v2 .benditoai-influencer-modal .benditoai-loading{
+margin-top:10px;
+}
+
+@media (max-width: 1180px){
+.benditoai-v2 .benditoai-modelo-shell,
+.benditoai-influencer-body{
+grid-template-columns:1fr;
+}
+
+.benditoai-v2 .benditoai-modelo-stage{
+min-height:420px;
+}
+
+.benditoai-influencer-dialog{
+height:calc(100vh - 22px);
+margin:11px auto;
+}
+
+.benditoai-modal-stage{
+height:420px;
+}
+
+.benditoai-v2 .benditoai-entry-actions,
+.benditoai-gender-row,
+.benditoai-two-cols,
+.benditoai-check-row{
+grid-template-columns:1fr;
+}
+
+.benditoai-influencer-header h3{
+font-size:26px;
+}
+}
+
+/* ===========================
+Modelos AI v2 - Dark UX Theme
+=========================== */
+.benditoai-wrapper-modelos.benditoai-v2{
+position:relative;
+max-width:1900px;
+margin:22px auto;
+padding:18px;
+border-radius:24px;
+border:1px solid rgba(117,84,255,.32);
+background:
+radial-gradient(circle at 18% 8%, rgba(124,58,237,.24), transparent 36%),
+radial-gradient(circle at 88% 88%, rgba(76,29,149,.22), transparent 40%),
+linear-gradient(180deg,#07060f 0%,#06050f 100%);
+box-shadow:
+0 30px 60px rgba(0,0,0,.45),
+inset 0 0 0 1px rgba(255,255,255,.03);
+overflow:hidden;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2::before{
+content:"";
+position:absolute;
+inset:0;
+background-image:
+linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+background-size:40px 40px;
+opacity:.34;
+pointer-events:none;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2::after{
+content:"";
+position:absolute;
+inset:0;
+background:linear-gradient(180deg, rgba(7,6,15,.12), rgba(7,6,15,.42));
+pointer-events:none;
+}
+
+.benditoai-v2 .benditoai-modelo-shell{
+position:relative;
+z-index:1;
+display:grid;
+grid-template-columns:1fr 1.08fr;
+gap:24px;
+align-items:stretch;
+min-height:720px;
+}
+
+.benditoai-v2 .benditoai-modelo-stage{
+border:1px solid rgba(154,109,255,.45);
+border-radius:18px;
+background:linear-gradient(180deg,#0b0a17 0%,#090814 100%);
+box-shadow:
+inset 0 0 0 1px rgba(255,255,255,.03),
+0 20px 36px rgba(0,0,0,.35);
+min-height:720px;
+}
+
+.benditoai-v2 .benditoai-modelo-stage img{
+object-fit:cover;
+filter:saturate(1.04) contrast(1.03);
+}
+
+.benditoai-v2 .benditoai-modelo-stage-placeholder{
+color:#bbb8d5;
+gap:12px;
+padding:28px;
+}
+
+.benditoai-v2 .benditoai-modelo-stage-placeholder i,
+.benditoai-v2 .benditoai-modal-stage-placeholder i{
+color:#7f5cff;
+opacity:.85;
+}
+
+.benditoai-v2 #benditoai-form-modelo-ai{
+position:relative;
+z-index:1;
+background:linear-gradient(180deg, rgba(18,16,31,.92), rgba(11,10,19,.96));
+border:1px solid rgba(139,92,246,.34);
+border-radius:18px;
+padding:20px;
+gap:14px;
+box-shadow:
+inset 0 0 0 1px rgba(255,255,255,.025),
+0 20px 36px rgba(0,0,0,.32);
+}
+
+.benditoai-v2 .benditoai-entry-actions{
+gap:14px;
+margin-bottom:2px;
+}
+
+.benditoai-v2 .benditoai-entry-action{
+background:linear-gradient(180deg,#161328 0%,#100f1d 100%);
+border:1px solid rgba(131,96,255,.36);
+border-radius:14px;
+min-height:116px;
+padding:12px;
+gap:7px;
+}
+
+.benditoai-v2 .benditoai-entry-action:hover{
+transform:translateY(-2px);
+border-color:rgba(166,137,255,.66);
+box-shadow:
+0 14px 28px rgba(0,0,0,.4),
+0 0 0 1px rgba(190,173,255,.15);
+}
+
+.benditoai-v2 .benditoai-entry-action i{
+font-size:28px;
+color:#9d7bff;
+}
+
+.benditoai-v2 .benditoai-entry-action span{
+font-size:17px;
+font-weight:700;
+font-family:"Space Grotesk","Poppins","Segoe UI",sans-serif;
+color:#f4f3ff;
+}
+
+.benditoai-v2 .benditoai-entry-action small{
+font-size:12px;
+color:#b9b3da;
+max-width:340px;
+}
+
+.benditoai-v2 label{
+font-size:14px;
+font-weight:600;
+letter-spacing:.2px;
+color:#e9e6ff;
+}
+
+.benditoai-v2 input[type="text"],
+.benditoai-v2 textarea,
+.benditoai-v2 select{
+border:1px solid rgba(132,102,250,.35);
+border-radius:12px;
+background:#0f0d1c;
+color:#f4f3ff;
+padding:12px;
+font-size:14px;
+transition:border-color .2s ease, box-shadow .2s ease;
+}
+
+.benditoai-v2 input[type="text"]::placeholder,
+.benditoai-v2 textarea::placeholder{
+color:#8f89b3;
+}
+
+.benditoai-v2 input[type="text"]:focus,
+.benditoai-v2 textarea:focus,
+.benditoai-v2 select:focus{
+outline:none;
+border-color:#8a63ff;
+box-shadow:0 0 0 3px rgba(125,81,255,.2);
+}
+
+.benditoai-v2 .benditoai-counter{
+color:#9b95c3;
+font-size:11px;
+}
+
+.benditoai-v2 .benditoai-public-row{
+padding:6px 0 2px;
+}
+
+.benditoai-v2 .benditoai-slider{
+background:#2a2448;
+border:1px solid rgba(142,116,255,.3);
+}
+
+.benditoai-v2 .benditoai-slider:before{
+background:#f2efff;
+box-shadow:0 1px 3px rgba(0,0,0,.3);
+}
+
+.benditoai-v2 .benditoai-switch input:checked + .benditoai-slider{
+background:linear-gradient(90deg,#8b5cf6,#5b2ae4);
+}
+
+.benditoai-v2 .benditoai-create-btn{
+border:1px solid transparent;
+border-radius:12px;
+background:#2c2747;
+color:#d5cfff;
+padding:14px 16px;
+font-size:17px;
+font-weight:700;
+letter-spacing:.1px;
+}
+
+.benditoai-v2 .benditoai-create-btn:not(:disabled){
+background:linear-gradient(90deg,#6d35ff 0%,#5322d7 100%);
+color:#ffffff;
+cursor:pointer;
+box-shadow:0 12px 26px rgba(67,31,175,.45);
+}
+
+.benditoai-v2 .benditoai-create-btn:not(:disabled):hover{
+transform:translateY(-1px);
+filter:brightness(1.06);
+}
+
+.benditoai-v2 .benditoai-error-message{
+color:#ffb4c5;
+font-size:13px;
+}
+
+.benditoai-v2 .benditoai-loading{
+background:#141125;
+border:1px solid rgba(132,102,250,.36);
+color:#d7d1f7;
+border-radius:12px;
+font-size:13px;
+}
+
+.benditoai-v2 .benditoai-prompt-debug{
+background:#0f0d1b;
+border:1px solid rgba(132,102,250,.34);
+border-radius:12px;
+}
+
+.benditoai-v2 .benditoai-prompt-debug label{
+color:#cfc9f0;
+}
+
+.benditoai-v2 .benditoai-prompt-debug textarea{
+background:#0a0914;
+border:1px solid rgba(132,102,250,.28);
+color:#d8d4f7;
+font-family:"JetBrains Mono","Consolas","Courier New",monospace;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-influencer-backdrop{
+background:rgba(2,2,7,.72);
+backdrop-filter:blur(5px);
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-influencer-dialog{
+background:linear-gradient(180deg,#0a0915 0%,#0b0914 100%);
+border:1px solid rgba(130,95,255,.38);
+border-radius:18px;
+box-shadow:0 30px 56px rgba(0,0,0,.52);
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-influencer-header{
+border-bottom:1px solid rgba(130,95,255,.3);
+background:linear-gradient(180deg, rgba(20,17,35,.94), rgba(15,13,27,.94));
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-influencer-header h3{
+font-size:30px;
+font-family:"Space Grotesk","Poppins","Segoe UI",sans-serif;
+color:#f7f5ff;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-close-modal{
+color:#beb7e6;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-close-modal:hover{
+color:#ffffff;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-modal-label{
+color:#cbc4ef;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-modal-stage{
+border:1px solid rgba(132,102,250,.42);
+border-radius:14px;
+background:linear-gradient(180deg,#090813 0%,#0b0a16 100%);
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-modal-stage-placeholder{
+color:#b4add7;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-select-ref-btn{
+border:1px solid transparent;
+border-radius:12px;
+background:#2d2849;
+color:#d9d4f7;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-select-ref-btn:not(:disabled){
+background:linear-gradient(90deg,#7a42ff,#5f2adf);
+color:#fff;
+box-shadow:0 10px 24px rgba(69,33,177,.45);
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-random-btn,
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-generate-btn{
+border:1px solid rgba(140,108,255,.3);
+border-radius:12px;
+background:linear-gradient(90deg,#6f39ff,#5827da);
+color:#ffffff;
+font-weight:700;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-random-btn:hover,
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-generate-btn:hover{
+filter:brightness(1.08);
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-field-title{
+color:#c7c0eb;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-gender-pill span{
+border:1px solid rgba(132,102,250,.34);
+border-radius:10px;
+background:#100e1c;
+color:#d0caee;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-gender-pill input:checked + span{
+border-color:#9f83ff;
+background:linear-gradient(180deg,#231a44 0%,#18132f 100%);
+color:#ffffff;
+box-shadow:0 0 0 2px rgba(151,121,255,.2);
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-range-head{
+color:#d3cdf1;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-modal-controls-col input[type="range"]{
+accent-color:#8255ff;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-trait-btn{
+border:1px solid rgba(132,102,250,.3);
+border-radius:10px;
+background:#110f1f;
+color:#d6d1f3;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-trait-btn.is-active{
+border-color:#a283ff;
+box-shadow:0 0 0 2px rgba(154,124,255,.2);
+background:linear-gradient(180deg,#1c1634,#141128);
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-trait-select{
+position:relative;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-trait-select-trigger{
+width:100%;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:10px;
+padding:8px 10px;
+border:1px solid rgba(132,102,250,.35);
+border-radius:12px;
+background:#0f0d1c;
+color:#ece9ff;
+cursor:pointer;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-trait-select-trigger i{
+color:#9f8ae3;
+font-size:13px;
+transition:transform .2s ease;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-trait-select.is-open .benditoai-trait-select-trigger i{
+transform:rotate(180deg);
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-trait-select-current{
+display:flex;
+align-items:center;
+gap:10px;
+font-size:14px;
+font-weight:600;
+min-width:0;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-trait-select-current span{
+overflow:hidden;
+text-overflow:ellipsis;
+white-space:nowrap;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-trait-select-current img{
+width:46px;
+height:46px;
+border-radius:8px;
+border:1px solid rgba(255,255,255,.08);
+object-fit:cover;
+flex-shrink:0;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-trait-select-menu{
+display:none;
+position:absolute;
+left:0;
+right:0;
+top:calc(100% + 8px);
+background:#100e1d;
+border:1px solid rgba(132,102,250,.38);
+border-radius:12px;
+padding:8px;
+z-index:30;
+box-shadow:0 20px 38px rgba(0,0,0,.45);
+max-height:248px;
+overflow:auto;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-trait-select.is-open .benditoai-trait-select-menu{
+display:block;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-trait-option{
+width:100%;
+display:flex;
+align-items:center;
+gap:10px;
+padding:7px;
+border:none;
+border-radius:10px;
+background:transparent;
+color:#dcd7fb;
+text-align:left;
+cursor:pointer;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-trait-option:hover{
+background:#1f1a38;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-trait-option img{
+width:44px;
+height:44px;
+border-radius:8px;
+border:1px solid rgba(255,255,255,.08);
+object-fit:cover;
+flex-shrink:0;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-trait-option span{
+font-size:13px;
+font-weight:600;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-trait-option.is-active{
+background:#261f46;
+outline:1px solid rgba(162,131,255,.5);
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-check-row label{
+color:#d0caef;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-reset-btn{
+border:1px solid rgba(132,102,250,.28);
+background:#1f1a37;
+color:#d8d2f7;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-reset-btn:hover{
+background:#28224a;
+}
+
+/* ===========================
+AI Global States (Reusable)
+=========================== */
+.benditoai-ai-preview-stage{
+position:relative;
+width:100%;
+min-height:320px;
+border:1px solid rgba(130,95,255,.35);
+border-radius:14px;
+background:linear-gradient(180deg,#090813 0%,#0b0a16 100%);
+overflow:hidden;
+}
+
+.benditoai-ai-preview-placeholder{
+width:100%;
+height:100%;
+min-height:320px;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+gap:10px;
+padding:14px;
+text-align:center;
+color:#b4add7;
+}
+
+.benditoai-ai-preview-placeholder i{
+font-size:30px;
+color:#8f6cff;
+opacity:.9;
+}
+
+.benditoai-ai-preview-placeholder span{
+font-size:15px;
+line-height:1.35;
+}
+
+.benditoai-ai-preview-stage .benditoai-image-wrapper{
+display:none;
+position:relative;
+width:100%;
+height:100%;
+min-height:320px;
+}
+
+.benditoai-ai-preview-stage .benditoai-generated-image{
+width:100%;
+height:100%;
+min-height:320px;
+object-fit:cover;
+border-radius:0;
+box-shadow:none;
+}
+
+.benditoai-ai-preview-stage .benditoai-download-btn{
+position:absolute;
+top:10px;
+right:10px;
+z-index:2;
+}
+
+.benditoai-resultado-preview.benditoai-ai-preview-stage{
+padding:0 !important;
+display:block;
+align-items:stretch;
+justify-content:stretch;
+background:linear-gradient(180deg,#090813 0%,#0b0a16 100%);
+}
+
+.benditoai-ai-state{
+width:100%;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+gap:10px;
+text-align:center;
+padding:16px;
+}
+
+.benditoai-ai-state__lines{
+width:min(320px,92%);
+display:flex;
+flex-direction:column;
+gap:8px;
+}
+
+.benditoai-ai-state__label{
+margin:0;
+font-size:13px;
+font-weight:600;
+color:#a9a3cc;
+}
+
+.benditoai-ai-state__title{
+margin:0;
+font-size:16px;
+font-weight:700;
+color:#f4f2ff;
+}
+
+.benditoai-ai-state__message{
+margin:0;
+font-size:13px;
+line-height:1.45;
+color:#d6d0f6;
+max-width:42ch;
+}
+
+.benditoai-ai-state--error i{
+font-size:30px;
+color:#ff8ab1;
+}
+
+.benditoai-skeleton{
+display:block;
+position:relative;
+overflow:hidden;
+border-radius:10px;
+background:linear-gradient(90deg,#171428 12%,#2d2347 52%,#171428 88%);
+background-size:200% 100%;
+animation:benditoaiSkeletonShimmer 1.25s linear infinite;
+height:12px;
+}
+
+.benditoai-skeleton--short{
+width:68%;
+}
+
+.benditoai-skeleton--media{
+width:100%;
+height:100%;
+max-height:none;
+border-radius:0;
+}
+
+@keyframes benditoaiSkeletonShimmer{
+0%{background-position:200% 0;}
+100%{background-position:-200% 0;}
+}
+
+.benditoai-modal-stage-placeholder.is-loading,
+.benditoai-modal-stage-placeholder.is-error{
+width:100%;
+height:100%;
+padding:14px;
+justify-content:center;
+}
+
+.benditoai-modal-stage-placeholder.is-loading{
+padding:0;
+}
+
+.benditoai-modal-stage-placeholder.is-loading .benditoai-ai-state{
+height:100%;
+padding:0;
+gap:0;
+}
+
+.benditoai-modal-stage-placeholder.is-loading .benditoai-ai-state__lines,
+.benditoai-modal-stage-placeholder.is-loading .benditoai-ai-state__label{
+display:none;
+}
+
+.benditoai-modal-stage-placeholder.is-error{
+color:#d8d2f7;
+}
+
+.benditoai-ai-preview-placeholder.is-loading,
+.benditoai-ai-preview-placeholder.is-error{
+padding:0;
+}
+
+.benditoai-ai-preview-placeholder.is-loading .benditoai-ai-state,
+.benditoai-ai-preview-placeholder.is-error .benditoai-ai-state{
+height:100%;
+padding:0;
+}
+
+@keyframes benditoaiGlowIn{
+0%{
+opacity:0;
+transform:translateY(10px);
+}
+100%{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-modelo-stage,
+.benditoai-wrapper-modelos.benditoai-v2 #benditoai-form-modelo-ai{
+animation:benditoaiGlowIn .45s ease both;
+}
+
+@media (max-width: 1180px){
+.benditoai-wrapper-modelos.benditoai-v2{
+padding:12px;
+border-radius:18px;
+}
+
+.benditoai-v2 .benditoai-modelo-shell{
+gap:16px;
+}
+
+.benditoai-v2 .benditoai-modelo-stage{
+min-height:420px;
+}
+
+.benditoai-v2 .benditoai-entry-actions{
+grid-template-columns:1fr;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-influencer-header h3{
+font-size:23px;
+}
+}
+
+@media (max-width: 900px){
+.benditoai-wrapper-modelos.benditoai-v2{
+margin:12px auto;
+padding:10px;
+border-radius:14px;
+}
+
+.benditoai-v2 .benditoai-modelo-shell{
+grid-template-columns:1fr;
+gap:12px;
+min-height:0;
+}
+
+.benditoai-v2 #benditoai-form-modelo-ai{
+order:1;
+padding:14px;
+gap:12px;
+}
+
+.benditoai-v2 .benditoai-modelo-stage{
+order:2;
+min-height:260px;
+max-height:46vh;
+}
+
+.benditoai-v2 .benditoai-entry-action{
+min-height:88px;
+padding:10px;
+}
+
+.benditoai-v2 .benditoai-entry-action span{
+font-size:15px;
+}
+
+.benditoai-v2 .benditoai-entry-action small{
+font-size:11px;
+}
+
+.benditoai-v2 input[type="text"],
+.benditoai-v2 textarea,
+.benditoai-v2 select{
+font-size:16px;
+padding:11px;
+}
+
+.benditoai-v2 textarea{
+min-height:82px;
+}
+
+.benditoai-v2 .benditoai-create-btn{
+min-height:52px;
+font-size:16px;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-influencer-dialog{
+width:100%;
+height:100dvh;
+margin:0;
+border-radius:0;
+border-left:none;
+border-right:none;
+overflow-y:auto;
+overflow-x:hidden;
+-webkit-overflow-scrolling:touch;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-influencer-header{
+position:static;
+top:auto;
+z-index:auto;
+padding:12px;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-influencer-header h3{
+font-size:20px;
+line-height:1.15;
+}
+
+.benditoai-influencer-body{
+display:flex;
+flex-direction:column;
+gap:12px;
+padding:12px;
+overflow:visible;
+min-height:auto;
+}
+
+.benditoai-modal-preview-col{
+order:2;
+position:static;
+overflow:visible;
+min-height:auto;
+}
+
+.benditoai-modal-controls-col{
+order:1;
+position:relative;
+padding-right:0;
+padding-bottom:12px;
+overflow:visible;
+min-height:auto;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-modal-stage{
+height:240px;
+min-height:240px;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-select-ref-btn{
+min-height:48px;
+font-size:15px;
+margin-bottom:2px;
+}
+
+.benditoai-two-cols{
+grid-template-columns:1fr;
+gap:10px;
+}
+
+.benditoai-gender-row{
+grid-template-columns:1fr 1fr 1fr;
+gap:8px;
+}
+
+.benditoai-gender-pill span{
+min-height:42px;
+font-size:13px;
+}
+
+.benditoai-check-row{
+grid-template-columns:1fr 1fr;
+gap:8px;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-check-row label{
+font-size:12px;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-trait-select-trigger{
+min-height:56px;
+padding:8px;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-trait-select-current{
+font-size:13px;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-trait-select-current img{
+width:40px;
+height:40px;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-trait-select-menu{
+max-height:44vh;
+padding:6px;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-trait-option{
+min-height:52px;
+padding:7px;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-trait-option img{
+width:38px;
+height:38px;
+}
+
+.benditoai-modal-actions{
+position:static;
+bottom:auto;
+padding:0;
+margin-top:10px;
+background:transparent;
+border-top:none;
+z-index:auto;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-reset-btn,
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-generate-btn{
+min-height:48px;
+font-size:14px;
+}
+
+.benditoai-ai-preview-stage,
+.benditoai-ai-preview-placeholder,
+.benditoai-ai-preview-stage .benditoai-image-wrapper,
+.benditoai-ai-preview-stage .benditoai-generated-image{
+min-height:240px;
+}
+}
+
+@media (max-width: 560px){
+.benditoai-wrapper-modelos.benditoai-v2{
+padding:8px;
+border-radius:12px;
+}
+
+.benditoai-v2 #benditoai-form-modelo-ai{
+padding:12px;
+border-radius:14px;
+}
+
+.benditoai-v2 .benditoai-modelo-stage{
+min-height:210px;
+max-height:36vh;
+border-radius:12px;
+}
+
+.benditoai-v2 .benditoai-modelo-stage-placeholder{
+font-size:13px;
+gap:8px;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-influencer-header{
+padding:10px 12px;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-influencer-header h3{
+font-size:18px;
+}
+
+.benditoai-influencer-body{
+padding:10px;
+gap:10px;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-modal-stage{
+height:200px;
+min-height:200px;
+}
+
+.benditoai-gender-row{
+grid-template-columns:1fr;
+}
+
+.benditoai-check-row{
+grid-template-columns:1fr;
+}
+
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-trait-select-trigger{
+min-height:52px;
+}
+
+.benditoai-ai-preview-stage,
+.benditoai-ai-preview-placeholder,
+.benditoai-ai-preview-stage .benditoai-image-wrapper,
+.benditoai-ai-preview-stage .benditoai-generated-image{
+min-height:200px;
+}
+}
+/* Modelos AI wizard refresh */
+.benditoai-wrapper-modelos.benditoai-v2{
+--bendito-bg:#060312;
+--bendito-panel:#0f0a24;
+--bendito-panel-soft:#141033;
+--bendito-line:rgba(129,93,255,.28);
+--bendito-text:#eceaff;
+--bendito-muted:#b7b1d8;
+--bendito-accent:#7c3aed;
+--bendito-accent-soft:#a78bfa;
+}
+
+.benditoai-v2 .benditoai-influencer-dialog{
+background:linear-gradient(180deg,rgba(11,8,27,.98),rgba(10,7,23,.98));
+border:1px solid var(--bendito-line);
+border-radius:20px;
+}
+
+.benditoai-v2 .benditoai-influencer-header{
+border-bottom:1px solid rgba(129,93,255,.2);
+}
+
+.benditoai-v2 .benditoai-influencer-header h3{
+font-family:"Outfit","Poppins","Segoe UI",sans-serif;
+letter-spacing:.2px;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col{
+background:rgba(12,10,31,.82);
+border:1px solid rgba(129,93,255,.22);
+border-radius:14px;
+padding:14px;
+}
+
+.benditoai-v2 .benditoai-generator-steps{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:8px;
+margin-bottom:14px;
+}
+
+.benditoai-v2 .benditoai-generator-step{
+min-height:36px;
+border:1px solid rgba(129,93,255,.24);
+border-radius:10px;
+background:rgba(21,16,46,.75);
+color:var(--bendito-muted);
+font-size:13px;
+font-weight:600;
+cursor:pointer;
+transition:all .2s ease;
+}
+
+.benditoai-v2 .benditoai-generator-step:hover{
+color:#f1efff;
+border-color:rgba(167,139,250,.5);
+}
+
+.benditoai-v2 .benditoai-generator-step.is-active{
+color:#fff;
+background:linear-gradient(90deg,var(--bendito-accent),#5b2ae4);
+border-color:transparent;
+box-shadow:0 8px 18px rgba(91,42,228,.35);
+}
+
+.benditoai-v2 .benditoai-generator-panel{
+display:none;
+}
+
+.benditoai-v2 .benditoai-generator-panel.is-active{
+display:block;
+animation:benditoaiFadeStep .24s ease;
+}
+
+@keyframes benditoaiFadeStep{
+from{opacity:0;transform:translateY(6px);} to{opacity:1;transform:translateY(0);} 
+}
+
+.benditoai-v2 .benditoai-generator-step-actions{
+display:flex;
+justify-content:flex-end;
+gap:8px;
+margin-top:12px;
+}
+
+.benditoai-v2 .benditoai-step-nav-btn{
+min-height:38px;
+padding:0 14px;
+border-radius:10px;
+border:1px solid rgba(129,93,255,.28);
+background:#191237;
+color:#ddd8fb;
+font-size:13px;
+font-weight:600;
+cursor:pointer;
+}
+
+.benditoai-v2 .benditoai-step-next{
+background:linear-gradient(90deg,var(--bendito-accent),#5b2ae4);
+border-color:transparent;
+color:#fff;
+}
+
+.benditoai-v2 .benditoai-field-block,
+.benditoai-v2 .benditoai-two-cols,
+.benditoai-v2 .benditoai-check-row{
+margin-bottom:10px;
+}
+
+.benditoai-v2 .benditoai-modal-actions{
+margin-top:10px;
+border-top:1px solid rgba(129,93,255,.2);
+padding-top:12px;
+}
+
+.benditoai-v2 .benditoai-modal-label,
+.benditoai-v2 .benditoai-field-title,
+.benditoai-v2 .benditoai-check-row label{
+color:#d3cdf5;
+}
+
+@media (max-width:900px){
+.benditoai-v2 .benditoai-generator-steps{grid-template-columns:1fr;}
+.benditoai-v2 .benditoai-generator-step-actions{justify-content:space-between;}
+}
+/* Modelos AI beauty polish */
+.benditoai-v2 .benditoai-modelos-hero{
+position:relative;
+z-index:1;
+text-align:center;
+max-width:840px;
+margin:0 auto 20px;
+padding:8px 12px 2px;
+}
+
+.benditoai-v2 .benditoai-modelos-pill{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+padding:8px 16px;
+border-radius:999px;
+border:1px solid rgba(124,58,237,.45);
+background:rgba(46,16,101,.35);
+color:#d8cbff;
+font-size:12px;
+letter-spacing:.2px;
+margin:0 0 14px;
+}
+
+.benditoai-v2 .benditoai-modelos-hero h2{
+margin:0 0 8px;
+font-size:clamp(30px,5vw,52px);
+line-height:1.04;
+font-weight:800;
+font-family:"Outfit","Poppins","Segoe UI",sans-serif;
+color:#f6f4ff;
+}
+
+.benditoai-v2 .benditoai-modelos-hero p{
+margin:0;
+color:#b8b2d7;
+font-size:16px;
+line-height:1.55;
+}
+
+.benditoai-v2 #benditoai-form-modelo-ai{
+gap:16px;
+}
+
+.benditoai-v2 .benditoai-form-card{
+background:linear-gradient(180deg,rgba(17,13,37,.86),rgba(13,11,29,.88));
+border:1px solid rgba(124,58,237,.26);
+border-radius:14px;
+padding:14px;
+}
+
+.benditoai-v2 .benditoai-form-card-title{
+margin:0 0 10px;
+font-size:13px;
+text-transform:uppercase;
+letter-spacing:.35px;
+font-weight:700;
+color:#cfc5ff;
+}
+
+.benditoai-v2 .benditoai-public-row{
+margin-top:8px;
+padding-top:10px;
+border-top:1px solid rgba(124,58,237,.2);
+}
+
+.benditoai-v2 .benditoai-create-btn{
+min-height:54px;
+border-radius:12px;
+}
+
+.benditoai-v2 .benditoai-influencer-subtitle{
+margin:6px 0 0;
+font-size:13px;
+line-height:1.4;
+color:#aea6d2;
+}
+
+@media (max-width:900px){
+.benditoai-v2 .benditoai-modelos-hero{margin-bottom:14px;}
+.benditoai-v2 .benditoai-modelos-hero p{font-size:14px;}
+.benditoai-v2 .benditoai-form-card{padding:12px;}
+}
+/* Modelos AI calm UX tune */
+.benditoai-v2 .benditoai-modelos-hero{
+max-width:760px;
+margin:0 auto 14px;
+padding:4px 8px 0;
+}
+
+.benditoai-v2 .benditoai-modelos-pill{
+padding:6px 12px;
+font-size:11px;
+font-weight:500;
+border-color:rgba(124,58,237,.35);
+background:rgba(46,16,101,.2);
+margin-bottom:10px;
+}
+
+.benditoai-v2 .benditoai-modelos-hero h2{
+font-size:clamp(28px,4.2vw,44px);
+line-height:1.1;
+font-weight:700;
+letter-spacing:-.3px;
+margin-bottom:6px;
+}
+
+.benditoai-v2 .benditoai-modelos-hero p{
+font-size:15px;
+line-height:1.5;
+color:#aca5ce;
+max-width:64ch;
+margin:0 auto;
+}
+
+.benditoai-v2 .benditoai-modelo-shell{
+gap:16px;
+}
+
+.benditoai-v2 #benditoai-form-modelo-ai{
+gap:12px;
+padding:12px;
+border-color:rgba(124,58,237,.2);
+background:linear-gradient(180deg,rgba(13,10,29,.9),rgba(10,8,22,.9));
+}
+
+.benditoai-v2 .benditoai-form-card{
+background:rgba(16,13,36,.45);
+border:1px solid rgba(124,58,237,.16);
+border-radius:12px;
+padding:10px;
+}
+
+.benditoai-v2 .benditoai-form-card-title{
+font-size:11px;
+letter-spacing:.28px;
+font-weight:600;
+color:#b9b0df;
+margin-bottom:8px;
+}
+
+.benditoai-v2 .benditoai-entry-actions{
+gap:10px;
+}
+
+.benditoai-v2 .benditoai-entry-action{
+min-height:88px;
+border-radius:12px;
+padding:10px;
+background:rgba(17,13,38,.55);
+}
+
+.benditoai-v2 .benditoai-entry-action i{
+font-size:22px;
+}
+
+.benditoai-v2 .benditoai-entry-action span{
+font-size:15px;
+font-weight:600;
+}
+
+.benditoai-v2 .benditoai-entry-action small{
+font-size:12px;
+line-height:1.35;
+}
+
+.benditoai-v2 label{
+font-size:13px;
+font-weight:500;
+color:#d9d4f4;
+}
+
+.benditoai-v2 input[type="text"],
+.benditoai-v2 textarea,
+.benditoai-v2 select{
+font-size:14px;
+border-radius:10px;
+padding:10px 11px;
+}
+
+.benditoai-v2 .benditoai-counter{
+font-size:10px;
+opacity:.82;
+}
+
+.benditoai-v2 .benditoai-public-row{
+margin-top:6px;
+padding-top:8px;
+}
+
+.benditoai-v2 .benditoai-create-btn{
+min-height:48px;
+font-size:15px;
+font-weight:600;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col{
+padding:10px;
+border-radius:12px;
+background:rgba(12,10,31,.66);
+border-color:rgba(124,58,237,.18);
+}
+
+.benditoai-v2 .benditoai-generator-steps{
+gap:6px;
+margin-bottom:10px;
+}
+
+.benditoai-v2 .benditoai-generator-step{
+min-height:32px;
+font-size:12px;
+font-weight:500;
+border-radius:8px;
+}
+
+.benditoai-v2 .benditoai-generator-step.is-active{
+box-shadow:0 4px 12px rgba(91,42,228,.28);
+}
+
+.benditoai-v2 .benditoai-field-block,
+.benditoai-v2 .benditoai-two-cols,
+.benditoai-v2 .benditoai-check-row{
+margin-bottom:8px;
+}
+
+.benditoai-v2 .benditoai-step-nav-btn{
+min-height:34px;
+font-size:12px;
+font-weight:500;
+border-radius:8px;
+padding:0 11px;
+}
+
+.benditoai-v2 .benditoai-modal-actions{
+margin-top:8px;
+padding-top:10px;
+}
+
+.benditoai-v2 .benditoai-random-btn,
+.benditoai-v2 .benditoai-reset-btn,
+.benditoai-v2 .benditoai-generate-btn,
+.benditoai-v2 .benditoai-select-ref-btn{
+font-weight:600;
+}
+
+.benditoai-v2 .benditoai-influencer-header h3{
+font-size:24px;
+font-weight:700;
+}
+
+.benditoai-v2 .benditoai-influencer-subtitle{
+font-size:12px;
+color:#a79fcf;
+}
+
+@media (max-width:900px){
+.benditoai-v2 .benditoai-modelos-hero h2{font-size:clamp(24px,7vw,34px);} 
+.benditoai-v2 .benditoai-modelos-hero p{font-size:14px;} 
+.benditoai-v2 .benditoai-entry-action{min-height:80px;} 
+}
+/* Modelos AI ultra clean - remove box-in-box */
+.benditoai-v2 #benditoai-form-modelo-ai{
+background:transparent !important;
+border:none !important;
+box-shadow:none !important;
+padding:8px 0 !important;
+}
+
+.benditoai-v2 .benditoai-form-card,
+.benditoai-v2 .benditoai-generator-panel,
+.benditoai-v2 .benditoai-modal-controls-col,
+.benditoai-v2 .benditoai-modal-preview-col,
+.benditoai-v2 .benditoai-entry-action,
+.benditoai-v2 .benditoai-trait-select-trigger,
+.benditoai-v2 .benditoai-trait-select-menu{
+background:transparent !important;
+border:none !important;
+box-shadow:none !important;
+}
+
+.benditoai-v2 .benditoai-form-card{
+padding:0 0 14px !important;
+margin:0 0 14px !important;
+border-bottom:1px solid rgba(124,58,237,.14) !important;
+border-radius:0 !important;
+}
+
+.benditoai-v2 .benditoai-form-card:last-of-type{
+border-bottom:none !important;
+margin-bottom:8px !important;
+}
+
+.benditoai-v2 .benditoai-form-card-title{
+font-size:11px !important;
+font-weight:500 !important;
+letter-spacing:.2px !important;
+opacity:.86;
+margin-bottom:8px !important;
+}
+
+.benditoai-v2 .benditoai-entry-actions{
+gap:8px !important;
+}
+
+.benditoai-v2 .benditoai-entry-action{
+padding:8px 2px !important;
+min-height:auto !important;
+}
+
+.benditoai-v2 .benditoai-entry-action span{
+font-size:14px !important;
+font-weight:600 !important;
+}
+
+.benditoai-v2 .benditoai-entry-action small{
+font-size:11px !important;
+opacity:.85;
+}
+
+.benditoai-v2 .benditoai-generator-steps{
+border-bottom:1px solid rgba(124,58,237,.16);
+padding-bottom:8px;
+margin-bottom:10px !important;
+}
+
+.benditoai-v2 .benditoai-generator-step{
+background:transparent !important;
+border:none !important;
+box-shadow:none !important;
+font-size:12px !important;
+font-weight:500 !important;
+opacity:.72;
+}
+
+.benditoai-v2 .benditoai-generator-step.is-active{
+opacity:1;
+text-decoration:underline;
+text-underline-offset:5px;
+}
+
+.benditoai-v2 .benditoai-field-block,
+.benditoai-v2 .benditoai-two-cols,
+.benditoai-v2 .benditoai-check-row{
+margin-bottom:6px !important;
+}
+
+.benditoai-v2 input[type="text"],
+.benditoai-v2 textarea,
+.benditoai-v2 select{
+background:rgba(255,255,255,.03) !important;
+border:1px solid rgba(124,58,237,.18) !important;
+}
+
+.benditoai-v2 .benditoai-influencer-body{
+gap:12px !important;
+}
+
+.benditoai-v2 .benditoai-modal-actions{
+border-top:1px solid rgba(124,58,237,.14) !important;
+padding-top:8px !important;
+}
+/* Distinct CTA buttons for reference actions */
+.benditoai-v2 .benditoai-entry-actions{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.benditoai-v2 #benditoai-upload-trigger,
+.benditoai-v2 #benditoai-open-generator{
+display:flex !important;
+flex-direction:column;
+align-items:flex-start;
+justify-content:center;
+text-align:left;
+min-height:96px;
+padding:12px 14px !important;
+border-radius:12px;
+cursor:pointer;
+transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+}
+
+.benditoai-v2 #benditoai-upload-trigger{
+background:rgba(255,255,255,.03) !important;
+border:1px solid rgba(148,163,184,.28) !important;
+box-shadow:0 4px 12px rgba(0,0,0,.12);
+}
+
+.benditoai-v2 #benditoai-upload-trigger i{color:#cbd5e1;}
+
+.benditoai-v2 #benditoai-open-generator{
+background:linear-gradient(135deg,rgba(124,58,237,.28),rgba(91,42,228,.22)) !important;
+border:1px solid rgba(167,139,250,.45) !important;
+box-shadow:0 8px 20px rgba(91,42,228,.24);
+}
+
+.benditoai-v2 #benditoai-open-generator i{color:#c4b5fd;}
+
+.benditoai-v2 #benditoai-upload-trigger:hover{
+transform:translateY(-1px);
+background:rgba(255,255,255,.05) !important;
+border-color:rgba(203,213,225,.45) !important;
+box-shadow:0 8px 18px rgba(0,0,0,.2);
+}
+
+.benditoai-v2 #benditoai-open-generator:hover{
+transform:translateY(-1px);
+background:linear-gradient(135deg,rgba(124,58,237,.42),rgba(91,42,228,.34)) !important;
+border-color:rgba(196,181,253,.72) !important;
+box-shadow:0 12px 24px rgba(91,42,228,.32);
+}
+
+.benditoai-v2 #benditoai-upload-trigger span,
+.benditoai-v2 #benditoai-open-generator span{
+font-size:15px !important;
+font-weight:700 !important;
+line-height:1.2;
+}
+
+.benditoai-v2 #benditoai-upload-trigger small,
+.benditoai-v2 #benditoai-open-generator small{
+font-size:12px !important;
+line-height:1.35;
+opacity:.9;
+margin-top:4px;
+}
+
+@media (max-width:900px){
+.benditoai-v2 .benditoai-entry-actions{grid-template-columns:1fr;}
+.benditoai-v2 #benditoai-upload-trigger,
+.benditoai-v2 #benditoai-open-generator{min-height:88px;}
+}
+/* Modelos AI final cleanup */
+.benditoai-v2 .benditoai-modelos-pill{display:none !important;}
+
+.benditoai-v2 .benditoai-modelos-hero h2{
+font-family:inherit !important;
+font-size:clamp(24px,3.2vw,34px) !important;
+font-weight:600 !important;
+letter-spacing:0 !important;
+}
+
+.benditoai-v2 .benditoai-modelos-hero p{
+font-family:inherit !important;
+}
+
+.benditoai-v2 .benditoai-influencer-header h3,
+.benditoai-v2 .benditoai-influencer-subtitle{
+font-family:inherit !important;
+}
+
+.benditoai-v2 .benditoai-influencer-dialog{
+width:min(1080px, calc(100vw - 56px)) !important;
+max-height:calc(100vh - 56px) !important;
+margin:28px auto !important;
+border-radius:16px !important;
+overflow:hidden !important;
+}
+
+.benditoai-influencer-body{
+max-height:calc(100vh - 170px) !important;
+overflow:auto !important;
+}
+
+@media (max-width:900px){
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-influencer-dialog{
+width:calc(100vw - 18px) !important;
+max-height:calc(100vh - 18px) !important;
+height:auto !important;
+margin:9px auto !important;
+border-radius:12px !important;
+}
+
+.benditoai-influencer-body{
+max-height:calc(100vh - 136px) !important;
+}
+}
+
+.benditoai-v2 .benditoai-generate-btn.is-locked,
+.benditoai-v2 .benditoai-generate-btn:disabled{
+opacity:.5 !important;
+filter:saturate(.7);
+cursor:not-allowed !important;
+box-shadow:none !important;
+}
+/* Modelos AI modal minimalist final */
+.benditoai-v2 .benditoai-influencer-backdrop{
+background:rgba(6,5,14,.55) !important;
+backdrop-filter:blur(2px);
+}
+
+.benditoai-v2 .benditoai-influencer-dialog{
+width:min(940px, calc(100vw - 64px)) !important;
+max-height:calc(100vh - 64px) !important;
+margin:32px auto !important;
+border-radius:14px !important;
+border:1px solid rgba(124,58,237,.2) !important;
+box-shadow:0 10px 28px rgba(0,0,0,.28) !important;
+overflow:hidden !important;
+}
+
+.benditoai-v2 .benditoai-influencer-header{
+padding:12px 14px !important;
+}
+
+.benditoai-v2 .benditoai-close-modal{
+font-size:22px;
+line-height:1;
+font-weight:400;
+width:28px;
+height:28px;
+border:none;
+background:transparent;
+color:#d8d2f5;
+}
+
+.benditoai-v2 .benditoai-influencer-body{
+gap:10px !important;
+padding:12px !important;
+min-height:0 !important;
+max-height:calc(100vh - 150px) !important;
+overflow-y:auto !important;
+overflow-x:hidden !important;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col{
+overflow:visible !important;
+padding:8px !important;
+}
+
+.benditoai-v2 .benditoai-generator-steps{
+display:flex !important;
+gap:8px;
+padding-bottom:6px;
+margin-bottom:8px !important;
+}
+
+.benditoai-v2 .benditoai-generator-step{
+display:inline-flex;
+align-items:center;
+gap:6px;
+min-height:28px;
+padding:0 8px;
+font-size:11px !important;
+font-weight:500 !important;
+opacity:.82;
+}
+
+.benditoai-v2 .benditoai-generator-step span{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+width:16px;
+height:16px;
+border-radius:50%;
+border:1px solid rgba(167,139,250,.38);
+font-size:10px;
+}
+
+.benditoai-v2 .benditoai-generator-step.is-active{
+text-decoration:none !important;
+opacity:1;
+color:#f3f1ff;
+}
+
+.benditoai-v2 .benditoai-generator-step.is-active span{
+background:rgba(124,58,237,.55);
+border-color:transparent;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col input[type="range"]{
+height:2px !important;
+accent-color:#8b5cf6;
+}
+
+.benditoai-v2 .benditoai-range-head strong,
+.benditoai-v2 .benditoai-range-head span{
+font-size:12px !important;
+font-weight:500 !important;
+}
+
+.benditoai-v2 .benditoai-trait-select-trigger{
+border:1px solid rgba(124,58,237,.18) !important;
+border-radius:8px !important;
+background:rgba(255,255,255,.02) !important;
+padding:6px 8px !important;
+}
+
+.benditoai-v2 .benditoai-trait-select-menu{
+border:1px solid rgba(124,58,237,.2) !important;
+border-radius:10px !important;
+background:rgba(16,13,32,.96) !important;
+box-shadow:0 8px 22px rgba(0,0,0,.3) !important;
+}
+
+.benditoai-v2 .benditoai-step-nav-btn{
+min-height:30px !important;
+padding:0 10px !important;
+font-size:11px !important;
+font-weight:500 !important;
+border:1px solid rgba(124,58,237,.28) !important;
+border-radius:8px !important;
+}
+
+.benditoai-v2 .benditoai-step-next{
+background:rgba(124,58,237,.18) !important;
+}
+
+.benditoai-v2 .benditoai-step-next.is-nudge{
+outline:1px solid rgba(196,181,253,.8);
+box-shadow:0 0 0 3px rgba(124,58,237,.18);
+}
+
+.benditoai-v2 .benditoai-generate-btn.is-locked{
+opacity:.45 !important;
+}
+
+@media (max-width:900px){
+.benditoai-v2 .benditoai-influencer-dialog{
+width:calc(100vw - 18px) !important;
+max-height:calc(100vh - 18px) !important;
+margin:9px auto !important;
+}
+.benditoai-v2 .benditoai-influencer-body{max-height:calc(100vh - 126px) !important;}
+}
+/* Modal + sliders hard reset (clean) */
+.benditoai-v2 .benditoai-influencer-backdrop{
+background:rgba(4,4,10,.5) !important;
+backdrop-filter:none !important;
+}
+
+.benditoai-v2 .benditoai-influencer-dialog,
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-influencer-dialog{
+width:calc(100vw - 20px) !important;
+max-width:none !important;
+height:calc(100vh - 20px) !important;
+max-height:none !important;
+margin:10px auto !important;
+border-radius:14px !important;
+border:1px solid rgba(124,58,237,.24) !important;
+box-shadow:none !important;
+}
+
+.benditoai-v2 .benditoai-influencer-body{
+max-height:none !important;
+height:calc(100vh - 96px) !important;
+overflow:auto !important;
+}
+
+/* Remove all residual shadows in modal */
+.benditoai-v2 .benditoai-influencer-dialog *,
+.benditoai-v2 .benditoai-influencer-dialog *::before,
+.benditoai-v2 .benditoai-influencer-dialog *::after{
+box-shadow:none !important;
+text-shadow:none !important;
+}
+
+/* Minimal range sliders */
+.benditoai-v2 .benditoai-modal-controls-col input[type="range"]{
+-webkit-appearance:none !important;
+appearance:none !important;
+width:100%;
+height:4px !important;
+border-radius:999px;
+background:rgba(255,255,255,.18) !important;
+outline:none;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col input[type="range"]::-webkit-slider-runnable-track{
+height:4px;
+border-radius:999px;
+background:rgba(255,255,255,.18);
+}
+
+.benditoai-v2 .benditoai-modal-controls-col input[type="range"]::-webkit-slider-thumb{
+-webkit-appearance:none;
+width:14px;
+height:14px;
+border-radius:50%;
+background:#7c3aed;
+border:0;
+margin-top:-5px;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col input[type="range"]::-moz-range-track{
+height:4px;
+border:0;
+border-radius:999px;
+background:rgba(255,255,255,.18);
+}
+
+.benditoai-v2 .benditoai-modal-controls-col input[type="range"]::-moz-range-thumb{
+width:14px;
+height:14px;
+border-radius:50%;
+border:0;
+background:#7c3aed;
+}
+
+.benditoai-v2 .benditoai-range-head{
+margin-bottom:6px;
+}
+
+.benditoai-v2 .benditoai-range-head span,
+.benditoai-v2 .benditoai-range-head strong{
+font-size:12px !important;
+font-weight:500 !important;
+}
+
+@media (max-width:900px){
+.benditoai-v2 .benditoai-influencer-dialog,
+.benditoai-wrapper-modelos.benditoai-v2 .benditoai-influencer-dialog{
+width:calc(100vw - 8px) !important;
+height:calc(100vh - 8px) !important;
+margin:4px auto !important;
+border-radius:10px !important;
+}
+}
+/* UX hierarchy pass: steps + next button + simple sliders */
+.benditoai-v2 .benditoai-generator-steps{
+display:grid !important;
+grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+gap:8px !important;
+width:100%;
+}
+
+.benditoai-v2 .benditoai-generator-step{
+width:100%;
+display:flex !important;
+align-items:center;
+justify-content:flex-start;
+gap:8px;
+padding:0 10px;
+min-height:34px;
+border-radius:10px;
+border:1px solid rgba(124,58,237,.22) !important;
+background:rgba(255,255,255,.02) !important;
+}
+
+.benditoai-v2 .benditoai-generator-step span{
+width:18px;
+height:18px;
+display:inline-flex;
+align-items:center;
+justify-content:center;
+font-size:10px;
+font-weight:600;
+}
+
+.benditoai-v2 .benditoai-generator-step.is-active{
+background:rgba(124,58,237,.16) !important;
+border-color:rgba(167,139,250,.45) !important;
+}
+
+/* Next button hierarchy */
+.benditoai-v2 .benditoai-generator-step-actions{
+width:100%;
+}
+
+.benditoai-v2 .benditoai-step-next{
+width:100% !important;
+min-height:38px !important;
+justify-content:center;
+display:inline-flex;
+align-items:center;
+font-size:12px !important;
+font-weight:600 !important;
+background:rgba(124,58,237,.26) !important;
+border:1px solid rgba(167,139,250,.55) !important;
+color:#f6f3ff;
+}
+
+.benditoai-v2 .benditoai-step-prev{
+min-height:32px !important;
+font-size:11px !important;
+opacity:.9;
+}
+
+/* Simple one-color sliders */
+.benditoai-v2 .benditoai-modal-controls-col input[type="range"],
+.benditoai-v2 .benditoai-modal-controls-col input[type="range"]::-webkit-slider-runnable-track,
+.benditoai-v2 .benditoai-modal-controls-col input[type="range"]::-moz-range-track{
+background:#8b8fa3 !important;
+height:3px !important;
+border-radius:999px;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col input[type="range"]::-webkit-slider-thumb,
+.benditoai-v2 .benditoai-modal-controls-col input[type="range"]::-moz-range-thumb{
+width:12px !important;
+height:12px !important;
+border-radius:50% !important;
+background:#d8dbe7 !important;
+border:0 !important;
+}
+
+@media (max-width:900px){
+.benditoai-v2 .benditoai-generator-step{
+min-height:32px;
+font-size:11px !important;
+}
+}
+/* Focus mode when trait select is open */
+.benditoai-v2 .benditoai-modal-controls-col{
+position:relative;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col::before{
+content:"";
+position:absolute;
+inset:0;
+background:rgba(6,6,14,0);
+transition:background .2s ease;
+pointer-events:none;
+border-radius:inherit;
+z-index:1;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col.has-open-select::before{
+background:rgba(6,6,14,.34);
+}
+
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select,
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select.is-open{
+position:relative;
+z-index:3;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select-menu{
+z-index:5 !important;
+}
+/* Fix: trait dropdown + native selects visual consistency */
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select-trigger{
+background:rgba(15,12,28,.92) !important;
+border:1px solid rgba(124,58,237,.34) !important;
+border-radius:10px !important;
+color:#e9e6fb !important;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select-menu{
+background:rgba(14,11,27,.98) !important;
+border:1px solid rgba(124,58,237,.38) !important;
+border-radius:10px !important;
+box-shadow:none !important;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-option{
+border-radius:8px;
+color:#ddd8f5;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-option:hover{
+background:rgba(124,58,237,.14) !important;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-option.is-active{
+background:rgba(124,58,237,.24) !important;
+outline:none !important;
+}
+
+/* Native selects (países) styled like trait selects */
+.benditoai-v2 .benditoai-modal-controls-col select,
+.benditoai-v2 #benditoai-form-modelo-ai select{
+-webkit-appearance:none;
+appearance:none;
+background-color:rgba(15,12,28,.92) !important;
+border:1px solid rgba(124,58,237,.34) !important;
+border-radius:10px !important;
+color:#ece9ff !important;
+padding:10px 34px 10px 10px !important;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7L10 12L15 7' stroke='%23c4b5fd' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+background-repeat:no-repeat !important;
+background-position:right 10px center !important;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col select:focus,
+.benditoai-v2 #benditoai-form-modelo-ai select:focus{
+outline:none;
+border-color:rgba(167,139,250,.65) !important;
+}
+
+/* Ensure option list is readable */
+.benditoai-v2 .benditoai-modal-controls-col select option,
+.benditoai-v2 #benditoai-form-modelo-ai select option{
+background:#120f23;
+color:#ece9ff;
+}
+/* Fix z-index stacking for trait dropdowns */
+.benditoai-v2 .benditoai-modal-controls-col{
+position:relative;
+isolation:isolate;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-generator-panel{
+position:relative;
+z-index:1;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-field-block,
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-two-cols{
+position:relative;
+z-index:1;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select{
+position:relative;
+z-index:2;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select.is-open{
+z-index:40 !important;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select-menu{
+position:absolute;
+z-index:50 !important;
+}
+/* Hard fix: dropdown always above sibling fields */
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-two-cols,
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-field-block{
+position:relative;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select{
+position:relative;
+z-index:2 !important;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select.is-open{
+z-index:9999 !important;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select.is-open .benditoai-trait-select-menu{
+z-index:10000 !important;
+}
+/* Targeted stacking fix: constitucion/ojos above peinado/color */
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-two-cols{
+overflow:visible !important;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select[data-trait-select="constitucion"],
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select[data-trait-select="ojos"]{
+z-index:3000 !important;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select[data-trait-select="peinado"],
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select[data-trait-select="color_pelo"]{
+z-index:2000 !important;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select[data-trait-select="constitucion"].is-open,
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select[data-trait-select="ojos"].is-open,
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select[data-trait-select="peinado"].is-open,
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select[data-trait-select="color_pelo"].is-open{
+z-index:9999 !important;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select[data-trait-select="constitucion"] .benditoai-trait-select-menu,
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select[data-trait-select="ojos"] .benditoai-trait-select-menu,
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select[data-trait-select="peinado"] .benditoai-trait-select-menu,
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select[data-trait-select="color_pelo"] .benditoai-trait-select-menu{
+z-index:10000 !important;
+}
+/* Floating trait menu mode (robust stacking) */
+.benditoai-v2 .benditoai-trait-select-menu.is-floating{
+position:fixed !important;
+z-index:20000 !important;
+overflow:auto;
+}
+/* Stable dropdown behavior: open in normal flow (no overlap) */
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select{
+position:relative;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select-menu,
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select-menu.is-floating{
+position:static !important;
+top:auto !important;
+left:auto !important;
+width:100% !important;
+max-height:220px !important;
+margin-top:8px !important;
+display:none;
+overflow:auto;
+z-index:auto !important;
+}
+
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select.is-open .benditoai-trait-select-menu,
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select.is-open .benditoai-trait-select-menu.is-floating{
+display:block;
+}
+
+/* Ensure rows can grow naturally when menu opens */
+.benditoai-v2 .benditoai-modal-controls-col,
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-two-cols,
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-field-block,
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-generator-panel{
+overflow:visible !important;
+}
+
+/* reset previous aggressive stacking rules */
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select,
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select.is-open,
+.benditoai-v2 .benditoai-modal-controls-col .benditoai-trait-select.is-open .benditoai-trait-select-menu{
+z-index:auto !important;
+}
