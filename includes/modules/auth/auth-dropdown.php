@@ -18,7 +18,7 @@ function benditoai_user_dropdown() {
     <div class="benditoai-user-menu">
 
         <div class="benditoai-user-trigger">
-            👤 <?php echo esc_html($current_user->display_name); ?>
+            <?php echo esc_html($current_user->display_name); ?>
         </div>
 
         <div class="benditoai-user-dropdown">

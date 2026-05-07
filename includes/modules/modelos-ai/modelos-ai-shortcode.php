@@ -7,192 +7,1339 @@ if (!defined('ABSPATH')) {
 function benditoai_modelos_ai_shortcode() {
 
     if (!is_user_logged_in()) {
-        return '<div class="benditoai-auth-message">Debes iniciar sesión para usar esta herramienta.</div>';
+        return '<div class="benditoai-auth-message">Debes iniciar sesion para usar esta herramienta.</div>';
     }
+
+    $campaign_url = apply_filters('benditoai_modelos_ai_campaign_url', home_url('/crea-campana/'));
 
     ob_start();
 ?>
 
-<div class="benditoai-wrapper-modelos">
+<div class="benditoai-modelos-wizard" data-campaign-url="<?php echo esc_url($campaign_url); ?>">
+    <div class="baiw-shell">
 
-    <div class="benditoai-wrapper">
-
-        <div class="benditoai-modelos-header">
-            <h2>Creador de Modelo IA</h2>
-            <p>Diseña tu modelo virtual para usarlo luego en el generador de mockups.</p>
-        </div>
-
-        <form id="benditoai-form-modelo-ai">
-
-            <div class="benditoai-top-grid">
-
-                <!-- RASGOS DEL MODELO -->
-
-                <div class="benditoai-card">
-
-                    <h3>Rasgos del modelo</h3>
-
-                    <label>Nombre del modelo</label>
-                    <input 
-                        type="text"
-                        name="nombre_modelo"
-                        placeholder="Ej: Modelo urbano 01"
-                        required
-                    >
-
-                    <label>Género</label>
-                    <select name="genero">
-                        <option value="male">Hombre</option>
-                        <option value="female">Mujer</option>
-                    </select>
-
-                    <label>Edad</label>
-                    <select name="edad">
-                        <option value="young adult">18-25</option>
-                        <option value="adult">25-35</option>
-                        <option value="mature">35-45</option>
-                    </select>
-
-                    <label>Tipo de cuerpo</label>
-                    <select name="cuerpo">
-                        <option value="athletic">Atlético</option>
-                        <option value="slim">Delgado</option>
-                        <option value="average">Promedio</option>
-                    </select>
-
-                    <label>Etnia</label>
-                    <select name="etnia">
-                        <option value="latin">Latino</option>
-                        <option value="european">Europeo</option>
-                        <option value="african">Afro</option>
-                        <option value="asian">Asiático</option>
-                    </select>
-
-                    <label>Estilo general</label>
-                    <select name="estilo">
-                        <option value="streetwear">Streetwear</option>
-                        <option value="fashion">Fashion</option>
-                        <option value="fitness">Fitness</option>
-                        <option value="minimalist">Minimalista</option>
-                    </select>
-
+        <section class="baiw-config-stage" id="benditoai-config-stage">
+            <header class="baiw-header">
+                <div>
+                                       <h2 class="baiw-title-main">Crea tu modelo AI en 3 pasos</h2>
+                    <p>Flujo claro, rapido y listo para reutilizar en campanas.</p>
                 </div>
-
-                <!-- VESTIMENTA -->
-
-                <div class="benditoai-card">
-
-                    <h3>Vestimenta</h3>
-
-                    <label>Prenda superior</label>
-                    <textarea 
-                        name="prenda_superior"
-                        placeholder="Ej: hoodie negro oversize"
-                    ></textarea>
-
-                    <label>Prenda inferior</label>
-                    <textarea 
-                        name="prenda_inferior"
-                        placeholder="Ej: pantalón cargo gris"
-                    ></textarea>
-
-                    <label>Zapatos</label>
-                    <textarea 
-                        name="zapatos"
-                        placeholder="Ej: Nike Air Force blancas"
-                    ></textarea>
-
-                    <label>Accesorios</label>
-                    <textarea 
-                        name="accesorios"
-                        placeholder="Ej: gafas negras y reloj minimalista"
-                    ></textarea>
-
+                <div class="baiw-credits">
+                    <span>Consumo estimado</span>
+                    <strong>1 credito</strong>
                 </div>
+            </header>
 
+            <ol class="baiw-stepper" aria-label="Progreso del wizard">
+                <li class="is-active" data-step-indicator="1">
+                    <span class="baiw-step-badge">1</span>
+                </li>
+                <li data-step-indicator="2">
+                    <span class="baiw-step-badge">2</span>
+                </li>
+                <li data-step-indicator="3">
+                    <span class="baiw-step-badge">3</span>
+                </li>
+            </ol>
+
+            <div class="baiw-progress-track" aria-hidden="true">
+                <div class="baiw-progress-fill" id="benditoai-wizard-progress"></div>
             </div>
 
-            <!-- PARTE INFERIOR -->
+            <form id="benditoai-form-modelo-ai" class="baiw-form" enctype="multipart/form-data" novalidate>
+                <input type="hidden" name="benditoai_modelos_nonce" value="<?php echo esc_attr(wp_create_nonce('benditoai_modelos_ai_nonce')); ?>">
+                <input type="hidden" name="perfil_publico" id="benditoai_perfil_publico" value="0">
+                <input type="hidden" name="descripcion_referencia" value="">
 
-            <div class="benditoai-bottom-grid">
+                <section class="baiw-step is-active" data-step="1" aria-hidden="false">
+                    <div class="baiw-card">
+                        <h3>Informacion principal</h3>
+                       
+                        <div class="baiw-field">
+                            <label for="benditoai_nombre_modelo">Nombre del modelo</label>
+                            <input id="benditoai_nombre_modelo" type="text" name="nombre_modelo" placeholder="Ej: Editorial Denim 01" maxlength="100" required>
+                        </div>
 
-                <!-- GENERADOR -->
+                        <div class="baiw-field">
+                            <label for="benditoai_descripcion_modelo">Descripcion del modelo</label>
+                            <textarea id="benditoai_descripcion_modelo" name="descripcion_modelo" placeholder="Ej: modelo urbano, fotorealista, actitud segura." maxlength="600"></textarea>
+                        </div>
 
-                <div class="benditoai-card benditoai-generator">
+                        <p class="baiw-field-label">Tipo de creacion</p>
+                        <div class="baiw-mode-grid" role="radiogroup" aria-label="Tipo de creacion">
+                            <label class="baiw-mode-option">
+                                <input type="radio" name="modo_creacion" value="referencia" checked>
+                                <span>
+                                    <small>Sube una foto y la IA la usa como base.</small>
+                                </span>
+                            </label>
 
-                    <h3>Generar modelo</h3>
+                            <label class="baiw-mode-option">
+                                <input type="radio" name="modo_creacion" value="rasgos">
+                                <span>
+                               
+                                    <small>Construye el avatar desde cero en tres pasos.</small>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </section>
 
-                    <p class="benditoai-info">
-                        Define las características del modelo y presiona generar.
-                        La IA creará un avatar completo listo para usar en mockups.
-                    </p>
+                <section class="baiw-step" data-step="2" aria-hidden="true" hidden>
+                    <div class="baiw-card" data-mode-panel="referencia">
+                        <h3>Referencia visual</h3>
+                        <p class="baiw-hint">Sube una imagen nitida. Formatos validos: JPG, PNG o WEBP.</p>
 
-                    <button 
-                        type="submit"
-                        class="benditoai-btn benditoai-btn--primary"
-                    >
-                        Generar modelo
-                    </button>
+                        <div class="baiw-field">
+                            <label for="benditoai_imagen_referencia">Imagen de referencia</label>
+                            <label class="baiw-file-smart" for="benditoai_imagen_referencia" id="benditoai-file-smart">
+                                <input id="benditoai_imagen_referencia" type="file" name="imagen_referencia" accept="image/png,image/jpeg,image/webp">
+                                <span class="baiw-file-smart-text" id="benditoai-file-text">Subir imagen</span>
+                                <div class="baiw-file-smart-meta" id="benditoai-file-meta" hidden>
+                                    <img class="baiw-file-preview" id="benditoai-file-preview" src="" alt="Preview referencia" hidden>
+                                    <p class="baiw-file-name" id="benditoai-file-name"></p>
+                                </div>
+                            </label>
+                        </div>
 
-                    <p class="benditoai-error-message" style="display:none;"></p>
-
-                    <p class="benditoai-loading" id="benditoai-modelo-loading">
-                        🤖 Generando modelo...
-                    </p>
-
-                </div>
-
-                <!-- RESULTADO -->
-
-                <div class="benditoai-card benditoai-render">
-
-                    <h3>Resultado</h3>
-
-                    <div id="benditoai-modelo-resultado">
-
-                        <p class="benditoai-placeholder">
-                            La imagen generada aparecerá aquí.
-                        </p>
-
+                        <div class="baiw-field baiw-grid-2">
+                            <div>
+                                <label for="benditoai_estilo_ref">Estilo visual</label>
+                                <select id="benditoai_estilo_ref" name="estilo">
+                                    <option value="editorial">Editorial</option>
+                                    <option value="streetwear">Streetwear</option>
+                                    <option value="minimalista">Minimalista</option>
+                                    <option value="fitness">Fitness</option>
+                                    <option value="luxury">Lujo</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="benditoai_nacionalidad_ref">Nacionalidad</label>
+                                <input id="benditoai_nacionalidad_ref" type="text" name="nacionalidad" placeholder="Ej: Colombiana" maxlength="80">
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="benditoai-image-wrapper" style="display:none;">
+                    <div class="baiw-card" data-mode-panel="rasgos" hidden>
+                        <h3>Rasgos base del avatar</h3>
+                        <p class="baiw-hint">Completa la base visual antes de pasar a los detalles.</p>
 
-                        <img 
-                            class="benditoai-generated-image"
-                            src=""
-                            alt="Modelo generado"
-                        >
+                        <div class="baiw-rasgos-layout">
+                            <div class="baiw-slider-row">
+                                <div class="baiw-field baiw-slider-group">
+                                    <label for="benditoai_edad_range">Edad <strong id="benditoai_edad_value">25</strong></label>
+                                    <input id="benditoai_edad_range" class="baiw-range" type="range" min="18" max="60" step="1" value="25" name="edad_valor">
+                                    <input type="hidden" id="benditoai_edad" name="edad" value="adult">
+                                </div>
 
-                        <a 
-                            class="benditoai-download-btn"
-                            href=""
-                            download="modelo-benditoai.png"
-                        >
+                                <div class="baiw-field baiw-slider-group">
+                                    <label for="benditoai_altura">Altura <strong id="benditoai_altura_value">175 cm</strong></label>
+                                    <input id="benditoai_altura" class="baiw-range" type="range" min="145" max="210" step="1" value="175" name="altura_cm">
+                                </div>
 
-                            <img 
-                                class="benditoai-download-icon"
-                                src="<?php echo plugin_dir_url(dirname(__FILE__,3)) . 'assets/images/download-icon.png'; ?>"
-                                alt="Descargar"
-                            >
+                                <div class="baiw-field baiw-slider-group">
+                                    <label for="benditoai_peso">Peso <strong id="benditoai_peso_value">55 kg</strong></label>
+                                    <input id="benditoai_peso" class="baiw-range" type="range" min="40" max="140" step="1" value="55" name="peso_kg">
+                                </div>
+                            </div>
 
-                        </a>
+                            <div class="baiw-fields-grid">
+                                <div class="baiw-field">
+                                    <label for="benditoai_genero">Genero</label>
+                                    <select id="benditoai_genero" name="genero">
+                                        <option value="male">Hombre</option>
+                                        <option value="female">Mujer</option>
+                                        <option value="non-binary">No binario</option>
+                                    </select>
+                                </div>
 
+                                <div class="baiw-field">
+                                    <label for="benditoai_cuerpo">Constitucion</label>
+                                    <select id="benditoai_cuerpo" name="cuerpo" class="baiw-enhanced-select">
+                                        <option value="athletic">Atletico</option>
+                                        <option value="slim">Delgado</option>
+                                        <option value="average">Promedio</option>
+                                        <option value="plus size">Plus size</option>
+                                    </select>
+                                </div>
+
+                                <div class="baiw-field">
+                                    <label for="benditoai_etnia">Etnia</label>
+                                    <select id="benditoai_etnia" name="etnia">
+                                        <option value="latin">Latino</option>
+                                        <option value="european">Europeo</option>
+                                        <option value="african">Afro</option>
+                                        <option value="asian">Asiatico</option>
+                                        <option value="middle eastern">Medio oriente</option>
+                                    </select>
+                                </div>
+
+                                <div class="baiw-field">
+                                    <label for="benditoai_color_ojos">Color de ojos</label>
+                                    <select id="benditoai_color_ojos" name="color_ojos" class="baiw-enhanced-select">
+                                        <option value="brown">Cafe</option>
+                                        <option value="black">Negro</option>
+                                        <option value="hazel">Avellana</option>
+                                        <option value="green">Verde</option>
+                                        <option value="blue">Azul</option>
+                                        <option value="gray">Gris</option>
+                                    </select>
+                                </div>
+
+                                <div class="baiw-field">
+                                    <label for="benditoai_peinado">Peinado</label>
+                                    <select id="benditoai_peinado" name="peinado" class="baiw-enhanced-select">
+                                        <option value="short">Corto</option>
+                                        <option value="long">Largo</option>
+                                        <option value="curly">Rizado</option>
+                                        <option value="afro">Afro</option>
+                                        <option value="wavy">Ondulado</option>
+                                        <option value="buzz cut">Rapado</option>
+                                    </select>
+                                </div>
+
+                                <div class="baiw-field">
+                                    <label for="benditoai_color_pelo">Color de pelo</label>
+                                    <select id="benditoai_color_pelo" name="color_pelo" class="baiw-enhanced-select">
+                                        <option value="black">Negro</option>
+                                        <option value="brown">Castano</option>
+                                        <option value="blonde">Rubio</option>
+                                        <option value="red">Pelirrojo</option>
+                                        <option value="gray">Gris</option>
+                                    </select>
+                                </div>
+
+                                <div class="baiw-field">
+                                    <label for="benditoai_estilo_rasgos">Estilo general</label>
+                                    <select id="benditoai_estilo_rasgos" name="estilo">
+                                        <option value="streetwear">Streetwear</option>
+                                        <option value="fashion">Fashion</option>
+                                        <option value="fitness">Fitness</option>
+                                        <option value="minimalist">Minimalista</option>
+                                        <option value="luxury">Lujo</option>
+                                    </select>
+                                </div>
+
+                                <div class="baiw-field baiw-field--full">
+                                    <label for="benditoai_nacionalidad">Nacionalidad</label>
+                                    <input id="benditoai_nacionalidad" type="text" name="nacionalidad" placeholder="Ej: Colombiana" maxlength="80">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="baiw-step" data-step="3" aria-hidden="true" hidden>
+                    <div class="baiw-card" data-mode-panel="referencia">
+                        <h3>Ultimos ajustes</h3>
+                        <p class="baiw-hint">Agrega contexto final para la generacion.</p>
+
+                        <div class="baiw-field">
+                            <label for="benditoai_campo_adicional_ref">Detalle adicional</label>
+                            <textarea id="benditoai_campo_adicional_ref" name="campo_adicional" placeholder="Ej: look limpio, fondo claro, pose frontal."></textarea>
+                        </div>
                     </div>
 
+                    <div class="baiw-card" data-mode-panel="rasgos" hidden>
+                        <h3>Detalles a medida</h3>
+                        <p class="baiw-hint">Completa expresion, vestuario y ajustes finales.</p>
+
+                        <div class="baiw-field">
+                            <label for="benditoai_rasgos">Rasgos y caracteristicas</label>
+                            <textarea id="benditoai_rasgos" name="rasgos_caracteristicas" placeholder="Ej: rostro ovalado, mirada segura, sonrisa suave."></textarea>
+                        </div>
+
+                        <div class="baiw-grid-2">
+                            <div class="baiw-field">
+                                <label for="benditoai_prenda_superior">Prenda superior</label>
+                                <textarea id="benditoai_prenda_superior" name="prenda_superior" placeholder="Ej: chaqueta denim oversize"></textarea>
+                            </div>
+
+                            <div class="baiw-field">
+                                <label for="benditoai_prenda_inferior">Prenda inferior</label>
+                                <textarea id="benditoai_prenda_inferior" name="prenda_inferior" placeholder="Ej: pantalon cargo beige"></textarea>
+                            </div>
+
+                            <div class="baiw-field">
+                                <label for="benditoai_zapatos">Zapatos</label>
+                                <textarea id="benditoai_zapatos" name="zapatos" placeholder="Ej: zapatillas blancas limpias"></textarea>
+                            </div>
+
+                            <div class="baiw-field">
+                                <label for="benditoai_accesorios">Accesorios</label>
+                                <textarea id="benditoai_accesorios" name="accesorios" placeholder="Ej: reloj metalico minimalista"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="baiw-field">
+                            <p class="baiw-field-label">Detalles rapidos</p>
+                            <div class="baiw-chip-group">
+                                <label class="baiw-chip"><input type="checkbox" name="detalle_hoyuelos" value="1">Hoyuelos</label>
+                                <label class="baiw-chip"><input type="checkbox" name="detalle_barba" value="1">Barba</label>
+                                <label class="baiw-chip"><input type="checkbox" name="detalle_bronceado" value="1">Bronceado</label>
+                            </div>
+                        </div>
+
+                        <div class="baiw-field">
+                            <label for="benditoai_campo_adicional">Campo adicional</label>
+                            <textarea id="benditoai_campo_adicional" name="campo_adicional" placeholder="Indicaciones extra para la IA."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="baiw-toggle-row">
+                        <div>
+                            <p class="baiw-field-label">Visibilidad del modelo</p>
+                            <p class="baiw-hint">Activalo si quieres marcarlo como publico.</p>
+                        </div>
+
+                        <label class="baiw-switch" for="benditoai_perfil_publico_toggle">
+                            <input type="checkbox" id="benditoai_perfil_publico_toggle" role="switch" aria-checked="false">
+                            <span class="baiw-switch-ui">
+                                <span class="baiw-switch-knob"></span>
+                            </span>
+                            <span id="benditoai_perfil_publico_label">Privado</span>
+                        </label>
+                    </div>
+
+                </section>
+
+                <div class="baiw-error-inline" id="benditoai-modelo-inline-error" role="alert" aria-live="polite"></div>
+
+                <div class="baiw-nav">
+                    <button type="button" class="baiw-btn baiw-btn--ghost" id="benditoai-modelo-prev">Anterior</button>
+                    <button type="button" class="baiw-btn baiw-btn--primary" id="benditoai-modelo-next">Siguiente</button>
+                    <button type="submit" class="baiw-btn baiw-btn--accent" id="benditoai-modelo-submit">Generar modelo</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="baiw-result-stage" id="benditoai-result-stage" hidden aria-live="polite">
+            <div class="baiw-result-stage-inner">
+                <p class="baiw-kicker">Resultado final</p>
+                <h3 class="baiw-result-title">Tu modelo AI</h3>
+
+                <p class="benditoai-loading" id="benditoai-modelo-loading">Generando modelo con IA...</p>
+                <div class="baiw-result-skeleton benditoai-img-wrap benditoai-image-loading" id="benditoai-modelo-skeleton" hidden></div>
+
+                <div class="baiw-final-error" id="benditoai-modelo-error-panel" hidden>
+                    <p class="benditoai-error-message" id="benditoai-modelo-error"></p>
+                    <button type="button" class="baiw-btn baiw-btn--ghost" id="benditoai-modelo-retry">Intentar de nuevo</button>
                 </div>
 
+                <div class="benditoai-image-wrapper baiw-result-image" id="benditoai-modelo-image-wrapper" style="display:none;">
+                    <img class="benditoai-generated-image" id="benditoai-modelo-image" src="" alt="Modelo generado">
+                </div>
+
+                <div class="baiw-action-row baiw-action-row--main" id="benditoai-modelo-success-actions" style="display:none;">
+                    <a class="baiw-btn baiw-btn--primary" id="benditoai-modelo-campaign" href="<?php echo esc_url($campaign_url); ?>">Empezar campana</a>
+                    <button type="button" class="baiw-btn baiw-btn--ghost" id="benditoai-modelo-create-another">Crear otro modelo</button>
+                </div>
+
+                <div class="baiw-action-row baiw-action-row--secondary" id="benditoai-modelo-secondary-actions" style="display:none;">
+                    <a class="baiw-btn baiw-btn--ghost" id="benditoai-modelo-download" href="" download="modelo-benditoai.png">Descargar</a>
+                    <button type="button" class="baiw-btn baiw-btn--ghost" id="benditoai-modelo-share">Compartir</button>
+                    <button type="button" class="baiw-btn baiw-btn--ghost" id="benditoai-modelo-edit">Editar</button>
+                </div>
             </div>
-
-        </form>
-
+        </section>
     </div>
-
 </div>
+
+<style>
+.benditoai-modelos-wizard {
+    --baiw-bg: #070312;
+    --baiw-surface: rgba(20, 12, 42, 0.84);
+    --baiw-surface-soft: rgba(32, 20, 68, 0.62);
+    --baiw-primary: #7c3aff;
+    --baiw-primary-strong: #8f56ff;
+    --baiw-accent: #a071ff;
+    --baiw-ink: #f8f7ff;
+    --baiw-muted: #b6adcf;
+    --baiw-border: rgba(137, 111, 214, 0.33);
+    --baiw-success: #22c55e;
+    --baiw-danger: #fb7185;
+
+    max-width: 1160px;
+    margin: 48px auto;
+    padding: 0 16px;
+    color: var(--baiw-ink);
+    line-height: 1.45;
+}
+
+.benditoai-modelos-wizard [hidden] {
+    display: none !important;
+}
+
+.benditoai-modelos-wizard .baiw-shell {
+    position: relative;
+    overflow: visible !important;
+    display: grid;
+    gap: 10px;
+    border-radius: 22px;
+    border: 1px solid var(--baiw-border);
+    background:
+        radial-gradient(circle at 16% 2%, rgba(124, 58, 255, 0.3), transparent 40%),
+        radial-gradient(circle at 92% 22%, rgba(124, 58, 255, 0.24), transparent 45%),
+        var(--baiw-bg);
+    padding: clamp(14px, 1.8vw, 22px);
+    box-shadow: 0 28px 64px rgba(2, 0, 12, 0.52);
+    transition: padding-bottom 0.25s ease;
+}
+
+.benditoai-modelos-wizard.is-dropdown-open .baiw-shell {
+    padding-bottom: clamp(170px, 22vw, 260px) !important;
+}
+
+.benditoai-modelos-wizard .baiw-shell::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    background-size: 52px 52px;
+    opacity: 0.35;
+}
+
+.benditoai-modelos-wizard .baiw-shell > * {
+    position: relative;
+    z-index: 1;
+}
+
+.benditoai-modelos-wizard .baiw-config-stage {
+    display: grid;
+    gap: 10px;
+}
+
+.benditoai-modelos-wizard .baiw-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 2px;
+    max-height: 196px;
+    opacity: 1;
+    transform: translateY(0);
+    overflow: hidden;
+    transition: max-height 0.34s ease, opacity 0.22s ease, transform 0.22s ease, margin 0.3s ease;
+}
+
+.benditoai-modelos-wizard.is-step-compact .baiw-header {
+    max-height: 0;
+    opacity: 0;
+    margin: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
+}
+
+.benditoai-modelos-wizard .baiw-kicker {
+    margin: 0 0 8px;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    border: 1px solid rgba(128, 90, 213, 0.5);
+    background: rgba(74, 30, 150, 0.35);
+    padding: 8px 14px;
+    letter-spacing: 0.02em;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #d8c8ff;
+}
+
+.benditoai-modelos-wizard .baiw-header h2 {
+    margin: 6px 0;
+    font-size: clamp(1.45rem, 1.05rem + 1.4vw, 2.15rem);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.benditoai-modelos-wizard .baiw-title-main {
+    color: #ffffff !important;
+}
+
+.benditoai-modelos-wizard .baiw-header p {
+    margin: 0;
+    color: var(--baiw-muted);
+    font-size: 0.95rem;
+}
+
+.benditoai-modelos-wizard .baiw-credits {
+    min-width: 160px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(133, 102, 211, 0.4);
+    background: rgba(14, 8, 31, 0.62);
+}
+
+.benditoai-modelos-wizard .baiw-credits span {
+    display: block;
+    color: var(--baiw-muted);
+    font-size: 0.78rem;
+}
+
+.benditoai-modelos-wizard .baiw-credits strong {
+    display: block;
+    margin-top: 2px;
+    font-size: 1rem;
+    color: #e8dcff;
+}
+
+.benditoai-modelos-wizard .baiw-stepper {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.benditoai-modelos-wizard .baiw-stepper li {
+    display: grid;
+    place-items: center;
+    padding: 8px 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(124, 92, 201, 0.33);
+    background: rgba(20, 12, 42, 0.68);
+    color: #b8afd2;
+    transition: 0.2s ease;
+}
+
+.benditoai-modelos-wizard .baiw-stepper li.is-active {
+    border-color: rgba(124, 58, 255, 0.66);
+    color: #f5f1ff;
+    background: rgba(124, 58, 255, 0.34);
+    box-shadow: 0 0 0 1px rgba(124, 58, 255, 0.24);
+}
+
+.benditoai-modelos-wizard .baiw-stepper li.is-complete {
+    border-color: rgba(120, 95, 193, 0.55);
+    background: rgba(72, 35, 150, 0.38);
+    color: #ddd1ff;
+}
+
+.benditoai-modelos-wizard .baiw-step-badge {
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #dcd2f8;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.benditoai-modelos-wizard .baiw-stepper li.is-active .baiw-step-badge,
+.benditoai-modelos-wizard .baiw-stepper li.is-complete .baiw-step-badge {
+    color: #ffffff;
+    background: linear-gradient(140deg, #7c3aff, #8f56ff);
+}
+
+.benditoai-modelos-wizard .baiw-progress-track {
+    width: 100%;
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(120, 106, 165, 0.28);
+    overflow: hidden;
+}
+
+.benditoai-modelos-wizard .baiw-progress-fill {
+    width: 0%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #7c3aff, #9d6dff);
+    transition: width 0.2s ease;
+}
+
+.benditoai-modelos-wizard .baiw-form {
+    display: grid;
+    gap: 10px;
+}
+
+.benditoai-modelos-wizard .baiw-step {
+    display: none;
+}
+
+.benditoai-modelos-wizard .baiw-step.is-active {
+    display: grid;
+    gap: 10px;
+}
+
+.benditoai-modelos-wizard .baiw-card {
+    border: 1px solid rgba(124, 92, 201, 0.33);
+    border-radius: 16px;
+    background: var(--baiw-surface);
+    backdrop-filter: blur(8px);
+    padding: 14px;
+}
+
+.benditoai-modelos-wizard .baiw-card h3 {
+    margin: 0;
+    font-size: 1.04rem;
+    letter-spacing: 0.01em;
+    font-weight: 600;
+}
+
+.benditoai-modelos-wizard .baiw-hint {
+    margin: 6px 0 0;
+    color: var(--baiw-muted);
+    font-size: 0.85rem;
+}
+
+.benditoai-modelos-wizard .baiw-field,
+.benditoai-modelos-wizard .baiw-toggle-row {
+    margin-top: 9px;
+}
+
+.benditoai-modelos-wizard .baiw-field label,
+.benditoai-modelos-wizard .baiw-field-label {
+    display: block;
+    margin: 0 0 6px;
+    font-size: 0.84rem;
+    color: #f2ecff;
+    font-weight: 600;
+}
+
+.benditoai-modelos-wizard input,
+.benditoai-modelos-wizard select,
+.benditoai-modelos-wizard textarea {
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid rgba(120, 96, 187, 0.42);
+    background: rgba(9, 5, 24, 0.72);
+    color: #f7f3ff !important;
+    padding: 11px 12px;
+    font-size: 0.92rem;
+    appearance: none;
+}
+
+.benditoai-modelos-wizard input::placeholder,
+.benditoai-modelos-wizard textarea::placeholder {
+    color: rgba(214, 205, 240, 0.88);
+}
+
+.benditoai-modelos-wizard textarea {
+    min-height: 112px;
+    resize: vertical;
+    line-height: 1.45;
+}
+
+.benditoai-modelos-wizard input:focus,
+.benditoai-modelos-wizard select:focus,
+.benditoai-modelos-wizard textarea:focus {
+    outline: none;
+    background: rgba(9, 5, 24, 0.82);
+    border-color: rgba(124, 58, 255, 0.88);
+    box-shadow: 0 0 0 3px rgba(124, 58, 255, 0.24);
+}
+
+.benditoai-modelos-wizard select option {
+    background: #140d2e;
+    color: #f7f3ff;
+}
+
+.benditoai-modelos-wizard .baiw-file-smart {
+    position: relative;
+    width: 100%;
+    display: grid;
+    place-items: center;
+    margin: 0;
+    border-radius: 12px;
+    border: 1.5px solid rgba(94, 29, 247, 0.30) !important;
+    background: rgba(94, 29, 247, 0.12) !important;
+    min-height: 54px;
+    padding: 8px 12px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: #A78BFA !important;
+    cursor: pointer;
+    overflow: hidden;
+    transition: border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+}
+
+.benditoai-modelos-wizard .baiw-file-smart input[type="file"] {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    cursor: pointer;
+}
+
+.benditoai-modelos-wizard .baiw-file-smart-text {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #A78BFA !important;
+    font-size: 0.98rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    text-align: center;
+}
+
+.benditoai-modelos-wizard .baiw-file-smart-meta {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+}
+
+.benditoai-modelos-wizard .baiw-file-name {
+    margin: 0;
+    color: #ffffff;
+    font-size: 0.82rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.benditoai-modelos-wizard .baiw-file-preview {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    object-fit: cover;
+    display: block;
+    border: 1px solid rgba(124, 92, 201, 0.45);
+    background: rgba(20, 12, 42, 0.92);
+}
+
+.benditoai-modelos-wizard .baiw-file-preview[hidden] {
+    display: none;
+}
+
+.benditoai-modelos-wizard .baiw-file-smart.is-has-file {
+    place-items: center;
+    background: rgba(94, 29, 247, 0.16) !important;
+}
+
+.benditoai-modelos-wizard .baiw-file-smart:hover {
+    border-color: rgba(94, 29, 247, 0.55) !important;
+    background: rgba(94, 29, 247, 0.20) !important;
+    box-shadow: none !important;
+}
+
+.benditoai-modelos-wizard .baiw-mode-grid {
+    margin-top: 8px;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.benditoai-modelos-wizard .baiw-mode-option {
+    position: relative;
+}
+
+.benditoai-modelos-wizard .baiw-mode-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.benditoai-modelos-wizard .baiw-mode-option span {
+    display: block;
+    border: 1px solid rgba(124, 92, 201, 0.36);
+    border-radius: 12px;
+    background: var(--baiw-surface-soft);
+    padding: 12px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.benditoai-modelos-wizard .baiw-mode-option strong {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.benditoai-modelos-wizard .baiw-mode-option small {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.77rem;
+    color: #ac9fcb;
+    line-height: 1.4;
+}
+
+.benditoai-modelos-wizard .baiw-mode-option input:checked + span {
+    border-color: rgba(124, 58, 255, 0.74);
+    background: rgba(99, 56, 207, 0.34);
+    box-shadow: 0 12px 24px rgba(9, 4, 25, 0.35);
+}
+
+.benditoai-modelos-wizard .baiw-toggle-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+    border: 1px solid rgba(123, 91, 200, 0.35);
+    border-radius: 12px;
+    padding: 10px 12px;
+    background: rgba(28, 16, 57, 0.55);
+}
+
+.benditoai-modelos-wizard .baiw-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--baiw-ink);
+    cursor: pointer;
+}
+
+.benditoai-modelos-wizard .baiw-switch input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+}
+
+.benditoai-modelos-wizard .baiw-switch-ui {
+    width: 42px;
+    height: 24px;
+    border-radius: 999px;
+    border: 1px solid rgba(135, 106, 209, 0.52);
+    background: rgba(26, 15, 52, 0.85);
+    display: inline-flex;
+    align-items: center;
+    padding: 2px;
+    transition: 0.2s ease;
+}
+
+.benditoai-modelos-wizard .baiw-switch-knob {
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    background: #d9cbff;
+    box-shadow: 0 1px 8px rgba(17, 5, 43, 0.4);
+    transition: 0.2s ease;
+}
+
+.benditoai-modelos-wizard .baiw-switch input:checked + .baiw-switch-ui {
+    background: rgba(124, 58, 255, 0.66);
+    border-color: rgba(167, 139, 250, 0.68);
+}
+
+.benditoai-modelos-wizard .baiw-switch input:checked + .baiw-switch-ui .baiw-switch-knob {
+    transform: translateX(17px);
+}
+
+.benditoai-modelos-wizard .baiw-grid-2 {
+    margin-top: 8px;
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.benditoai-modelos-wizard .baiw-chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.benditoai-modelos-wizard .baiw-chip {
+    border: 1px solid rgba(128, 98, 200, 0.45);
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 0.82rem;
+    background: rgba(40, 24, 79, 0.55);
+    color: #ddd2fa;
+    cursor: pointer;
+}
+
+.benditoai-modelos-wizard .baiw-chip input {
+    width: auto;
+    margin-right: 6px;
+}
+
+.benditoai-modelos-wizard .baiw-slider-group label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.benditoai-modelos-wizard .baiw-slider-group label strong {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.benditoai-modelos-wizard .baiw-rasgos-layout {
+    margin-top: 8px;
+    display: grid;
+    gap: 12px;
+}
+
+.benditoai-modelos-wizard .baiw-slider-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    padding: 0;
+    border: none;
+    background: transparent;
+}
+
+.benditoai-modelos-wizard .baiw-slider-row .baiw-slider-group {
+    margin-top: 0;
+    padding: 12px 12px 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(124, 92, 201, 0.36);
+    background: linear-gradient(180deg, rgba(20, 11, 44, 0.84), rgba(14, 8, 32, 0.88));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.benditoai-modelos-wizard .baiw-fields-grid {
+    position: relative;
+    isolation: isolate;
+    overflow: visible;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.benditoai-modelos-wizard .baiw-fields-grid .baiw-field {
+    position: relative;
+    z-index: 1;
+    overflow: visible;
+}
+
+.benditoai-modelos-wizard .baiw-fields-grid .baiw-field.baiw-field--open {
+    z-index: 900;
+}
+
+.benditoai-modelos-wizard .baiw-field--full {
+    grid-column: 1 / -1;
+}
+
+.benditoai-modelos-wizard .baiw-range {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 8px;
+    border-radius: 999px;
+    border: none;
+    outline: none;
+    background: linear-gradient(90deg, #7c3aff 0%, #7c3aff var(--range-progress, 50%), #23153d var(--range-progress, 50%), #23153d 100%);
+    box-shadow: inset 0 0 0 1px rgba(146, 122, 214, 0.45);
+    padding: 0;
+}
+
+.benditoai-modelos-wizard .baiw-range::-webkit-slider-runnable-track {
+    height: 8px;
+    border-radius: 999px;
+    background: transparent;
+    border: none;
+}
+
+.benditoai-modelos-wizard .baiw-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 19px;
+    height: 19px;
+    border-radius: 50%;
+    border: 2px solid #1a1031;
+    background: #7c3aff;
+    box-shadow: 0 0 0 1px rgba(210, 196, 255, 0.18), 0 3px 9px rgba(6, 2, 19, 0.58);
+    cursor: pointer;
+    margin-top: -5px;
+}
+
+.benditoai-modelos-wizard .baiw-range::-moz-range-track {
+    height: 8px;
+    border-radius: 999px;
+    background: #23153d;
+    border: 1px solid rgba(146, 122, 214, 0.45);
+}
+
+.benditoai-modelos-wizard .baiw-range::-moz-range-progress {
+    height: 8px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #6f33e8, #7c3aff);
+}
+
+.benditoai-modelos-wizard .baiw-range::-moz-range-thumb {
+    width: 19px;
+    height: 19px;
+    border-radius: 50%;
+    border: 2px solid #1a1031;
+    background: #7c3aff;
+    box-shadow: 0 0 0 1px rgba(210, 196, 255, 0.18), 0 3px 9px rgba(6, 2, 19, 0.58);
+    cursor: pointer;
+}
+
+.benditoai-modelos-wizard .choices {
+    margin: 0;
+    z-index: 20;
+}
+
+.benditoai-modelos-wizard .baiw-field .choices.is-open {
+    position: relative;
+    z-index: 901;
+}
+
+.benditoai-modelos-wizard .choices__inner {
+    min-height: 50px;
+    border-radius: 18px;
+    border: 1px solid #5d2cce;
+    background: #0c0722;
+    color: #f7f3ff;
+    padding: 9px 14px;
+    font-size: 0.92rem;
+    box-shadow: inset 0 0 0 2px rgba(124, 58, 255, 0.15);
+}
+
+.benditoai-modelos-wizard .is-open .choices__inner {
+    border-color: #7c3aff;
+    box-shadow: inset 0 0 0 2px rgba(124, 58, 255, 0.26);
+}
+
+.benditoai-modelos-wizard .choices__list--single {
+    padding: 4px 20px 4px 2px;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.benditoai-modelos-wizard .choices__item--selectable {
+    opacity: 1 !important;
+}
+
+.benditoai-modelos-wizard .choices[data-type*="select-one"]::after {
+    border-color: #bda6ff transparent transparent;
+    right: 12px;
+    margin-top: -4px;
+}
+
+.benditoai-modelos-wizard .choices[data-type*="select-one"].is-open::after {
+    border-color: transparent transparent #bda6ff;
+    margin-top: -9px;
+}
+
+.benditoai-modelos-wizard .choices__list--dropdown,
+.benditoai-modelos-wizard .choices__list[aria-expanded] {
+    z-index: 120;
+    margin-top: 0;
+    border-radius: 0;
+    border: 1px solid rgba(228, 221, 250, 0.65);
+    background: #140c2f !important;
+    box-shadow: 0 16px 36px rgba(2, 1, 9, 0.56);
+    overflow: hidden;
+}
+
+.benditoai-modelos-wizard .choices__list--dropdown .choices__list,
+.benditoai-modelos-wizard .choices__list[aria-expanded] .choices__list {
+    background: #140c2f !important;
+}
+
+.benditoai-modelos-wizard .choices__list--dropdown .choices__item,
+.benditoai-modelos-wizard .choices__list[aria-expanded] .choices__item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    color: #ffffff;
+    font-weight: 600;
+    min-height: 82px;
+    padding: 18px 98px 18px 16px;
+    border-bottom: 1px solid rgba(235, 228, 255, 0.86);
+    background: #1a0f40 !important;
+}
+
+.benditoai-modelos-wizard .choices__list--dropdown .choices__item::before,
+.benditoai-modelos-wizard .choices__list[aria-expanded] .choices__item::before {
+    content: "";
+    position: absolute;
+    right: 80px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(235, 228, 255, 0.86);
+}
+
+.benditoai-modelos-wizard .choices__list--dropdown .choices__item::after,
+.benditoai-modelos-wizard .choices__list[aria-expanded] .choices__item::after {
+    content: "";
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    width: 52px;
+    height: 52px;
+    transform: translateY(-50%);
+    border-radius: 11px;
+    border: 1px solid rgba(242, 236, 255, 0.78);
+    background:
+        radial-gradient(circle at 50% 36%, #f5dccb 12px, transparent 13px),
+        radial-gradient(circle at 50% 22%, #11101a 15px, transparent 16px),
+        linear-gradient(180deg, #f7f4ee 0 62%, #dac9c0 100%);
+}
+
+.benditoai-modelos-wizard .choices__list--dropdown .choices__item--selectable.is-selected::after,
+.benditoai-modelos-wizard .choices__list[aria-expanded] .choices__item--selectable.is-selected::after {
+    content: "" !important;
+    display: block !important;
+}
+
+.benditoai-modelos-wizard .choices__list--dropdown .choices__item--selectable.is-highlighted,
+.benditoai-modelos-wizard .choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
+    background: #2f0b8a;
+}
+
+.benditoai-modelos-wizard .choices__list--dropdown .choices__item--selectable.is-highlighted {
+    box-shadow: inset 4px 0 0 #35a0ff;
+}
+
+.benditoai-modelos-wizard .choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
+    box-shadow: inset 4px 0 0 #35a0ff;
+}
+
+.benditoai-modelos-wizard .choices__list--dropdown .choices__item--selectable.is-highlighted,
+.benditoai-modelos-wizard .choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
+    color: #ffffff;
+}
+
+.benditoai-modelos-wizard .baiw-error-inline {
+    display: none;
+    border-radius: 12px;
+    border: 1px solid rgba(251, 113, 133, 0.45);
+    background: rgba(89, 19, 38, 0.55);
+    color: #ffc2cf;
+    padding: 10px 12px;
+    font-size: 0.84rem;
+}
+
+.benditoai-modelos-wizard .baiw-nav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+.benditoai-modelos-wizard .baiw-btn {
+    border-radius: 12px;
+    border: 1.5px solid rgba(94, 29, 247, 0.30) !important;
+    background: rgba(94, 29, 247, 0.12) !important;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #A78BFA !important;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    transition: 0.18s ease;
+    box-shadow: none !important;
+}
+
+.benditoai-modelos-wizard .baiw-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.benditoai-modelos-wizard .baiw-btn--ghost {
+    color: #A78BFA !important;
+    border-color: rgba(94, 29, 247, 0.30) !important;
+    background: rgba(94, 29, 247, 0.12) !important;
+}
+
+.benditoai-modelos-wizard .baiw-btn--ghost:hover {
+    border-color: rgba(94, 29, 247, 0.55) !important;
+    background: rgba(94, 29, 247, 0.20) !important;
+}
+
+.benditoai-modelos-wizard .baiw-btn--primary {
+    color: #A78BFA !important;
+    border-color: rgba(94, 29, 247, 0.30) !important;
+    background: rgba(94, 29, 247, 0.12) !important;
+}
+
+.benditoai-modelos-wizard .baiw-btn--primary:hover {
+    border-color: rgba(94, 29, 247, 0.55) !important;
+    background: rgba(94, 29, 247, 0.20) !important;
+    filter: none;
+}
+
+.benditoai-modelos-wizard .baiw-btn--accent {
+    margin-left: auto;
+    color: #A78BFA !important;
+    border-color: rgba(94, 29, 247, 0.30) !important;
+    background: rgba(94, 29, 247, 0.12) !important;
+    box-shadow: none !important;
+}
+
+.benditoai-modelos-wizard .baiw-btn--accent:hover {
+    transform: none;
+    border-color: rgba(94, 29, 247, 0.55) !important;
+    background: rgba(94, 29, 247, 0.20) !important;
+    filter: none;
+}
+
+.benditoai-modelos-wizard .baiw-btn--loading {
+    opacity: 0.9;
+    cursor: wait;
+}
+
+.benditoai-modelos-wizard .baiw-result-stage {
+    min-height: auto;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.28s ease, transform 0.32s ease;
+}
+
+.benditoai-modelos-wizard .baiw-result-stage-inner {
+    width: min(860px, 100%);
+    margin: 0 auto;
+    border: 1px solid rgba(124, 92, 201, 0.33);
+    border-radius: 18px;
+    background: rgba(20, 12, 42, 0.74);
+    backdrop-filter: blur(8px);
+    padding: clamp(16px, 3vw, 28px);
+}
+
+.benditoai-modelos-wizard.is-loading-result .baiw-result-stage {
+    margin-top: 2px;
+    animation: baiwResultReveal 0.42s cubic-bezier(0.2, 0.78, 0.24, 1) both;
+}
+
+.benditoai-modelos-wizard.is-loading-result .baiw-result-stage-inner {
+    border-color: rgba(124, 92, 201, 0.42);
+    box-shadow: 0 14px 32px rgba(8, 4, 26, 0.38);
+}
+
+.benditoai-modelos-wizard .baiw-result-title {
+    margin: 2px 0 14px;
+    font-size: clamp(1.35rem, 1.1rem + 1vw, 1.85rem);
+}
+
+.benditoai-modelos-wizard .benditoai-loading {
+    display: none;
+    margin: 0 auto 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(124, 58, 255, 0.5);
+    background: rgba(81, 45, 170, 0.38);
+    color: #ede6ff;
+    padding: 10px 12px;
+    font-size: 0.84rem;
+    max-width: 430px;
+}
+
+.benditoai-modelos-wizard .baiw-final-error {
+    margin: 0 auto 12px;
+    max-width: 560px;
+}
+
+.benditoai-modelos-wizard .benditoai-error-message {
+    margin: 0 0 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(251, 113, 133, 0.5);
+    background: rgba(95, 24, 43, 0.58);
+    color: #ffd2dc;
+    padding: 10px 12px;
+    font-size: 0.84rem;
+}
+
+.benditoai-modelos-wizard .baiw-result-image {
+    margin: 0 auto;
+    width: min(520px, 100%);
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(130, 102, 202, 0.5);
+    box-shadow: 0 22px 36px rgba(4, 2, 13, 0.38);
+}
+
+.benditoai-modelos-wizard .baiw-result-skeleton {
+    width: min(520px, 100%);
+    margin: 0 auto;
+    height: 320px;
+    border-radius: 14px;
+    border: 1px solid rgba(130, 102, 202, 0.5);
+}
+
+.benditoai-modelos-wizard .benditoai-generated-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.benditoai-modelos-wizard .baiw-action-row {
+    margin-top: 14px;
+    display: grid;
+    gap: 8px;
+}
+
+.benditoai-modelos-wizard .baiw-action-row--main {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.benditoai-modelos-wizard .baiw-action-row--secondary {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 900px) {
+    .benditoai-modelos-wizard .baiw-header {
+        flex-direction: column;
+    }
+
+    .benditoai-modelos-wizard .baiw-credits {
+        width: 100%;
+    }
+}
+
+@media (min-width: 901px) {
+    .benditoai-modelos-wizard .baiw-result-stage .baiw-kicker,
+    .benditoai-modelos-wizard .baiw-result-stage .baiw-result-title {
+        display: none;
+    }
+}
+
+@media (max-width: 720px) {
+    .benditoai-modelos-wizard .baiw-mode-grid,
+    .benditoai-modelos-wizard .baiw-grid-2,
+    .benditoai-modelos-wizard .baiw-fields-grid,
+    .benditoai-modelos-wizard .baiw-slider-row,
+    .benditoai-modelos-wizard .baiw-action-row--main,
+    .benditoai-modelos-wizard .baiw-action-row--secondary {
+        grid-template-columns: 1fr;
+    }
+
+    .benditoai-modelos-wizard .baiw-stepper li {
+        padding: 9px 8px;
+    }
+
+    .benditoai-modelos-wizard .baiw-nav {
+        flex-direction: column;
+    }
+
+    .benditoai-modelos-wizard .baiw-btn--accent {
+        margin-left: 0;
+    }
+
+    .benditoai-modelos-wizard .baiw-result-stage {
+        min-height: auto;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .benditoai-modelos-wizard * {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+@keyframes baiwResultReveal {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
 
 <?php
 
     return ob_get_clean();
 }
 
-add_shortcode('benditoai_modelos_ai','benditoai_modelos_ai_shortcode');
+add_shortcode('benditoai_modelos_ai', 'benditoai_modelos_ai_shortcode');

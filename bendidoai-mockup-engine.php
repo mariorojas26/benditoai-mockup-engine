@@ -111,20 +111,26 @@ function benditoai_enqueue_assets() {
         '6.7.2'
     );
 
+    $styles_path = BENDIDOAI_PLUGIN_PATH . 'assets/css/styles.css';
+    $styles_version = file_exists($styles_path) ? (string) filemtime($styles_path) : '1.0';
+
     wp_enqueue_style(
         'benditoai-styles',
         BENDIDOAI_PLUGIN_URL . 'assets/css/styles.css',
         array(),
-        '1.0'
+        $styles_version
     );
 
     /* JS PRINCIPAL (usa imports internos) */
+
+    $main_script_path = BENDIDOAI_PLUGIN_PATH . 'assets/js/benditoai-main.js';
+    $main_script_version = file_exists($main_script_path) ? (string) filemtime($main_script_path) : '1.0';
 
     wp_enqueue_script(
         'benditoai-main',
         BENDIDOAI_PLUGIN_URL . 'assets/js/benditoai-main.js',
         array(),
-        '1.0',
+        $main_script_version,
         true
     );
 
@@ -160,11 +166,33 @@ add_filter('script_loader_tag', function($tag, $handle) {
 
 function benditoai_modelos_ai_scripts() {
 
+    $choices_css_path = BENDIDOAI_PLUGIN_PATH . 'assets/vendor/choices/choices.min.css';
+    $choices_js_path = BENDIDOAI_PLUGIN_PATH . 'assets/vendor/choices/choices.min.js';
+    $script_path = BENDIDOAI_PLUGIN_PATH . 'includes/modules/modelos-ai/modelos-ai-script.js';
+    $choices_css_version = file_exists($choices_css_path) ? (string) filemtime($choices_css_path) : '11.1.0';
+    $choices_js_version = file_exists($choices_js_path) ? (string) filemtime($choices_js_path) : '11.1.0';
+    $script_version = file_exists($script_path) ? (string) filemtime($script_path) : '1.1';
+
+    wp_enqueue_style(
+        'benditoai-choices',
+        BENDIDOAI_PLUGIN_URL . 'assets/vendor/choices/choices.min.css',
+        array(),
+        $choices_css_version
+    );
+
+    wp_enqueue_script(
+        'benditoai-choices-js',
+        BENDIDOAI_PLUGIN_URL . 'assets/vendor/choices/choices.min.js',
+        array(),
+        $choices_js_version,
+        true
+    );
+
     wp_enqueue_script(
         'benditoai-modelos-ai',
         BENDIDOAI_PLUGIN_URL . 'includes/modules/modelos-ai/modelos-ai-script.js',
-        array('benditoai-main'),
-        '1.0',
+        array('benditoai-main', 'benditoai-choices-js'),
+        $script_version,
         true
     );
 

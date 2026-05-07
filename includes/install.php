@@ -2,12 +2,12 @@
 /*
   includes/install.php
  
-  Aquí creamos las tablas de la base de datos para guardar el historial de generaciones
+  AquÃ­ creamos las tablas de la base de datos para guardar el historial de generaciones
   y los modelos AI.
  
   CADA VEZ QUE SE ACTIVA EL PLUGIN, SE EJECUTAN ESTAS FUNCIONES PARA ASEGURAR QUE LAS TABLAS EXISTAN AUTOMATICAMENTE
   .
- ⚠️ SOLO DEBE HABER 1 if (!defined('ABSPATH')) exit; Y DEBAJO ANINDAR LAS TABLAS, NO DEBEN HABER 2 IF POR QUE ROMPE ELEMENTOR
+ âš ï¸ SOLO DEBE HABER 1 if (!defined('ABSPATH')) exit; Y DEBAJO ANINDAR LAS TABLAS, NO DEBEN HABER 2 IF POR QUE ROMPE ELEMENTOR
 
 
  */
@@ -40,11 +40,11 @@ function benditoai_create_historial_table() {
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
     dbDelta($sql);
 
-    error_log("✅ benditoai_create_historial_table ejecutada: $table_name");
+    error_log("âœ… benditoai_create_historial_table ejecutada: $table_name");
 }
 
 /**
- * Crear tabla campañas AI
+ * Crear tabla campaÃ±as AI
  */
 function benditoai_create_campanas_ai_table() {
     global $wpdb;
@@ -75,7 +75,7 @@ function benditoai_create_campanas_ai_table() {
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
     dbDelta($sql);
 
-    error_log("✅ benditoai_create_campanas_ai_table ejecutada: $table_name");
+    error_log("âœ… benditoai_create_campanas_ai_table ejecutada: $table_name");
 }
 
 /**
@@ -96,10 +96,17 @@ function benditoai_create_modelos_ai_table() {
         cuerpo VARCHAR(50) DEFAULT '',
         etnia VARCHAR(50) DEFAULT '',
         estilo VARCHAR(50) DEFAULT '',
+        perfil_publico TINYINT(1) NOT NULL DEFAULT 0,
+        descripcion_modelo TEXT,
         prenda_superior TEXT,
         prenda_inferior TEXT,
         zapatos TEXT,
         accesorios TEXT,
+        modo_creacion VARCHAR(30) NOT NULL DEFAULT 'rasgos',
+        nacionalidad VARCHAR(80) DEFAULT '',
+        rasgos_caracteristicas TEXT,
+        campo_adicional TEXT,
+        descripcion_referencia TEXT,
         prompt TEXT,
         image_url TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -109,5 +116,6 @@ function benditoai_create_modelos_ai_table() {
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
     dbDelta($sql);
 
-    error_log("✅ benditoai_create_modelos_ai_table ejecutada: $table_name");
+    error_log("âœ… benditoai_create_modelos_ai_table ejecutada: $table_name");
 }
+

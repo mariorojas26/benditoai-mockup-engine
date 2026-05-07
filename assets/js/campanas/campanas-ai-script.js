@@ -78,6 +78,65 @@ document.querySelectorAll("input[name='use_model']").forEach(r => {
     })
 })
 
+function preselectModelFromContext(){
+
+    const radioYes = document.querySelector("input[name='use_model'][value='1']")
+    const container = document.getElementById("benditoai-modelos-container")
+    const hiddenInput = document.getElementById("model_url")
+    const label = document.getElementById("benditoai-modelo-seleccionado")
+
+    if(!radioYes || !container || !hiddenInput) return
+
+    let selectedModelUrl = ""
+
+    try{
+        const params = new URLSearchParams(window.location.search)
+        selectedModelUrl = params.get("model_url") || ""
+    }catch(err){
+        selectedModelUrl = ""
+    }
+
+    if(!selectedModelUrl){
+        try{
+            const cached = JSON.parse(localStorage.getItem("benditoai_selected_model") || "null")
+            if(cached && cached.image_url){
+                selectedModelUrl = cached.image_url
+            }
+        }catch(err){
+            selectedModelUrl = ""
+        }
+    }
+
+    if(!selectedModelUrl) return
+
+    radioYes.checked = true
+    useModel = "1"
+    container.style.display = "block"
+
+    document.querySelectorAll(".benditoai-modelo-card")
+        .forEach(c => c.classList.remove("active"))
+
+    const card = Array.from(document.querySelectorAll(".benditoai-modelo-card"))
+        .find(c => c.dataset.url === selectedModelUrl)
+
+    modelUrl = selectedModelUrl
+    hiddenInput.value = selectedModelUrl
+
+    if(card){
+        card.classList.add("active")
+        if(label){
+            label.style.display = "block"
+            label.querySelector("strong").innerText = card.dataset.nombre || "Modelo seleccionado"
+        }
+        return
+    }
+
+    if(label){
+        label.style.display = "block"
+        label.querySelector("strong").innerText = "Modelo seleccionado desde generacion"
+    }
+}
+
 /* =========================
    🎯 SELECCIONAR MODELO
 ========================= */
@@ -258,5 +317,7 @@ document.getElementById("benditoai-reset")?.addEventListener("click", () => {
     useModel = "0"
 
 })
+
+preselectModelFromContext()
 
 })
