@@ -164,6 +164,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const syncModePanels = () => {
         const mode = getActiveMode();
         const modePanels = Array.from(form.querySelectorAll("[data-mode-panel]"));
+        const stepThree = form.querySelector(".baiw-step[data-step='3']");
 
         modePanels.forEach((panel) => {
             const isActive = panel.dataset.modePanel === mode;
@@ -178,6 +179,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (referenceImageInput) {
             referenceImageInput.required = mode === "referencia";
+        }
+
+        if (stepThree) {
+            stepThree.setAttribute("data-active-mode", mode);
         }
 
         initChoicesSelects();

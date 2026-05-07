@@ -113,10 +113,10 @@ FACIAL AND PERSONAL TRAITS
 {$data['rasgos_caracteristicas']}
 
 OUTFIT DESCRIPTION
-Upper clothing: {$data['prenda_superior']}
-Lower clothing: {$data['prenda_inferior']}
-Shoes: {$data['zapatos']}
-Accessories: {$data['accesorios']}
+Upper clothing: plain white t-shirt
+Lower clothing: white shorts
+Shoes: barefoot
+Accessories: none
 
 EXTRA REQUIREMENTS
 {$data['campo_adicional']}
@@ -166,9 +166,6 @@ Do not copy watermarks, text or logos.
 
 MODEL SUMMARY
 {$data['descripcion_modelo']}
-
-STYLE DIRECTION
-{$data['descripcion_referencia']}
 
 OPTIONAL STYLE HINT
 {$data['estilo']}
@@ -310,7 +307,6 @@ function benditoai_modelos_ai_ensure_optional_columns($table_name) {
         'nacionalidad' => "VARCHAR(80) DEFAULT ''",
         'rasgos_caracteristicas' => "TEXT",
         'campo_adicional' => "TEXT",
-        'descripcion_referencia' => "TEXT",
     );
 
     foreach ($columns as $column_name => $definition) {
@@ -320,6 +316,22 @@ function benditoai_modelos_ai_ensure_optional_columns($table_name) {
 
         // Best effort: keep production compatible even if schema has not been migrated.
         $wpdb->query("ALTER TABLE `$table_name` ADD COLUMN `$column_name` $definition");
+    }
+}
+
+function benditoai_modelos_ai_cleanup_deprecated_columns($table_name) {
+    global $wpdb;
+
+    // Deprecated after wizard refactor: no longer used in UI or prompts.
+    $deprecated_columns = array('descripcion_referencia');
+
+    foreach ($deprecated_columns as $column_name) {
+        if (!benditoai_modelos_ai_column_exists($table_name, $column_name)) {
+            continue;
+        }
+
+        // Best effort cleanup: if ALTER fails, generation flow continues.
+        $wpdb->query("ALTER TABLE `$table_name` DROP COLUMN `$column_name`");
     }
 }
 
@@ -399,7 +411,10 @@ function benditoai_generar_modelo_ai() {
         wp_send_json_error(array('message' => 'El nombre del modelo es obligatorio.'));
     }
 
-    $descripcion_modelo = benditoai_modelos_ai_textarea_field('descripcion_modelo');
+    $descripcion_modelo = benditoai_modelos_ai_textarea_field('descripcion_modelo', $nombre_modelo);
+    if (trim((string) $descripcion_modelo) === '') {
+        $descripcion_modelo = $nombre_modelo;
+    }
     $perfil_publico = benditoai_modelos_ai_bool_field('perfil_publico');
 
     // -------------------------------------------------
@@ -436,12 +451,11 @@ function benditoai_generar_modelo_ai() {
     $rasgos_caracteristicas = benditoai_modelos_ai_textarea_field('rasgos_caracteristicas');
     $campo_adicional = benditoai_modelos_ai_textarea_field('campo_adicional');
 
-    $prenda_superior = benditoai_modelos_ai_textarea_field('prenda_superior');
-    $prenda_inferior = benditoai_modelos_ai_textarea_field('prenda_inferior');
-    $zapatos = benditoai_modelos_ai_textarea_field('zapatos');
-    $accesorios = benditoai_modelos_ai_textarea_field('accesorios');
+    $prenda_superior = 'plain white t-shirt';
+    $prenda_inferior = 'white shorts';
+    $zapatos = 'barefoot';
+    $accesorios = 'none';
 
-    $descripcion_referencia = benditoai_modelos_ai_textarea_field('descripcion_referencia');
     $color_ojos = benditoai_modelos_ai_text_field('color_ojos');
     $peinado = benditoai_modelos_ai_text_field('peinado');
     $color_pelo = benditoai_modelos_ai_text_field('color_pelo');
@@ -490,7 +504,6 @@ function benditoai_generar_modelo_ai() {
         'zapatos' => $zapatos,
         'accesorios' => $accesorios,
         'campo_adicional' => $campo_adicional,
-        'descripcion_referencia' => $descripcion_referencia,
     );
 
     if ($modo_creacion === 'referencia') {
@@ -526,6 +539,7 @@ function benditoai_generar_modelo_ai() {
     $created_at = current_time('mysql');
 
     benditoai_modelos_ai_ensure_optional_columns($table_name);
+    benditoai_modelos_ai_cleanup_deprecated_columns($table_name);
 
     $insert_data = array(
         'user_id' => $user_id,
@@ -551,7 +565,6 @@ function benditoai_generar_modelo_ai() {
         'nacionalidad' => $nacionalidad,
         'rasgos_caracteristicas' => $rasgos_compuestos,
         'campo_adicional' => $campo_adicional,
-        'descripcion_referencia' => $descripcion_referencia,
     );
 
     foreach ($optional_data as $column_name => $value) {

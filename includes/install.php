@@ -106,7 +106,6 @@ function benditoai_create_modelos_ai_table() {
         nacionalidad VARCHAR(80) DEFAULT '',
         rasgos_caracteristicas TEXT,
         campo_adicional TEXT,
-        descripcion_referencia TEXT,
         prompt TEXT,
         image_url TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,

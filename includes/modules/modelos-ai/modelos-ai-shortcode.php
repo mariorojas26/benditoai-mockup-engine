@@ -49,7 +49,6 @@ function benditoai_modelos_ai_shortcode() {
             <form id="benditoai-form-modelo-ai" class="baiw-form" enctype="multipart/form-data" novalidate>
                 <input type="hidden" name="benditoai_modelos_nonce" value="<?php echo esc_attr(wp_create_nonce('benditoai_modelos_ai_nonce')); ?>">
                 <input type="hidden" name="perfil_publico" id="benditoai_perfil_publico" value="0">
-                <input type="hidden" name="descripcion_referencia" value="">
 
                 <section class="baiw-step is-active" data-step="1" aria-hidden="false">
                     <div class="baiw-card">
@@ -57,12 +56,7 @@ function benditoai_modelos_ai_shortcode() {
                        
                         <div class="baiw-field">
                             <label for="benditoai_nombre_modelo">Nombre del modelo</label>
-                            <input id="benditoai_nombre_modelo" type="text" name="nombre_modelo" placeholder="Ej: Editorial Denim 01" maxlength="100" required>
-                        </div>
-
-                        <div class="baiw-field">
-                            <label for="benditoai_descripcion_modelo">Descripcion del modelo</label>
-                            <textarea id="benditoai_descripcion_modelo" name="descripcion_modelo" placeholder="Ej: modelo urbano, fotorealista, actitud segura." maxlength="600"></textarea>
+                            <input id="benditoai_nombre_modelo" type="text" name="nombre_modelo" placeholder="Natalia Pastor" maxlength="100" required>
                         </div>
 
                         <p class="baiw-field-label">Tipo de creacion</p>
@@ -70,6 +64,10 @@ function benditoai_modelos_ai_shortcode() {
                             <label class="baiw-mode-option">
                                 <input type="radio" name="modo_creacion" value="referencia" checked>
                                 <span>
+                                    <span class="baiw-tip baiw-tip--corner" tabindex="0" aria-label="Ayuda modo referencia">
+                                        ?
+                                        <span class="baiw-tip-bubble">Usa una foto base y la IA la toma como guia principal.</span>
+                                    </span>
                                     <small>Sube una foto y la IA la usa como base.</small>
                                 </span>
                             </label>
@@ -77,8 +75,11 @@ function benditoai_modelos_ai_shortcode() {
                             <label class="baiw-mode-option">
                                 <input type="radio" name="modo_creacion" value="rasgos">
                                 <span>
-                               
-                                    <small>Construye el avatar desde cero en tres pasos.</small>
+                                    <span class="baiw-tip baiw-tip--corner" tabindex="0" aria-label="Ayuda modo rasgos">
+                                        ?
+                                        <span class="baiw-tip-bubble">Describe rasgos y estilo para generar el avatar desde cero.</span>
+                                    </span>
+                                    <small>Construye el avatar desde cero.</small>
                                 </span>
                             </label>
                         </div>
@@ -87,11 +88,15 @@ function benditoai_modelos_ai_shortcode() {
 
                 <section class="baiw-step" data-step="2" aria-hidden="true" hidden>
                     <div class="baiw-card" data-mode-panel="referencia">
-                        <h3>Referencia visual</h3>
-                        <p class="baiw-hint">Sube una imagen nitida. Formatos validos: JPG, PNG o WEBP.</p>
 
                         <div class="baiw-field">
-                            <label for="benditoai_imagen_referencia">Imagen de referencia</label>
+                            <label class="baiw-label-tip" for="benditoai_imagen_referencia">
+                                <span>Imagen de referencia</span>
+                                <span class="baiw-tip" tabindex="0" aria-label="Ayuda imagen de referencia">
+                                    ?
+                                    <span class="baiw-tip-bubble">Sube una imagen nitida.</span>
+                                </span>
+                            </label>
                             <label class="baiw-file-smart" for="benditoai_imagen_referencia" id="benditoai-file-smart">
                                 <input id="benditoai_imagen_referencia" type="file" name="imagen_referencia" accept="image/png,image/jpeg,image/webp">
                                 <span class="baiw-file-smart-text" id="benditoai-file-text">Subir imagen</span>
@@ -242,62 +247,50 @@ function benditoai_modelos_ai_shortcode() {
 
                     <div class="baiw-card" data-mode-panel="rasgos" hidden>
                         <h3>Detalles a medida</h3>
-                        <p class="baiw-hint">Completa expresion, vestuario y ajustes finales.</p>
+               
 
-                        <div class="baiw-field">
-                            <label for="benditoai_rasgos">Rasgos y caracteristicas</label>
-                            <textarea id="benditoai_rasgos" name="rasgos_caracteristicas" placeholder="Ej: rostro ovalado, mirada segura, sonrisa suave."></textarea>
-                        </div>
-
-                        <div class="baiw-grid-2">
+                        <div class="baiw-step3-layout">
                             <div class="baiw-field">
-                                <label for="benditoai_prenda_superior">Prenda superior</label>
-                                <textarea id="benditoai_prenda_superior" name="prenda_superior" placeholder="Ej: chaqueta denim oversize"></textarea>
+                                <label for="benditoai_rasgos">Rasgos y caracteristicas</label>
+                                <textarea id="benditoai_rasgos" name="rasgos_caracteristicas" placeholder="Ej: rostro ovalado, mirada segura, sonrisa suave."></textarea>
                             </div>
 
                             <div class="baiw-field">
-                                <label for="benditoai_prenda_inferior">Prenda inferior</label>
-                                <textarea id="benditoai_prenda_inferior" name="prenda_inferior" placeholder="Ej: pantalon cargo beige"></textarea>
+                                <label for="benditoai_campo_adicional">Campo adicional</label>
+                                <textarea id="benditoai_campo_adicional" name="campo_adicional" placeholder="Indicaciones extra para la IA."></textarea>
                             </div>
 
-                            <div class="baiw-field">
-                                <label for="benditoai_zapatos">Zapatos</label>
-                                <textarea id="benditoai_zapatos" name="zapatos" placeholder="Ej: zapatillas blancas limpias"></textarea>
+                            <div class="baiw-field baiw-step3-flags">
+                                <p class="baiw-field-label">Detalles rapidos</p>
+                                <div class="baiw-step3-flags-list">
+                                    <label class="baiw-step3-flag">
+                                        <input type="checkbox" name="detalle_barba" value="1">
+                                        <span>Barba</span>
+                                    </label>
+                                    <label class="baiw-step3-flag">
+                                        <input type="checkbox" name="detalle_hoyuelos" value="1">
+                                        <span>Hoyuelos</span>
+                                    </label>
+                                    <label class="baiw-step3-flag">
+                                        <input type="checkbox" name="detalle_bronceado" value="1">
+                                        <span>Bronceado</span>
+                                    </label>
+                                </div>
                             </div>
-
-                            <div class="baiw-field">
-                                <label for="benditoai_accesorios">Accesorios</label>
-                                <textarea id="benditoai_accesorios" name="accesorios" placeholder="Ej: reloj metalico minimalista"></textarea>
-                            </div>
-                        </div>
-
-                        <div class="baiw-field">
-                            <p class="baiw-field-label">Detalles rapidos</p>
-                            <div class="baiw-chip-group">
-                                <label class="baiw-chip"><input type="checkbox" name="detalle_hoyuelos" value="1">Hoyuelos</label>
-                                <label class="baiw-chip"><input type="checkbox" name="detalle_barba" value="1">Barba</label>
-                                <label class="baiw-chip"><input type="checkbox" name="detalle_bronceado" value="1">Bronceado</label>
-                            </div>
-                        </div>
-
-                        <div class="baiw-field">
-                            <label for="benditoai_campo_adicional">Campo adicional</label>
-                            <textarea id="benditoai_campo_adicional" name="campo_adicional" placeholder="Indicaciones extra para la IA."></textarea>
                         </div>
                     </div>
 
-                    <div class="baiw-toggle-row">
-                        <div>
-                            <p class="baiw-field-label">Visibilidad del modelo</p>
-                            <p class="baiw-hint">Activalo si quieres marcarlo como publico.</p>
-                        </div>
-
-                        <label class="baiw-switch" for="benditoai_perfil_publico_toggle">
+                    <div class="baiw-consent-row">
+                        <label class="baiw-consent-check" for="benditoai_perfil_publico_toggle">
                             <input type="checkbox" id="benditoai_perfil_publico_toggle" role="switch" aria-checked="false">
-                            <span class="baiw-switch-ui">
-                                <span class="baiw-switch-knob"></span>
+                            <span class="baiw-consent-box" aria-hidden="true"></span>
+                            <span class="baiw-consent-copy">
+                                <small>Publico</small>
                             </span>
-                            <span id="benditoai_perfil_publico_label">Privado</span>
+                            <span class="baiw-tip baiw-tip--consent" tabindex="0" aria-label="Ayuda visibilidad">
+                                <span aria-hidden="true">?</span>
+                                <span class="baiw-tip-bubble">Permites usar tus imagenes generadas como ejemplos reales en el sitio.</span>
+                            </span>
                         </label>
                     </div>
 
@@ -602,6 +595,59 @@ function benditoai_modelos_ai_shortcode() {
     font-weight: 600;
 }
 
+.benditoai-modelos-wizard .baiw-label-tip {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 8px;
+}
+
+.benditoai-modelos-wizard .baiw-tip {
+    position: relative;
+    width: 19px;
+    height: 19px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid rgba(94, 29, 247, 0.35);
+    background: rgba(94, 29, 247, 0.12);
+    color: #A78BFA;
+    font-size: 0.68rem;
+    font-weight: 700;
+    line-height: 1;
+    cursor: help;
+    user-select: none;
+}
+
+.benditoai-modelos-wizard .baiw-tip-bubble {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 8px);
+    min-width: 220px;
+    max-width: 280px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(124, 92, 201, 0.45);
+    background: #140c2f;
+    color: #e7defe;
+    font-size: 0.76rem;
+    font-weight: 500;
+    line-height: 1.35;
+    box-shadow: 0 10px 24px rgba(4, 2, 13, 0.45);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(4px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    z-index: 95;
+}
+
+.benditoai-modelos-wizard .baiw-tip:hover .baiw-tip-bubble,
+.benditoai-modelos-wizard .baiw-tip:focus .baiw-tip-bubble,
+.benditoai-modelos-wizard .baiw-tip:focus-visible .baiw-tip-bubble {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 .benditoai-modelos-wizard input,
 .benditoai-modelos-wizard select,
 .benditoai-modelos-wizard textarea {
@@ -737,7 +783,7 @@ function benditoai_modelos_ai_shortcode() {
     pointer-events: none;
 }
 
-.benditoai-modelos-wizard .baiw-mode-option span {
+.benditoai-modelos-wizard .baiw-mode-option > span {
     display: block;
     border: 1px solid rgba(124, 92, 201, 0.36);
     border-radius: 12px;
@@ -745,15 +791,16 @@ function benditoai_modelos_ai_shortcode() {
     padding: 12px;
     cursor: pointer;
     transition: 0.2s ease;
+    position: relative;
 }
 
-.benditoai-modelos-wizard .baiw-mode-option strong {
+.benditoai-modelos-wizard .baiw-mode-option > span > strong {
     display: block;
     font-size: 0.9rem;
     font-weight: 600;
 }
 
-.benditoai-modelos-wizard .baiw-mode-option small {
+.benditoai-modelos-wizard .baiw-mode-option > span > small {
     display: block;
     margin-top: 4px;
     font-size: 0.77rem;
@@ -767,6 +814,174 @@ function benditoai_modelos_ai_shortcode() {
     box-shadow: 0 12px 24px rgba(9, 4, 25, 0.35);
 }
 
+/* Paso 1 con mejor respiracion tras quitar descripcion */
+.benditoai-modelos-wizard .baiw-step[data-step="1"] .baiw-card {
+    padding: 18px;
+}
+
+.benditoai-modelos-wizard .baiw-step[data-step="1"] .baiw-field-label {
+    margin-top: 14px;
+}
+
+.benditoai-modelos-wizard .baiw-step[data-step="1"] .baiw-mode-grid {
+    gap: 12px;
+}
+
+.benditoai-modelos-wizard .baiw-step[data-step="1"] .baiw-mode-option > span {
+    min-height: 74px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 14px 18px;
+}
+
+.benditoai-modelos-wizard .baiw-tip--corner {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+/* Paso 2 referencia: mas respiracion entre contenedores */
+.benditoai-modelos-wizard .baiw-step[data-step="2"] .baiw-card[data-mode-panel="referencia"] {
+    padding: 20px 20px 18px;
+}
+
+.benditoai-modelos-wizard .baiw-step[data-step="2"] .baiw-card[data-mode-panel="referencia"] .baiw-field {
+    margin-top: 14px;
+}
+
+.benditoai-modelos-wizard .baiw-step[data-step="2"] .baiw-card[data-mode-panel="referencia"] .baiw-field + .baiw-field {
+    margin-top: 18px;
+}
+
+.benditoai-modelos-wizard .baiw-step[data-step="2"] .baiw-card[data-mode-panel="referencia"] .baiw-grid-2 {
+    margin-top: 14px;
+    gap: 14px;
+}
+
+/* Paso 3 rasgos: distribucion 3 columnas (rasgos / campo / flags) */
+.benditoai-modelos-wizard .baiw-step[data-step="3"] .baiw-card[data-mode-panel="rasgos"] .baiw-step3-layout {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    align-items: start;
+}
+
+.benditoai-modelos-wizard .baiw-step[data-step="3"] .baiw-card[data-mode-panel="rasgos"] .baiw-step3-layout .baiw-field {
+    margin-top: 0;
+}
+
+.benditoai-modelos-wizard .baiw-step[data-step="3"] .baiw-step3-flags-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    width: 100%;
+}
+
+.benditoai-modelos-wizard .baiw-step[data-step="3"] .baiw-step3-flags {
+    grid-column: 1 / -1;
+}
+
+.benditoai-modelos-wizard .baiw-step[data-step="3"] .baiw-step3-flag {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border: 1px solid rgba(124, 92, 201, 0.3);
+    border-radius: 999px;
+    padding: 6px 12px 6px 40px;
+    background: rgba(33, 20, 67, 0.34);
+    cursor: pointer;
+    color: #ded1ff;
+    font-weight: 500;
+    overflow: hidden;
+    min-height: 38px;
+    min-width: 0;
+    width: 100%;
+    transition: border-color .2s ease, background-color .2s ease;
+}
+
+.benditoai-modelos-wizard .baiw-step[data-step="3"] .baiw-step3-flag::before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    width: 20px;
+    height: 20px;
+    border-radius: 999px;
+    transform: translateY(-50%);
+    border: 1px solid rgba(126, 78, 255, 0.48);
+    box-shadow: none;
+    background: rgba(18, 9, 40, 0.9);
+}
+
+.benditoai-modelos-wizard .baiw-step[data-step="3"] .baiw-step3-flag::after {
+    content: "";
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    width: 12px;
+    height: 12px;
+    border-radius: 999px;
+    transform: translateY(-50%);
+    background: #0a041d;
+    box-shadow: inset 0 0 0 1px rgba(167, 139, 250, 0.08);
+}
+
+.benditoai-modelos-wizard .baiw-step[data-step="3"] .baiw-step3-flag input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    margin: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.benditoai-modelos-wizard .baiw-step[data-step="3"] .baiw-step3-flag span {
+    position: relative;
+    z-index: 1;
+    font-size: 0.74rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+}
+
+.benditoai-modelos-wizard .baiw-step[data-step="3"] .baiw-step3-flag:has(input:checked) {
+    border-color: rgba(140, 102, 255, 0.52);
+    background: rgba(50, 30, 95, 0.42);
+}
+
+.benditoai-modelos-wizard .baiw-step[data-step="3"] .baiw-step3-flag:has(input:checked)::before {
+    border-color: rgba(155, 121, 255, 0.68);
+    box-shadow: 0 0 0 1px rgba(124, 58, 255, 0.14);
+}
+
+.benditoai-modelos-wizard .baiw-step[data-step="3"] .baiw-step3-flag:has(input:checked)::after {
+    background: #8f63ff;
+}
+
+/* Desktop: compactar paso 3 (rasgos) moviendo visibilidad al espacio libre */
+@media (min-width: 901px) {
+    .benditoai-modelos-wizard .baiw-step[data-step="3"][data-active-mode="rasgos"] {
+        gap: 12px;
+    }
+
+    .benditoai-modelos-wizard .baiw-step[data-step="3"][data-active-mode="rasgos"] .baiw-consent-row {
+        width: auto !important;
+        max-width: 100% !important;
+        margin-top: 8px !important;
+        margin-left: 0 !important;
+        position: static !important;
+        z-index: auto !important;
+        border-radius: 20px;
+        padding: 0;
+    }
+}
+
 .benditoai-modelos-wizard .baiw-toggle-row {
     display: flex;
     justify-content: space-between;
@@ -776,6 +991,106 @@ function benditoai_modelos_ai_shortcode() {
     border-radius: 12px;
     padding: 10px 12px;
     background: rgba(28, 16, 57, 0.55);
+}
+
+.benditoai-modelos-wizard .baiw-consent-row {
+    display: inline-flex;
+    width: auto;
+    max-width: 100%;
+    align-items: stretch;
+    justify-content: flex-start;
+    border: 1px solid rgba(123, 91, 200, 0.34);
+    border-radius: 14px;
+    padding: 0;
+    background: rgba(23, 13, 49, 0.62);
+    box-shadow: none;
+}
+
+.benditoai-modelos-wizard .baiw-consent-check {
+    position: relative;
+    display: inline-flex;
+    width: auto;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 30px 8px 12px;
+    min-height: 0px;
+    cursor: pointer;
+}
+
+.benditoai-modelos-wizard .baiw-tip--consent {
+    position: absolute;
+    top: 50%;
+    right: 6px;
+    transform: translateY(-50%);
+    z-index: 6;
+    width: 15px;
+    height: 15px;
+    font-size: 0.58rem;
+    border-width: 1px;
+}
+
+.benditoai-modelos-wizard .baiw-tip--consent .baiw-tip-bubble {
+    right: 0;
+    min-width: 250px;
+}
+
+.benditoai-modelos-wizard .baiw-consent-check input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+}
+
+.benditoai-modelos-wizard .baiw-consent-box {
+    width: 14px;
+    height: 14px;
+    border-radius: 5px;
+    border: 1px solid rgba(141, 111, 221, 0.68);
+    background: rgba(10, 5, 31, 0.95);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    transition: 0.2s ease;
+}
+
+.benditoai-modelos-wizard .baiw-consent-box::after {
+    content: "";
+    width: 7px;
+    height: 4px;
+    border-left: 1.5px solid #ffffff;
+    border-bottom: 1.5px solid #ffffff;
+    transform: rotate(-45deg) translate(1px, -1px);
+    opacity: 0;
+    transition: 0.18s ease;
+}
+
+.benditoai-modelos-wizard .baiw-consent-check input:checked + .baiw-consent-box {
+    background: #7c3aff;
+    border-color: #9f77ff;
+    box-shadow: 0 0 0 2px rgba(124, 58, 255, 0.12);
+}
+
+.benditoai-modelos-wizard .baiw-consent-check input:checked + .baiw-consent-box::after {
+    opacity: 1;
+}
+
+.benditoai-modelos-wizard .baiw-consent-copy {
+    display: block;
+}
+
+.benditoai-modelos-wizard .baiw-consent-copy small {
+    display: block;
+    margin: 0;
+    font-size: 0.75rem;
+    color: #a99ccb;
+    line-height: 1.1;
+    letter-spacing: 0.005em;
+    text-transform: uppercase;
+}
+
+.benditoai-modelos-wizard .baiw-consent-state {
+    display: none;
 }
 
 .benditoai-modelos-wizard .baiw-switch {
@@ -1303,6 +1618,25 @@ function benditoai_modelos_ai_shortcode() {
 
     .benditoai-modelos-wizard .baiw-stepper li {
         padding: 9px 8px;
+    }
+
+    .benditoai-modelos-wizard .baiw-step[data-step="3"] .baiw-card[data-mode-panel="rasgos"] .baiw-step3-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .benditoai-modelos-wizard .baiw-step[data-step="3"] .baiw-step3-flags-list {
+        grid-template-columns: 1fr;
+    }
+
+    .benditoai-modelos-wizard .baiw-consent-row {
+        display: inline-flex;
+        width: auto;
+        max-width: 100%;
+    }
+
+    .benditoai-modelos-wizard .baiw-consent-check {
+        min-height: 0;
+        padding: 8px 10px;
     }
 
     .benditoai-modelos-wizard .baiw-nav {
