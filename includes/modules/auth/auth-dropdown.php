@@ -124,7 +124,7 @@ function benditoai_user_dropdown() {
 
                     <div class="benditoai-account-summary">
                         <div class="benditoai-account-summary-item">
-                            <span class="benditoai-account-label">Tokens disponibles</span>
+                            <span class="benditoai-account-label">Tus tokens</span>
                             <span class="benditoai-user-tokens benditoai-account-tokens"><?php echo esc_html($tokens_display); ?></span>
                         </div>
                         <div class="benditoai-account-summary-item">

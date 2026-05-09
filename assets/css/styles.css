@@ -1264,7 +1264,7 @@ pointer-events:none;
     border: 1px solid rgba(167, 139, 250, 0.35);
     border-radius: 12px;
     background: linear-gradient(135deg, rgba(124, 58, 255, 0.16), rgba(255, 255, 255, 0.05));
-    padding: 20px 18px 18px;
+    padding: 20px 18px 0px;
     display: flex;
     flex-direction: column;
     gap: 18px;
@@ -1290,9 +1290,9 @@ pointer-events:none;
 }
 
 .benditoai-account-summary-item {
-    padding: 14px 16px;
+    padding: 0px;
     border-radius: 12px;
-    background: rgba(23, 9, 48, 0.75);
+    background: transparent;
 }
 
 .benditoai-account-summary-item .benditoai-account-label {
@@ -1308,10 +1308,10 @@ pointer-events:none;
 .benditoai-account-tokens {
     display: block;
     margin-top: 0;
-    color: #c4b5fd !important;
+    color: #a78bfa !important;
     line-height: 1.1;
     font-weight: 800 !important;
-    font-size: 1.35rem;
+    font-size: 0.8rem;
 }
 
 .benditoai-account-models {
@@ -1319,7 +1319,7 @@ pointer-events:none;
     align-items: center;
     gap: 14px;
     min-height: 66px;
-    padding: 0 14px;
+    padding: 0px !important;
     border-top: 1px solid rgba(167, 139, 250, 0.24);
     color: #ffffff !important;
     font-weight: 650;
@@ -1328,14 +1328,14 @@ pointer-events:none;
 }
 
 .benditoai-account-label {
-    margin-top: 10px;
+    margin-top: 0px;
     color: #d8cffb;
     line-height: 1.25;
 }
 
 .benditoai-account-tokens {
     margin-top: 6px;
-    padding-bottom: 20px;
+    padding-bottom: 0px;
     color: #a78bfa !important;
     line-height: 1.1;
     font-weight: 800 !important;
@@ -1532,12 +1532,9 @@ MOBILE (CLICK)
     .benditoai-account-name,
     .benditoai-account-label,
     .benditoai-account-tokens {
-        padding-inline: 20px;
+        padding-inline: 0px;
     }
 
-    .benditoai-account-models {
-        padding-inline: 20px;
-    }
 }
 
 .benditoai-historial-img{
