@@ -5,7 +5,7 @@ function maquina_texto_shortcode($atts) {
     ], $atts);
 
     $frases = [
-        "con Inteligencia Artificial",
+        "con IA",
         "en segundos",
         "sin ser diseñador",
         "para tu marca",
@@ -16,6 +16,7 @@ function maquina_texto_shortcode($atts) {
 
     $output = <<<HTML
     <div class="maquina-hero">
+        <div class="maquina-hero-inner">
 
         <div class="maquina-badge">
             ✨ Powered by Gemini Nano Banana Pro
@@ -23,11 +24,11 @@ function maquina_texto_shortcode($atts) {
 
         <h1 class="maquina-titulo">
             {$titulo}<br>
-            <span id="maquina-texto" style="color:#7C3AFF !important;"></span><span class="maquina-cursor" style="color:transparent !important;">|</span>
+            <span id="maquina-texto" style="color:#7C3AFF !important;"></span>
         </h1>
 
         <p class="maquina-subtitulo">
-           Crea modelos, vístelos con tu marca y ponlos a vender.
+           Crea modelos - vístelos con tu marca - ponlos a vender.
         </p>
 
         <div class="maquina-btns">
@@ -39,6 +40,7 @@ function maquina_texto_shortcode($atts) {
             </a>
         </div>
 
+        </div>
     </div>
 
     <script>

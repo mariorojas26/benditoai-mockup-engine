@@ -424,7 +424,10 @@ img.benditoai-download-icon {
 .benditoai-token-counter-box{
     display:inline-flex;
     align-items:center;
+    justify-content:center;
     gap:6px;
+    text-align:center;
+    line-height: 1;
 
     background: rgba(94, 29, 247, 0.12) !important;
     color: #A78BFA !important;
@@ -440,6 +443,77 @@ img.benditoai-download-icon {
 
     box-shadow:none !important;
     transition: all .25s ease;
+}
+
+.benditoai-token-counter-box strong{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    line-height: 1;
+}
+
+.benditoai-token-counter-box .benditoai-token-label,
+.benditoai-token-counter-box .benditoai-user-tokens,
+.benditoai-token-counter-box .benditoai-admin-check-inline{
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+.benditoai-admin-check-inline{
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    margin-left: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    align-self: center;
+    cursor: pointer;
+}
+
+.benditoai-admin-check-inline input{
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+}
+
+.benditoai-admin-check-ui{
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    border: 1px solid rgba(124, 58, 255, 0.7);
+    background: rgba(18, 10, 39, 0.92);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.18s ease;
+}
+
+.benditoai-admin-check-ui::after{
+    content: "";
+    width: 7px;
+    height: 4px;
+    border-left: 1.5px solid #ffffff;
+    border-bottom: 1.5px solid #ffffff;
+    transform: rotate(-45deg) translate(1px, -1px);
+    opacity: 0;
+    transition: 0.18s ease;
+}
+
+.benditoai-admin-check-inline input:checked + .benditoai-admin-check-ui{
+    background: #7c3aff;
+    border-color: #a78bfa;
+}
+
+.benditoai-admin-check-inline input:checked + .benditoai-admin-check-ui::after{
+    opacity: 1;
 }
 
 /* TEXTO "Tokens:" */
@@ -459,13 +533,9 @@ img.benditoai-download-icon {
  color: #c4b5fd !important;
 }
 
-/* TOGGLE ADMIN */
+/* TOGGLE ADMIN (legacy hidden block) */
 .benditoai-admin-toggle-wrapper{
-    font-size:13px;
-}
-
-.benditoai-admin-toggle-label{
-    color:#333;
+    display:none;
 }
 /* CONTENEDOR DEL CONTADOR TOKENS */
 
@@ -953,7 +1023,9 @@ pointer-events:none;
 .benditoai-user-trigger {
     display: inline-flex;
     align-items: center;
+    flex-wrap: nowrap;
     gap: 6px;
+    white-space: nowrap;
     background: rgba(94, 29, 247, 0.12) !important;
     color: #c4b5fd !important;
     padding: 8px 14px;
@@ -964,6 +1036,37 @@ pointer-events:none;
     box-shadow: none !important;
     cursor: pointer;
     transition: all .25s ease;
+    max-width: 92vw;
+    overflow: hidden;
+}
+
+.benditoai-user-trigger .benditoai-user-name{
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1 1 auto;
+}
+
+.benditoai-user-trigger .benditoai-token-label,
+.benditoai-user-trigger .benditoai-user-tokens,
+.benditoai-user-trigger > span[aria-hidden="true"]{
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+/* Unificar look & size de ambos botones (tokens y usuario) */
+.benditoai-token-counter-box,
+.benditoai-user-trigger {
+    min-height: 47px;
+    padding: 8px 14px !important;
+    border-radius: 12px !important;
+    border: 1.5px solid rgba(94, 29, 247, 0.30) !important;
+    background: rgba(94, 29, 247, 0.12) !important;
+    color: #c4b5fd !important;
+    font-size: 14px !important;
+    font-weight: 300 !important;
+    box-shadow: none !important;
 }
 
 .benditoai-token-counter-box:hover,
@@ -1008,6 +1111,15 @@ pointer-events:none;
     background: #f2f2f2;
 }
 
+.benditoai-dropdown-item--admin-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    cursor: default;
+    user-select: none;
+}
+
 /* LOGOUT */
 .benditoai-dropdown-item.logout {
     color: #ff4d4d !important;
@@ -1028,6 +1140,36 @@ DESKTOP (HOVER)
 MOBILE (CLICK)
 ================================ */
 @media (max-width: 768px) {
+    .benditoai-user-menu {
+        display: block;
+        flex: 1 1 100%;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .benditoai-user-trigger {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        font-size: clamp(11px, 3.4vw, 14px) !important;
+        padding: clamp(7px, 2.2vw, 10px) clamp(10px, 3vw, 14px) !important;
+        gap: clamp(4px, 1.6vw, 6px);
+    }
+
+    .benditoai-user-trigger .benditoai-user-name {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .benditoai-user-trigger .benditoai-token-label,
+    .benditoai-user-trigger .benditoai-user-tokens,
+    .benditoai-user-trigger > span[aria-hidden="true"] {
+        flex: 0 0 auto;
+        font-size: inherit;
+    }
+
     .benditoai-user-menu.active .benditoai-user-dropdown {
         opacity: 1;
         transform: translateY(0);
@@ -1208,8 +1350,10 @@ BENDITOAI IMAGE TRANSITION (FADE + BLUR)
     display: flex !important;               /* forzar flex */
     align-items: center !important;         /* centra verticalmente */
     justify-content: center !important;     /* centra horizontalmente */
-    height: 600px !important;               /* altura fija del hero */
-    min-height: 600px !important;           /* altura mínima */
+    height: 90vh !important;
+    min-height: 90vh !important;
+    height: 90dvh !important;
+    min-height: 90dvh !important;
     overflow: hidden !important;            /* no crece aunque el texto salte de línea */
     position: relative !important;
 }
@@ -1259,8 +1403,10 @@ BENDITOAI IMAGE TRANSITION (FADE + BLUR)
     display: flex !important;               /* forzar flex */
     align-items: center !important;         /* centra verticalmente */
     justify-content: center !important;     /* centra horizontalmente */
-    height: 380px !important;               /* altura fija del hero */
-    min-height: 380px !important;           /* altura mínima */
+    height: 90vh !important;
+    min-height: 90vh !important;
+    height: 90dvh !important;
+    min-height: 90dvh !important;
     overflow: hidden !important;            /* no crece aunque el texto salte de línea */
     position: relative !important;
 }
@@ -1562,11 +1708,30 @@ button.benditoai-toggle-info:active {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: clamp(18px, 2.4vh, 38px);
     text-align: center;
-    padding: 30px 24px 80px;
+    box-sizing: border-box;
+    height: 90vh;
+    min-height: 90vh;
+    height: 90dvh;
+    min-height: 90dvh;
     background: #07030F;
     position: relative;
+    padding: 0 clamp(20px, 2.2vw, 34px) clamp(18px, 3.2vh, 42px);
     overflow: hidden;
+}
+
+.maquina-hero-inner {
+    position: relative;
+    z-index: 1;
+    width: min(1280px, 100%);
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(18px, 2.4vh, 38px);
+    transform: translateY(clamp(-28px, -4.2vh, -10px));
 }
 
 .maquina-hero::before {
@@ -1594,30 +1759,28 @@ button.benditoai-toggle-info:active {
 }
 
 .maquina-badge {
-    position: relative;
-    z-index: 1;
     display: inline-flex;
     align-items: center;
     gap: 6px;
     background: rgba(94,29,247,0.15);
     border: 1px solid rgba(94,29,247,0.4);
     border-radius: 999px;
-    padding: 6px 18px;
-    font-size: 13px;
+    padding: 12px 25px;
+    font-size: 12px;
+    line-height: 1.2;
     color: #c4b5fd !important;
-    margin-bottom: 28px;
+    margin-bottom: 0;
     letter-spacing: 0.3px;
+    
 }
 
 .maquina-titulo {
-    position: relative;
-    z-index: 1;
-    font-size: clamp(38px, 6vw, 72px);
+    font-size: clamp(40px, 5.2vw, 96px);
     font-weight: 900;
-    line-height: 1.1;
+    line-height: 1.08;
     color: #ffffff !important;
-    letter-spacing: -2px;
-    margin-bottom: 20px;
+    letter-spacing: clamp(-1.2px, -0.12vw, -2.4px);
+    margin: 25px 0px;
 }
 
 /* 🔥 CLAVE: forzar morado en el texto animado */
@@ -1643,32 +1806,47 @@ button.benditoai-toggle-info:active {
 }
 
 .maquina-subtitulo {
-    position: relative;
-    z-index: 1;
     color: #9ca3af !important;
-    font-size: 17px;
-    line-height: 1.65;
-    max-width: 700px;
-    margin-bottom: 40px;
+    font-size: clamp(16px, 1.0vw, 28px);
+    line-height: 1.45;
+    max-width: min(980px, 92vw);
+    margin-bottom: 0;
+    margin-top: 0;
 }
 
 .maquina-btns {
-    position: relative;
-    z-index: 1;
     display: flex;
-    gap: 12px;
+    gap: clamp(10px, 1vw, 18px);
     flex-wrap: wrap;
     justify-content: center;
+    margin: 0;
+    margin-top: 6px;
+}
+
+.maquina-hero .maquina-badge,
+.maquina-hero .maquina-titulo,
+.maquina-hero .maquina-subtitulo,
+.maquina-hero .maquina-btns {
+    position: relative;
+    z-index: 1;
+}
+
+.maquina-hero #maquina-texto {
+    display: block !important;
+    margin-top: 0.12em;
+    font-size: inherit !important;
+    line-height: inherit !important;
+    text-align: inherit !important;
 }
 
 .maquina-btn {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    padding: 14px 30px;
-    border-radius: 10px;
-    font-size: 15px;
-    font-weight: 700;
+    justify-content: center; 
+    padding: clamp(12px, 1.3vh, 18px) clamp(24px, 2.2vw, 40px);
+    border-radius: 12px;
+    font-size: clamp(15px, 1.00vw, 21px);
+    font-weight: 100;
     text-decoration: none !important;
     transition: all 0.2s ease;
     cursor: pointer;
@@ -1699,14 +1877,76 @@ button.benditoai-toggle-info:active {
 }
 
 @media (max-width: 640px) {
+    .maquina-hero-inner {
+        transform: none;
+        width: 100%;
+        min-height: 100%;
+        justify-content: center;
+        gap: 14px;
+    }
+
     .maquina-hero {
-        padding: 80px 20px 60px;
+        height: auto;
+        min-height: calc(100vh - 68px);
+        min-height: calc(100dvh - 68px);
+        gap: 14px;
+        padding: 18px 18px 20px;
+        justify-content: center;
     }
+
+    .maquina-badge {
+        padding: 7px 14px;
+        font-size: 12px;
+        line-height: 1.2;
+    }
+
     .maquina-titulo {
+        font-size: clamp(38px, 12vw, 64px);
         letter-spacing: -1px;
+        margin: 8px 0;
     }
+
+    .maquina-subtitulo {
+        font-size: clamp(15px, 1vw, 17px);
+        line-height: 1.35;
+        max-width: 96%;
+    }
+
     .maquina-btn {
         width: 100%;
+        font-size: 16px;
+        padding: 13px 18px;
+    }
+}
+
+@media (max-width: 640px) and (max-height: 760px) {
+    .maquina-hero {
+        min-height: calc(100vh - 60px);
+        min-height: calc(100dvh - 60px);
+        padding: 14px 14px 16px;
+    }
+
+    .maquina-hero-inner {
+        gap: 10px;
+    }
+
+    .maquina-badge {
+        padding: 6px 12px;
+        font-size: 11px;
+    }
+
+    .maquina-titulo {
+        font-size: clamp(32px, 10vw, 48px);
+        margin: 35px 0 25px;
+    }
+
+    .maquina-subtitulo {
+        font-size: clamp(17px, 4.5vw, 23px);
+    }
+
+    .maquina-btn {
+        padding: 11px 14px;
+        font-size: 15px;
     }
 }
 /* hero */
@@ -2169,3 +2409,7 @@ color: white !important;
     color: rgba(220, 209, 250, 0.331) !important;
     opacity: 1 !important;
 }
+.elementor-element.elementor-element-9f135e1.videogenerado .elementor-widget-container{
+    border-radius: 0px !important;
+}
+/* Menu hamburguesa */

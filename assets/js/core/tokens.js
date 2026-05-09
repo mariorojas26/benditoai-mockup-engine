@@ -1,166 +1,126 @@
-/* --------------------------------------
-BENDITOAI TOKEN MANAGER
-
-/* =========================================================
-BENDITOAI TOKEN SYSTEM – REGLAS DE INTEGRACIÓN
-==============================================
-
-Este plugin usa un sistema centralizado de tokens para todas
-las herramientas de IA (mockup, enhance, remove-bg, trending, etc).
-
-Para que el contador de tokens se actualice correctamente
-en tiempo real, se deben cumplir estas reglas:
-
----
-
-## 1️⃣ CLASE DEL CONTADOR DE TOKENS
-
-El elemento HTML que muestra los tokens DEBE tener la clase:
-
-.benditoai-user-tokens
-
-Ejemplo correcto:
-
-<span class="benditoai-user-tokens">30</span>
-
-Esto permite que el archivo:
-
-assets/js/core/tokens.js
-
-pueda actualizar el contador automáticamente.
-
----
-
-## 2️⃣ DESCONTAR TOKENS EN EL BACKEND
-
-Todas las herramientas de IA deben descontar tokens usando:
-
-benditoai_use_token(1);
-
-Ejemplo:
-
-benditoai_use_token(1);
-
-Esto garantiza que el sistema de tokens sea consistente
-en todo el plugin.
-
----
-
-## 3️⃣ DEVOLVER TOKENS ACTUALIZADOS EN AJAX
-
-Después de descontar tokens, el endpoint AJAX debe devolver
-los tokens actualizados:
-$tokens = benditoai_get_user_tokens($user_id);
-
-wp_send_json_success([
-'resultado' => $data,
-'tokens' => $tokens
-]);
-
----
-
-## 4️⃣ ACTUALIZAR TOKENS EN EL FRONTEND
-
-Cuando el JS recibe la respuesta AJAX, debe ejecutar:
-
-benditoaiActualizarTokensInstantaneo(data.data.tokens);
-
-Ejemplo:
-
-if(typeof benditoaiActualizarTokensInstantaneo === "function"){
-benditoaiActualizarTokensInstantaneo(data.data.tokens);
+function benditoaiGetAdminToggles() {
+    return Array.from(document.querySelectorAll(".benditoai-admin-unlimited-toggle"));
 }
 
-Esto actualizará todos los contadores visibles en la página
-sin necesidad de recargar.
+function benditoaiSyncAdminToggles(checked, sourceToggle) {
+    const toggles = benditoaiGetAdminToggles();
 
----
+    toggles.forEach((toggle) => {
+        if (toggle !== sourceToggle) {
+            toggle.checked = checked;
+        }
+    });
+}
 
-## 5️⃣ ARCHIVO RESPONSABLE DEL CONTADOR
+function benditoaiPersistAdminUnlimited(checked) {
+    if (!window.benditoai_ajax || !benditoai_ajax.ajax_url) {
+        return Promise.resolve();
+    }
 
-assets/js/core/tokens.js
-
-Este archivo contiene el manager global que refresca los
-tokens en todos los elementos con la clase:
-
-.benditoai-user-tokens
-
----
-
-## RESUMEN
-
-HTML: <span class="benditoai-user-tokens">30</span>
-
-PHP:
-benditoai_use_token(1);
-
-AJAX RESPONSE:
-'tokens' => $tokens
-
-JS:
-benditoaiActualizarTokensInstantaneo(data.data.tokens);
-
-=========================================================
-BENDITOAI MOCKUP ENGINE
-Token system by BenditoTrazo
-============================
-
-*/
+    return fetch(benditoai_ajax.ajax_url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "action=benditoai_toggle_admin_tokens&enabled=" + (checked ? "yes" : "no")
+    }).catch(() => {});
+}
 
 window.benditoaiTokensManager = {
 
-    actualizar(tokens){
+    esIlimitadoActivo() {
+        return benditoaiGetAdminToggles().some((toggle) => toggle.checked);
+    },
 
-        /* si el backend envía tokens */
-        if(tokens !== undefined){
+    normalizarDisplay(tokens) {
+        if (this.esIlimitadoActivo()) {
+            return "\u221E";
+        }
+        return tokens;
+    },
 
+    actualizar(tokens) {
+
+        // Si el backend envia tokens
+        if (tokens !== undefined) {
             const tokenElements = document.querySelectorAll(".benditoai-user-tokens");
+            const display = this.normalizarDisplay(tokens);
 
-            tokenElements.forEach(el=>{
-                el.textContent = tokens;
+            tokenElements.forEach((el) => {
+                el.textContent = display;
             });
 
             return;
         }
 
-        /* fallback si no envía tokens */
+        // Fallback si no envia tokens
         this.refrescar();
-
     },
 
-    refrescar(){
+    refrescar() {
 
-        fetch(benditoai_ajax.ajax_url,{
-            method:"POST",
-            headers:{
-                "Content-Type":"application/x-www-form-urlencoded"
+        fetch(benditoai_ajax.ajax_url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
             },
-            body:"action=benditoai_get_tokens"
+            body: "action=benditoai_get_tokens"
         })
-        .then(res=>res.json())
-        .then(data=>{
+        .then((res) => res.json())
+        .then((data) => {
 
-            if(!data.success) return;
+            if (!data.success) return;
 
             const tokenElements = document.querySelectorAll(".benditoai-user-tokens");
+            const display = this.normalizarDisplay(data.data.tokens);
 
-            tokenElements.forEach(el=>{
-                el.textContent = data.data.tokens;
+            tokenElements.forEach((el) => {
+                el.textContent = display;
             });
 
         });
-
     }
 
 };
 
-
-/* --------------------------------------
-FUNCION GLOBAL COMPATIBLE
--------------------------------------- */
-
-window.benditoaiActualizarTokensInstantaneo = function(tokens){
-
+window.benditoaiActualizarTokensInstantaneo = function(tokens) {
     window.benditoaiTokensManager.actualizar(tokens);
-
 };
+
+function benditoaiInitAdminUnlimitedToggles() {
+    const toggles = benditoaiGetAdminToggles();
+    if (!toggles.length) {
+        return;
+    }
+
+    toggles.forEach((toggle) => {
+        if (toggle.dataset.benditoaiBound === "1") {
+            return;
+        }
+
+        toggle.dataset.benditoaiBound = "1";
+
+        toggle.addEventListener("pointerdown", function(event) {
+            event.stopPropagation();
+        });
+
+        toggle.addEventListener("click", function(event) {
+            event.stopPropagation();
+        });
+
+        toggle.addEventListener("change", function(event) {
+            event.stopPropagation();
+
+            benditoaiSyncAdminToggles(this.checked, this);
+            benditoaiPersistAdminUnlimited(this.checked).then(() => {
+                window.benditoaiActualizarTokensInstantaneo();
+            });
+        });
+    });
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", benditoaiInitAdminUnlimitedToggles);
+} else {
+    benditoaiInitAdminUnlimitedToggles();
+}

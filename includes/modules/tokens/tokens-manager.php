@@ -1,9 +1,7 @@
 <?php
 
-
-
 /**
- * Verifica si el admin tiene tokens ilimitados ACTIVOS
+ * Verifica si el admin tiene tokens ilimitados ACTIVOS.
  */
 function benditoai_admin_unlimited_tokens_enabled($user_id){
 
@@ -16,17 +14,16 @@ function benditoai_admin_unlimited_tokens_enabled($user_id){
     return $enabled === 'yes';
 }
 
-
 if (!defined('ABSPATH')) {
     exit;
 }
 
+if (!defined('BENDITOAI_INITIAL_TOKENS')) {
+    define('BENDITOAI_INITIAL_TOKENS', 5000);
+}
+
 /**
- * Verificar si el usuario es administrador
- * Si es admin tendrá tokens ilimitados
- */
-/**
- * Determinar si el usuario tiene tokens ilimitados
+ * Determinar si el usuario tiene tokens ilimitados.
  */
 function benditoai_user_has_unlimited_tokens($user_id){
 
@@ -37,42 +34,33 @@ function benditoai_user_has_unlimited_tokens($user_id){
     return benditoai_admin_unlimited_tokens_enabled($user_id);
 }
 
-
 /**
- * Obtener tokens del usuario
+ * Obtener tokens reales del usuario.
  */
 function benditoai_get_user_tokens($user_id) {
-
-    // 👑 Si es admin devolvemos un número muy alto
-    // Esto es solo para mostrar en el contador
-    if (benditoai_user_has_unlimited_tokens($user_id)) {
-        return 999999;
-    }
 
     $tokens = get_user_meta($user_id, 'benditoai_tokens', true);
 
     // Si el usuario nunca ha tenido tokens
     if ($tokens === '') {
-        $tokens = 50; // tokens iniciales
+        $tokens = BENDITOAI_INITIAL_TOKENS;
         update_user_meta($user_id, 'benditoai_tokens', $tokens);
     }
 
     return intval($tokens);
 }
 
-
 /**
- * Descontar tokens
+ * Descontar tokens.
  */
 function benditoai_decrease_tokens($user_id, $amount = 1) {
 
-    // 👑 Si es admin NO descontamos tokens
+    // Si es admin con ilimitado activo, no descontamos.
     if (benditoai_user_has_unlimited_tokens($user_id)) {
         return true;
     }
 
     $tokens = benditoai_get_user_tokens($user_id);
-
     $tokens = $tokens - $amount;
 
     if ($tokens < 0) {
@@ -84,13 +72,12 @@ function benditoai_decrease_tokens($user_id, $amount = 1) {
     return $tokens;
 }
 
-
 /**
- * Verificar si el usuario tiene tokens
+ * Verificar si el usuario tiene tokens.
  */
 function benditoai_user_has_tokens($user_id, $amount = 1) {
 
-    // 👑 Si es admin siempre tiene tokens
+    // Si es admin con ilimitado activo, siempre tiene tokens.
     if (benditoai_user_has_unlimited_tokens($user_id)) {
         return true;
     }
@@ -101,7 +88,7 @@ function benditoai_user_has_tokens($user_id, $amount = 1) {
 }
 
 /**
- * AJAX para activar / desactivar tokens ilimitados del admin
+ * AJAX para activar / desactivar tokens ilimitados del admin.
  */
 function benditoai_toggle_admin_tokens(){
 
@@ -111,12 +98,18 @@ function benditoai_toggle_admin_tokens(){
 
     $user_id = get_current_user_id();
 
-    $enabled = sanitize_text_field($_POST['enabled']);
+    $previous = get_user_meta($user_id,'benditoai_admin_unlimited_tokens',true);
+    $enabled = sanitize_text_field($_POST['enabled'] ?? 'no');
+    $enabled = ($enabled === 'yes') ? 'yes' : 'no';
 
     update_user_meta($user_id,'benditoai_admin_unlimited_tokens',$enabled);
 
-    wp_send_json_success();
+    // Solo al pasar de ON -> OFF, reinicia a 5000 para pruebas de descuento.
+    if ($previous === 'yes' && $enabled === 'no') {
+        update_user_meta($user_id, 'benditoai_tokens', BENDITOAI_INITIAL_TOKENS);
+    }
 
+    wp_send_json_success();
 }
 
 add_action('wp_ajax_benditoai_toggle_admin_tokens','benditoai_toggle_admin_tokens');

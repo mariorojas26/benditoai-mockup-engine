@@ -12,7 +12,11 @@ function benditoai_get_tokens_ajax() {
 
     $user_id = get_current_user_id();
 
-    $tokens = benditoai_get_user_tokens($user_id);
+    if (benditoai_user_has_unlimited_tokens($user_id)) {
+        $tokens = html_entity_decode('&infin;', ENT_QUOTES, 'UTF-8');
+    } else {
+        $tokens = benditoai_get_user_tokens($user_id);
+    }
 
     wp_send_json_success([
         'tokens' => $tokens
@@ -20,3 +24,4 @@ function benditoai_get_tokens_ajax() {
 }
 
 add_action('wp_ajax_benditoai_get_tokens', 'benditoai_get_tokens_ajax');
+
