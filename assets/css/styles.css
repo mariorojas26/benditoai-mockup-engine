@@ -1022,6 +1022,8 @@ pointer-events:none;
 
 /* BOTÓN / TRIGGER */
 .benditoai-user-trigger {
+    position: relative;
+    z-index: 10001;
     width: 48px;
     height: 48px;
     min-width: 48px;
@@ -1097,7 +1099,7 @@ pointer-events:none;
 /* ITEMS */
 .benditoai-user-menu.active .benditoai-user-dropdown {
     opacity: 1;
-    transform: translateY(0) translateX(11px);
+    transform: translateY(0);
     pointer-events: auto;
 }
 
@@ -1254,11 +1256,30 @@ DESKTOP Y MOBILE (CLICK)
 MOBILE (CLICK)
 ================================ */
 @media (max-width: 768px) {
+    body.benditoai-menu-open,
+    html.benditoai-menu-open {
+        overflow: hidden;
+    }
+
     .benditoai-user-menu {
         position: relative;
         flex: 0 0 auto;
         width: auto;
         max-width: none;
+    }
+
+    .benditoai-user-menu.active {
+        z-index: 10002;
+    }
+
+    .benditoai-user-menu.active::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: rgba(4, 2, 10, 0.68);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 9998;
     }
 
     .benditoai-user-trigger {
@@ -1270,11 +1291,23 @@ MOBILE (CLICK)
     }
 
     .benditoai-user-dropdown {
-        position: absolute;
+        position: fixed;
+        left: 0;
         right: 0;
-        top: calc(100% + 8px);
-        width: min(420px, calc(100vw - 24px));
-        max-height: calc(100vh - 86px);
+        top: var(--benditoai-menu-top, 88px);
+        bottom: 0;
+        width: 100vw;
+        max-height: none;
+        border-left: 0;
+        border-right: 0;
+        border-bottom: 0;
+        border-radius: 0;
+        box-shadow: 0 28px 60px rgba(0, 0, 0, 0.42);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: calc(24px + env(safe-area-inset-bottom));
+        z-index: 10000;
     }
 
     .benditoai-dropdown-section {
