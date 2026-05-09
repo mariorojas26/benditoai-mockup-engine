@@ -4,7 +4,7 @@ function benditoai_redirect_after_login($redirect_to, $request, $user) {
 
     if (!is_wp_error($user) && isset($user->roles)) {
         if (!in_array('administrator', $user->roles)) {
-            return home_url('/dashboard');
+            return home_url('/');
         }
     }
 

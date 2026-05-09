@@ -2699,7 +2699,7 @@ color: white !important;
 /* Menu hamburguesa */
 
 
-@media (min-width: 769px) {
+@media (max-width: 768px) {
     .benditoai-desktop-user-login {
         display: none !important;
     }

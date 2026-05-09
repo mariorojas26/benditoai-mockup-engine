@@ -2,25 +2,7 @@
 
 function benditoai_user_dropdown() {
 
-    if (!is_user_logged_in()) {
-
-        $login_url = wp_login_url(get_permalink());
-
-        return '<a href="' . esc_url($login_url) . '" class="benditoai-btn-login">Iniciar sesi&oacute;n</a>';
-    }
-
-    $current_user = wp_get_current_user();
-    $logout_url = wp_logout_url(home_url());
-    $user_id = get_current_user_id();
-    $tokens = function_exists('benditoai_get_user_tokens') ? benditoai_get_user_tokens($user_id) : 0;
-    $is_admin = current_user_can('administrator');
-    $enabled = get_user_meta($user_id, 'benditoai_admin_unlimited_tokens', true);
-    $is_unlimited = $is_admin && ($enabled === 'yes');
-    $tokens_display = $is_unlimited ? html_entity_decode('&infin;', ENT_QUOTES, 'UTF-8') : number_format((float) $tokens, 0, ',', '.');
-    $checked = ($enabled === 'yes') ? 'checked' : '';
-    $display_name = $current_user->display_name ? $current_user->display_name : $current_user->user_login;
-    $menu_id = 'benditoai-user-dropdown-' . wp_unique_id();
-
+    $login_url = wp_login_url(get_permalink());
     $nav_items = array(
         array(
             'label' => 'Home',
@@ -28,7 +10,7 @@ function benditoai_user_dropdown() {
             'icon' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>',
         ),
         array(
-            'label' => 'Herramientas IA',
+            'label' => 'Herramientas IAS',
             'url' => home_url('/herramientas-ia/'),
             'icon' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.7 5.1L19 10l-5.3 1.9L12 17l-1.7-5.1L5 10l5.3-1.9Z"/><path d="m5 15 .8 2.4L8 18l-2.2.6L5 21l-.8-2.4L2 18l2.2-.6Z"/></svg>',
             'has_children' => true,
@@ -49,6 +31,63 @@ function benditoai_user_dropdown() {
             'icon' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4Z"/><path d="m4 7 8 6 8-6"/></svg>',
         ),
     );
+
+    if (!is_user_logged_in()) {
+        $guest_menu_id = 'benditoai-user-dropdown-' . wp_unique_id();
+
+        ob_start();
+        ?>
+        <div class="benditoai-user-menu">
+            <button
+                type="button"
+                class="benditoai-user-trigger"
+                aria-label="Abrir menu de navegación"
+                aria-expanded="false"
+                aria-controls="<?php echo esc_attr($guest_menu_id); ?>"
+            >
+                <span class="benditoai-menu-line" aria-hidden="true"></span>
+                <span class="benditoai-menu-line" aria-hidden="true"></span>
+                <span class="benditoai-menu-line" aria-hidden="true"></span>
+            </button>
+
+            <div class="benditoai-user-dropdown" id="<?php echo esc_attr($guest_menu_id); ?>">
+                <nav class="benditoai-dropdown-section benditoai-dropdown-nav" aria-labelledby="<?php echo esc_attr($guest_menu_id); ?>-nav">
+                    <h3 class="benditoai-dropdown-heading" id="<?php echo esc_attr($guest_menu_id); ?>-nav">Navegación</h3>
+
+                    <?php foreach ($nav_items as $item) : ?>
+                        <a href="<?php echo esc_url($item['url']); ?>" class="benditoai-dropdown-item">
+                            <?php echo $item['icon']; ?>
+                            <span><?php echo wp_kses_post($item['label']); ?></span>
+                            <?php if (!empty($item['has_children'])) : ?>
+                                <svg class="benditoai-dropdown-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                            <?php endif; ?>
+                        </a>
+                    <?php endforeach; ?>
+                </nav>
+
+                <div class="benditoai-dropdown-section benditoai-guest-login-section">
+                    <a href="<?php echo esc_url($login_url); ?>" class="benditoai-dropdown-item benditoai-dropdown-login">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17 15 12l-5-5"/><path d="M15 12H3"/><path d="M14 5V4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2v-1"/></svg>
+                        <span>Iniciar sesión</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <?php
+        return ob_get_clean();
+    }
+
+    $current_user = wp_get_current_user();
+    $logout_url = wp_logout_url(home_url());
+    $user_id = get_current_user_id();
+    $tokens = function_exists('benditoai_get_user_tokens') ? benditoai_get_user_tokens($user_id) : 0;
+    $is_admin = current_user_can('administrator');
+    $enabled = get_user_meta($user_id, 'benditoai_admin_unlimited_tokens', true);
+    $is_unlimited = $is_admin && ($enabled === 'yes');
+    $tokens_display = $is_unlimited ? html_entity_decode('&infin;', ENT_QUOTES, 'UTF-8') : number_format((float) $tokens, 0, ',', '.');
+    $checked = ($enabled === 'yes') ? 'checked' : '';
+    $display_name = $current_user->display_name ? $current_user->display_name : $current_user->user_login;
+    $menu_id = 'benditoai-user-dropdown-' . wp_unique_id();
 
     ob_start();
     ?>
@@ -151,7 +190,7 @@ function benditoai_desktop_user_shortcode() {
             aria-controls="<?php echo esc_attr($menu_id); ?>"
         >
             <svg class="benditoai-desktop-user__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2Z"/></svg>
-            <span class="benditoai-desktop-user__label">Hola,</span>
+            <span class="benditoai-desktop-user__label"></span>
             <span class="benditoai-desktop-user__name"><?php echo esc_html($display_name); ?></span>
         </button>
 
