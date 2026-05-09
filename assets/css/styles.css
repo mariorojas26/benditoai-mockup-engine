@@ -537,6 +537,10 @@ img.benditoai-download-icon {
 .benditoai-admin-toggle-wrapper{
     display:none;
 }
+
+.benditoai-token-counter-box{
+    display:none !important;
+}
 /* CONTENEDOR DEL CONTADOR TOKENS */
 
 
@@ -1005,175 +1009,304 @@ cursor:not-allowed;
 pointer-events:none;
 }
 /* MENU DROPDOWN */
-/* CONTENEDOR */
 .benditoai-user-menu {
     position: relative;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
+
 .benditoai-user-menu::after {
-    content: "";
-    position: absolute;
-    top: 100%;
-    right: 0;
-    width: 100%;
-    height: 10px;
+    content: none;
 }
 
 /* BOTÓN / TRIGGER */
 .benditoai-user-trigger {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    min-height: 48px;
     display: inline-flex;
     align-items: center;
-    flex-wrap: nowrap;
-    gap: 6px;
-    white-space: nowrap;
-    background: rgba(94, 29, 247, 0.12) !important;
-    color: #c4b5fd !important;
-    padding: 8px 14px;
-    border-radius: 12px;
-    border: 1.5px solid rgba(94, 29, 247, 0.30) !important;
-    font-size: 14px;
-    font-weight: 300;
-    box-shadow: none !important;
-    cursor: pointer;
-    transition: all .25s ease;
-    max-width: 92vw;
-    overflow: hidden;
-}
-
-.benditoai-user-trigger .benditoai-user-name{
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    flex: 1 1 auto;
-}
-
-.benditoai-user-trigger .benditoai-token-label,
-.benditoai-user-trigger .benditoai-user-tokens,
-.benditoai-user-trigger > span[aria-hidden="true"]{
-    flex: 0 0 auto;
-    white-space: nowrap;
-}
-
-/* Unificar look & size de ambos botones (tokens y usuario) */
-.benditoai-token-counter-box,
-.benditoai-user-trigger {
-    min-height: 47px;
-    padding: 8px 14px !important;
+    justify-content: center;
+    flex-direction: column;
+    gap: 5px;
+    padding: 0 !important;
     border-radius: 12px !important;
-    border: 1.5px solid rgba(94, 29, 247, 0.30) !important;
-    background: rgba(94, 29, 247, 0.12) !important;
-    color: #c4b5fd !important;
-    font-size: 14px !important;
-    font-weight: 300 !important;
-    box-shadow: none !important;
+    border: 1.5px solid rgba(124, 58, 255, 0.60) !important;
+    background: rgba(17, 8, 37, 0.92) !important;
+    color: #f8f7ff !important;
+    box-shadow: 0 10px 26px rgba(35, 12, 86, 0.22) !important;
+    cursor: pointer;
+    overflow: hidden;
+    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.benditoai-token-counter-box:hover,
-.benditoai-user-trigger:hover {
-    background: rgba(94, 29, 247, 0.20) !important;
-    border-color: rgba(94, 29, 247, 0.55) !important;
-    color: #A78BFA !important;
+.benditoai-user-trigger:hover,
+.benditoai-user-trigger:focus-visible,
+.benditoai-user-menu.active .benditoai-user-trigger {
+    background: rgba(36, 18, 72, 0.98) !important;
+    border-color: rgba(167, 139, 250, 0.95) !important;
+    box-shadow: 0 0 0 3px rgba(124, 58, 255, 0.22) !important;
+    outline: none;
+}
+
+.benditoai-menu-line {
+    width: 23px;
+    height: 3px;
+    border-radius: 999px;
+    background: currentColor;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.benditoai-user-menu.active .benditoai-menu-line:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+
+.benditoai-user-menu.active .benditoai-menu-line:nth-child(2) {
+    opacity: 0;
+}
+
+.benditoai-user-menu.active .benditoai-menu-line:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
 }
 
 /* DROPDOWN BASE (OCULTO) */
 .benditoai-user-dropdown {
     position: absolute;
     right: 0;
-    top: calc(100% + 6px);
-    background: #ffffff;
-    color: black;
-    border-radius: 10px;
-    min-width: 180px;
+    top: calc(100% + 12px);
+    width: min(420px, calc(100vw - 24px));
+    max-height: calc(100vh - 96px);
+    overflow-y: auto;
+    background: #090413;
+    color: #f8f7ff;
+    border: 1px solid rgba(124, 58, 255, 0.28);
+    border-radius: 0 0 8px 8px;
     /* 🔥 en vez de display:none usamos animación */
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
     pointer-events: none;
 
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    overflow: hidden;
+    box-shadow: 0 22px 55px rgba(0, 0, 0, 0.38);
 
-    transition: all 0.2s ease;
-    z-index: 999;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 9999;
 }
 
 /* ITEMS */
-.benditoai-dropdown-item {
-    display: block;
-    padding: 12px 15px;
-    color: #000000 !important;
-    text-decoration: none;
-    font-size: 14px;
-    border-bottom: 1px solid #dcdcdc;
+.benditoai-user-menu.active .benditoai-user-dropdown {
+    opacity: 1;
+    transform: translateY(0) translateX(11px);
+    pointer-events: auto;
 }
 
-.benditoai-dropdown-item:hover {
-    background: #f2f2f2;
+.benditoai-dropdown-section {
+    padding: 24px 26px 12px;
+}
+
+.benditoai-dropdown-heading {
+    margin: 0 0 16px;
+    color: #a78bfa;
+    font-size: 13px;
+    line-height: 1.2;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.benditoai-account-card {
+    overflow: hidden;
+    border: 1px solid rgba(167, 139, 250, 0.35);
+    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(124, 58, 255, 0.16), rgba(255, 255, 255, 0.05));
+}
+
+.benditoai-account-name,
+.benditoai-account-label,
+.benditoai-account-tokens {
+    display: block;
+    padding-inline: 22px;
+}
+
+.benditoai-account-name {
+    padding-top: 22px;
+    color: #ffffff;
+    font-size: 21px;
+    line-height: 1.2;
+    font-weight: 700;
+}
+
+.benditoai-account-label {
+    margin-top: 10px;
+    color: #d8cffb;
+    font-size: 15px;
+    line-height: 1.25;
+}
+
+.benditoai-account-tokens {
+    margin-top: 6px;
+    padding-bottom: 20px;
+    color: #a78bfa !important;
+    font-size: 22px;
+    line-height: 1.1;
+    font-weight: 800 !important;
+}
+
+.benditoai-account-models {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 66px;
+    padding: 0 22px;
+    border-top: 1px solid rgba(167, 139, 250, 0.24);
+    color: #ffffff !important;
+    font-size: 18px;
+    font-weight: 650;
+    text-decoration: none !important;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.benditoai-account-models:hover,
+.benditoai-account-models:focus-visible {
+    background: rgba(124, 58, 255, 0.18);
+    color: #c4b5fd !important;
+    outline: none;
+}
+
+.benditoai-account-models svg,
+.benditoai-dropdown-item svg {
+    width: 24px;
+    height: 24px;
+    flex: 0 0 24px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.benditoai-dropdown-nav {
+    padding-top: 18px;
+    padding-inline: 0;
+}
+
+.benditoai-dropdown-nav .benditoai-dropdown-heading {
+    padding-inline: 26px;
+}
+
+.benditoai-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 66px;
+    padding: 0 26px;
+    border-top: 1px solid rgba(255, 255, 255, 0.10);
+    color: #c4b5fd !important;
+    font-size: 18px;
+    line-height: 1.2;
+    font-weight: 600;
+    text-decoration: none !important;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.benditoai-dropdown-item:hover,
+.benditoai-dropdown-item:focus-visible {
+    background: rgba(124, 58, 255, 0.14);
+    color: #ffffff !important;
+    outline: none;
 }
 
 .benditoai-dropdown-item--admin-toggle {
-    display: flex;
-    align-items: center;
+    min-height: 54px;
+    margin: 2px 26px 0;
+    padding: 0;
+    border-top: 0;
     justify-content: space-between;
-    gap: 10px;
+    color: #d8cffb !important;
+    font-size: 14px;
     cursor: default;
     user-select: none;
 }
 
-/* LOGOUT */
-.benditoai-dropdown-item.logout {
-    color: #ff4d4d !important;
+.benditoai-dropdown-chevron {
+    margin-left: auto;
+}
+
+.benditoai-dropdown-logout {
+    margin-top: 8px;
+    border-top-color: rgba(255, 86, 101, 0.28);
+    color: #ff5865 !important;
+}
+
+.benditoai-dropdown-logout:hover,
+.benditoai-dropdown-logout:focus-visible {
+    background: rgba(255, 86, 101, 0.10);
+    color: #ff7a84 !important;
 }
 
 /* ===============================
-DESKTOP (HOVER)
+DESKTOP Y MOBILE (CLICK)
 ================================ */
-@media (min-width: 769px) {
-    .benditoai-user-menu:hover .benditoai-user-dropdown {
-        opacity: 1;
-        transform: translateY(0);
-        pointer-events: auto;
-    }
-}
 
 /* ===============================
 MOBILE (CLICK)
 ================================ */
 @media (max-width: 768px) {
     .benditoai-user-menu {
-        display: block;
-        flex: 1 1 100%;
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
+        position: relative;
+        flex: 0 0 auto;
+        width: auto;
+        max-width: none;
     }
 
     .benditoai-user-trigger {
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
+        width: 48px;
+        min-width: 48px;
         box-sizing: border-box;
-        font-size: clamp(11px, 3.4vw, 14px) !important;
-        padding: clamp(7px, 2.2vw, 10px) clamp(10px, 3vw, 14px) !important;
-        gap: clamp(4px, 1.6vw, 6px);
+        padding: 0 !important;
+        gap: 5px;
     }
 
-    .benditoai-user-trigger .benditoai-user-name {
-        flex: 1 1 auto;
-        min-width: 0;
+    .benditoai-user-dropdown {
+        position: absolute;
+        right: 0;
+        top: calc(100% + 8px);
+        width: min(420px, calc(100vw - 24px));
+        max-height: calc(100vh - 86px);
     }
 
-    .benditoai-user-trigger .benditoai-token-label,
-    .benditoai-user-trigger .benditoai-user-tokens,
-    .benditoai-user-trigger > span[aria-hidden="true"] {
-        flex: 0 0 auto;
-        font-size: inherit;
+    .benditoai-dropdown-section {
+        padding: 22px 20px 10px;
     }
 
-    .benditoai-user-menu.active .benditoai-user-dropdown {
-        opacity: 1;
-        transform: translateY(0);
-        pointer-events: auto;
+    .benditoai-dropdown-nav {
+        padding-inline: 0;
+    }
+
+    .benditoai-dropdown-nav .benditoai-dropdown-heading,
+    .benditoai-dropdown-item {
+        padding-inline: 20px;
+    }
+
+    .benditoai-dropdown-item {
+        min-height: 64px;
+        font-size: 17px;
+    }
+
+    .benditoai-dropdown-item--admin-toggle {
+        margin-inline: 20px;
+    }
+
+    .benditoai-account-name,
+    .benditoai-account-label,
+    .benditoai-account-tokens {
+        padding-inline: 20px;
+    }
+
+    .benditoai-account-models {
+        padding-inline: 20px;
     }
 }
 

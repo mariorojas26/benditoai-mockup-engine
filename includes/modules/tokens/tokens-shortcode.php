@@ -16,7 +16,7 @@ function benditoai_tokens_shortcode() {
     $tokens = benditoai_get_user_tokens($user_id);
     $enabled = get_user_meta($user_id, 'benditoai_admin_unlimited_tokens', true);
     $is_unlimited = $is_admin && ($enabled === 'yes');
-    $tokens_display = $is_unlimited ? html_entity_decode('&infin;', ENT_QUOTES, 'UTF-8') : $tokens;
+    $tokens_display = $is_unlimited ? html_entity_decode('&infin;', ENT_QUOTES, 'UTF-8') : number_format((float) $tokens, 0, ',', '.');
 
     $checked = '';
     if ($is_admin) {

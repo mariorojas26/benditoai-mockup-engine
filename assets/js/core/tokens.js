@@ -36,6 +36,13 @@ window.benditoaiTokensManager = {
         if (this.esIlimitadoActivo()) {
             return "\u221E";
         }
+
+        const numericTokens = Number(tokens);
+
+        if (Number.isFinite(numericTokens)) {
+            return String(Math.trunc(numericTokens)).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
         return tokens;
     },
 

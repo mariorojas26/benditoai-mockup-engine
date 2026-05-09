@@ -1,27 +1,31 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const mobileQuery = window.matchMedia("(max-width: 768px)");
+    function setMenuState(menu, isOpen) {
+        const trigger = menu.querySelector(".benditoai-user-trigger");
 
-    function closeAllMenus() {
+        menu.classList.toggle("active", isOpen);
+
+        if (trigger) {
+            trigger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+            trigger.setAttribute("aria-label", isOpen ? "Cerrar menu de usuario" : "Abrir menu de usuario");
+        }
+    }
+
+    function closeAllMenus(exceptMenu) {
         document.querySelectorAll(".benditoai-user-menu.active").forEach(function (menu) {
-            menu.classList.remove("active");
+            if (menu !== exceptMenu) {
+                setMenuState(menu, false);
+            }
         });
     }
 
     function toggleMenu(menu) {
         const isOpen = menu.classList.contains("active");
-        closeAllMenus();
 
-        if (!isOpen) {
-            menu.classList.add("active");
-        }
+        closeAllMenus(menu);
+        setMenuState(menu, !isOpen);
     }
 
-    // `pointerdown` improves response on touch devices.
-    document.addEventListener("pointerdown", function (event) {
-        if (!mobileQuery.matches) {
-            return;
-        }
-
+    document.addEventListener("click", function (event) {
         const trigger = event.target.closest(".benditoai-user-trigger");
 
         if (trigger) {
@@ -32,7 +36,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             event.preventDefault();
-            event.stopPropagation();
             toggleMenu(menu);
             return;
         }
@@ -43,10 +46,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     document.addEventListener("keydown", function (event) {
-        if (!mobileQuery.matches) {
-            return;
-        }
-
         if (event.key === "Escape") {
             closeAllMenus();
         }
