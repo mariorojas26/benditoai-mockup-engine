@@ -85,6 +85,15 @@ function benditoai_user_dropdown() {
     $enabled = get_user_meta($user_id, 'benditoai_admin_unlimited_tokens', true);
     $is_unlimited = $is_admin && ($enabled === 'yes');
     $tokens_display = $is_unlimited ? html_entity_decode('&infin;', ENT_QUOTES, 'UTF-8') : number_format((float) $tokens, 0, ',', '.');
+    $plan_key = strtolower(trim(get_user_meta($user_id, 'benditoai_plan', true)));
+    if (!$plan_key) {
+        $plan_key = 'starter';
+    }
+    $plan_label = ucfirst($plan_key);
+    $allowed_plans = array('Starter', 'Pro', 'Elite');
+    if (!in_array($plan_label, $allowed_plans, true)) {
+        $plan_label = 'Starter';
+    }
     $checked = ($enabled === 'yes') ? 'checked' : '';
     $display_name = $current_user->display_name ? $current_user->display_name : $current_user->user_login;
     $menu_id = 'benditoai-user-dropdown-' . wp_unique_id();
@@ -112,8 +121,17 @@ function benditoai_user_dropdown() {
 
                 <div class="benditoai-account-card">
                     <span class="benditoai-account-name"><?php echo esc_html($display_name); ?></span>
-                    <span class="benditoai-account-label">Tokens disponibles</span>
-                    <span class="benditoai-user-tokens benditoai-account-tokens"><?php echo esc_html($tokens_display); ?></span>
+
+                    <div class="benditoai-account-summary">
+                        <div class="benditoai-account-summary-item">
+                            <span class="benditoai-account-label">Tokens disponibles</span>
+                            <span class="benditoai-user-tokens benditoai-account-tokens"><?php echo esc_html($tokens_display); ?></span>
+                        </div>
+                        <div class="benditoai-account-summary-item">
+                            <span class="benditoai-account-label">Plan</span>
+                            <span class="benditoai-account-plan"><?php echo esc_html($plan_label); ?></span>
+                        </div>
+                    </div>
 
                     <a href="<?php echo esc_url(home_url('/mis-modelos/')); ?>" class="benditoai-account-models">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9Z"/><path d="m12 12 8-4.5"/><path d="M12 12v9"/><path d="M12 12 4 7.5"/></svg>
