@@ -447,6 +447,36 @@ function benditoai_customize_login_screen() {
                 max-width: 180px;
             }
         }
+        .login #login h1 a {
+            outline: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            -webkit-tap-highlight-color: transparent !important;
+            -webkit-appearance: none !important;
+            appearance: none !important;
+        }
+
+        .login #login h1 a:focus,
+        .login #login h1 a:focus-visible,
+        .login #login h1 a:active,
+        .login #login h1 a:focus-within {
+            outline: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            -webkit-outline: none !important;
+        }
+
+        .login a:focus,
+        .login a:focus-visible {
+            outline: none !important;
+        }
+
+        body.login h1 a {
+            outline: 0 none transparent !important;
+            border: 0 none !important;
+            box-shadow: none !important;
+        }
+
     </style>
     <?php
 }
@@ -465,7 +495,7 @@ add_filter('login_headertext', 'benditoai_login_logo_title');
 function benditoai_register_password_fields() {
     ?>
     <p class="benditoai-register-password-wrap">
-        <label for="benditoai_register_password"><?php esc_html_e('Contrasena', 'bendidoai-mockup-engine'); ?></label>
+        <label for="benditoai_register_password"><?php esc_html_e('contraseña', 'bendidoai-mockup-engine'); ?></label>
         <input
             type="password"
             name="benditoai_register_password"
@@ -477,7 +507,7 @@ function benditoai_register_password_fields() {
         >
     </p>
     <p class="benditoai-register-password-wrap">
-        <label for="benditoai_register_password_confirm"><?php esc_html_e('Confirmar contrasena', 'bendidoai-mockup-engine'); ?></label>
+        <label for="benditoai_register_password_confirm"><?php esc_html_e('Confirmar contraseña', 'bendidoai-mockup-engine'); ?></label>
         <input
             type="password"
             name="benditoai_register_password_confirm"
@@ -497,17 +527,17 @@ function benditoai_validate_register_password($errors, $sanitized_user_login, $u
     $password_confirm = isset($_POST['benditoai_register_password_confirm']) ? (string) wp_unslash($_POST['benditoai_register_password_confirm']) : '';
 
     if ($password === '' || $password_confirm === '') {
-        $errors->add('benditoai_register_password_required', '<strong>Error:</strong> Debes definir una contrasena y confirmarla.');
+        $errors->add('benditoai_register_password_required', '<strong>Error:</strong> Debes definir una contraseña y confirmarla.');
         return $errors;
     }
 
     if ($password !== $password_confirm) {
-        $errors->add('benditoai_register_password_mismatch', '<strong>Error:</strong> Las contrasenas no coinciden.');
+        $errors->add('benditoai_register_password_mismatch', '<strong>Error:</strong> Las contraseñas no coinciden.');
         return $errors;
     }
 
     if (strlen($password) < 8) {
-        $errors->add('benditoai_register_password_length', '<strong>Error:</strong> La contrasena debe tener al menos 8 caracteres.');
+        $errors->add('benditoai_register_password_length', '<strong>Error:</strong> La contraseña debe tener al menos 8 caracteres.');
     }
 
     return $errors;
@@ -539,14 +569,14 @@ function benditoai_login_context_label($message) {
         'login' => 'Iniciar sesion',
         'register' => 'Registrarse',
         'lostpassword' => 'Recuperar acceso',
-        'rp' => 'Nueva contrasena',
-        'resetpass' => 'Nueva contrasena',
+        'rp' => 'Nueva contraseña',
+        'resetpass' => 'Nueva contraseña',
     );
 
     $label = isset($labels[$action]) ? $labels[$action] : 'Iniciar sesion';
 
     if (isset($_GET['benditoai_registered']) && $_GET['benditoai_registered'] === '1') {
-        $message = '<p class="message">Registro completado. Inicia sesion con tu nueva contrasena.</p>' . $message;
+        $message = '<p class="message">Registro completado. Inicia sesion con tu nueva contraseña.</p>' . $message;
     }
 
     return '<div class="benditoai-login-context">' . esc_html($label) . '</div>' . $message;

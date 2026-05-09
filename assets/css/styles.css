@@ -1185,15 +1185,22 @@ pointer-events:none;
     cursor: pointer;
     overflow: hidden;
     transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
 }
 
 .benditoai-user-trigger:hover,
 .benditoai-user-trigger:focus-visible,
+.benditoai-user-trigger:focus,
+.benditoai-user-trigger:active,
 .benditoai-user-menu.active .benditoai-user-trigger {
     background: rgba(94,29,247,0.24) !important;
     border-color: rgba(167,139,250,0.72) !important;
     box-shadow: 0 0 0 3px rgba(94,29,247,0.18) !important;
-    outline: none;
+    outline: none !important;
+    -webkit-outline: none !important;
 }
 
 .benditoai-menu-line {
@@ -1314,19 +1321,6 @@ pointer-events:none;
     font-size: 0.8rem;
 }
 
-.benditoai-account-models {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    min-height: 66px;
-    padding: 0px !important;
-    border-top: 1px solid rgba(167, 139, 250, 0.24);
-    color: #ffffff !important;
-    font-weight: 650;
-    text-decoration: none !important;
-    transition: background 0.2s ease, color 0.2s ease;
-}
-
 .benditoai-account-label {
     margin-top: 0px;
     color: #d8cffb;
@@ -1351,14 +1345,9 @@ pointer-events:none;
     color: #ffffff !important;
     font-weight: 650;
     text-decoration: none !important;
-    transition: background 0.2s ease, color 0.2s ease;
-}
-
-.benditoai-account-models:hover,
-.benditoai-account-models:focus-visible {
-    background: rgba(124, 58, 255, 0.18);
-    color: #c4b5fd !important;
-    outline: none;
+    background: transparent !important;
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .benditoai-account-models svg,
@@ -1431,6 +1420,17 @@ pointer-events:none;
     color: #ff7a84 !important;
 }
 
+.benditoai-dropdown-login {
+    border-top-color: rgba(16, 185, 129, 0.28);
+    color: #10b981 !important;
+}
+
+.benditoai-dropdown-login:hover,
+.benditoai-dropdown-login:focus-visible {
+    background: rgba(16, 185, 129, 0.10);
+    color: #34d399 !important;
+}
+
 /* ===============================
 DESKTOP Y MOBILE (CLICK)
 ================================ */
@@ -1486,6 +1486,8 @@ MOBILE (CLICK)
         box-sizing: border-box;
         padding: 0 !important;
         gap: 5px;
+        outline: none !important;
+        -webkit-tap-highlight-color: transparent !important;
     }
 
     .benditoai-user-dropdown {
