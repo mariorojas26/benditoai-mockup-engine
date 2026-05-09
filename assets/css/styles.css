@@ -1340,7 +1340,7 @@ pointer-events:none;
     align-items: center;
     gap: 14px;
     min-height: 66px;
-    padding: 0 22px;
+    padding: 0px;
     border-top: 1px solid rgba(167, 139, 250, 0.24);
     color: #ffffff !important;
     font-weight: 650;
@@ -1511,7 +1511,7 @@ MOBILE (CLICK)
     }
 
     .benditoai-dropdown-section {
-        padding: 22px 20px 10px;
+        padding: 22px 0px 10px;
     }
 
     .benditoai-dropdown-nav {
@@ -2746,6 +2746,9 @@ color: white !important;
 
 
 @media (max-width: 768px) {
+    h3#benditoai-user-dropdown-3-account {
+    padding-inline: 20px;
+}
     .benditoai-desktop-user-login {
         display: none !important;
     }
