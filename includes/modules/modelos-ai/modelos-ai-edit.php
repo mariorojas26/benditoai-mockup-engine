@@ -78,7 +78,7 @@ High quality, photorealistic, 4K.";
     $image_data = file_get_contents($image_url);
     $base64 = base64_encode($image_data);
 
-    require_once plugin_dir_path(dirname(__FILE__,2)) . "gemini-api.php";
+    require_once BENDIDOAI_PLUGIN_PATH . 'includes/services/gemini/gemini-api.php';
 
     $response = benditoai_call_gemini($base64, $prompt);
 

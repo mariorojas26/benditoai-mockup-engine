@@ -13,7 +13,7 @@ BendidoAI - Guía de implementación de nueva herramienta de IA
         • estilos.css  -> estilos propios (opcional)
 
 2️⃣ Crear la función para la base de datos (si aplica):
-    - Editar includes/install.php
+    - Editar includes/core/install.php
     - Ejemplo: benditoai_create_mi_herramienta_table()
     - Registrar la tabla en la función de activación del plugin:
         benditoai_create_mi_herramienta_table();

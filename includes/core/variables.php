@@ -1,5 +1,5 @@
 <?php
-// includes/variables.php
+// includes/core/variables.php
 if (!defined('ABSPATH')) exit;
 
 // Pasos para crear nuevo mockup

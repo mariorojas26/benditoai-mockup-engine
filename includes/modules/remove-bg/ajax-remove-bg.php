@@ -40,7 +40,7 @@ function benditoai_remove_background() {
     $python = "C:\\Users\\heisemberthr\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe";
 
     // Ruta al script
-    $script = plugin_dir_path(dirname(__FILE__,2)) . "python/removebg.py";
+    $script = __DIR__ . "/python/removebg.py";
 
     // Comando
     $command = "\"$python\" \"$script\" \"$input_path\" \"$output_path\"";

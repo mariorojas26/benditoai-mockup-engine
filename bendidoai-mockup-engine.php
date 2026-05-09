@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BenditoAI Mockup Engine
  * Plugin URI: https://bendidoai.com
- * Description: Motor de generación de mockups con IA usando Gemini.
+ * Description: Motor de generaciÃ³n de mockups con IA usando Gemini.
  * Version: 1.0.0
  * Author: BendidoTrazo
  * License: GPL2
@@ -15,27 +15,27 @@ if (!defined('ABSPATH')) {
 define('BENDIDOAI_PLUGIN_PATH', plugin_dir_path(__FILE__));
 define('BENDIDOAI_PLUGIN_URL', plugin_dir_url(__FILE__));
 
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/install.php';
+require_once BENDIDOAI_PLUGIN_PATH . 'includes/core/install.php';
 
-/* ACTIVACIÓN TABLAS BASES DE DATOS*/
+/* ACTIVACIÃ“N TABLAS BASES DE DATOS*/
 
 function bendidoai_activate_plugin() {
     // Crear tabla historial de mockups
     benditoai_create_historial_table();
 
-    // Crear tabla de campañas AI
+    // Crear tabla de campaÃ±as AI
     benditoai_create_campanas_ai_table();
 
     // Crear tabla de modelos AI
     benditoai_create_modelos_ai_table();
 
-    error_log('BendidoAI activado 🚀');
+    error_log('BendidoAI activado ðŸš€');
 }
 
 register_activation_hook(__FILE__, 'bendidoai_activate_plugin');
 
 
-/* DESACTIVACIÓN */
+/* DESACTIVACIÃ“N */
 
 function bendidoai_deactivate_plugin() {
     error_log('BendidoAI desactivado.');
@@ -44,58 +44,64 @@ function bendidoai_deactivate_plugin() {
 register_deactivation_hook(__FILE__, 'bendidoai_deactivate_plugin');
 
 
-/* CARGAR MÓDULOS */
+/* CARGAR COMPONENTES */
 
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/admin-menu.php';
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/admin/admin-users-plans.php';
+function benditoai_require_files($files) {
+    foreach ($files as $file) {
+        require_once BENDIDOAI_PLUGIN_PATH . $file;
+    }
+}
 
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/ajax-mockup.php';
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/auth-redirect.php';
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/gemini-api.php';
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/gemini-api-text.php';
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/prompts.php';
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/shortcode-historial.php';
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/shortcodes.php';
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/variables.php';
+benditoai_require_files(array(
+    'includes/admin/admin-menu.php',
+    'includes/admin/admin-users-plans.php',
 
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/campanas-ai/campanas-ai-shortcode.php';
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/campanas-ai/campanas-ai-ajax.php';
+    'includes/core/variables.php',
+    'includes/core/prompts.php',
 
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/remove-bg/ajax-remove-bg.php';
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/remove-bg/shortcode-remove-bg.php';
+    'includes/services/gemini/gemini-api.php',
+    'includes/services/gemini/gemini-api-text.php',
+    'includes/services/gemini/gemini-api-multi-image.php',
 
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/tokens/tokens-shortcode.php';
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/tokens/tokens-manager.php';
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/tokens/ajax-get-tokens.php';
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/tokens/tokens-usage.php';
+    'includes/modules/auth/auth-redirect.php',
 
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/ux/maquinaEscribir.php';
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/ux/CardsSkills.php';
+    'includes/modules/plans/plans-config.php',
+    'includes/modules/plans/plans-functions.php',
+    'includes/modules/plans/plans-init.php',
+    'includes/modules/plans/ajax-update-plan.php',
 
-/* PLANES (SISTEMA DE SUSCRIPCIÓN) */
+    'includes/modules/tokens/tokens-manager.php',
+    'includes/modules/tokens/tokens-shortcode.php',
+    'includes/modules/tokens/ajax-get-tokens.php',
+    'includes/modules/tokens/tokens-usage.php',
 
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/plans/plans-config.php';
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/plans/plans-functions.php';
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/plans/plans-init.php';
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/plans/ajax-update-plan.php';
+    'includes/modules/mockup/ajax-mockup.php',
+    'includes/modules/mockup/shortcodes.php',
+    'includes/modules/historial/shortcode-historial.php',
 
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/enhance-image/ajax-enhance-image.php';
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/enhance-image/shortcode-enhance-image.php';
+    'includes/modules/campanas-ai/campanas-ai-shortcode.php',
+    'includes/modules/campanas-ai/campanas-ai-ajax.php',
 
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/tendencias/trending-shortcode.php';
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/tendencias/trending-ajax.php';
+    'includes/modules/remove-bg/ajax-remove-bg.php',
+    'includes/modules/remove-bg/shortcode-remove-bg.php',
 
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/modelos-ai/modelos-ai-shortcode.php';
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/modelos-ai/modelos-ai-historial-shortcode.php';
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/modelos-ai/modelos-ai-ajax.php';
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/modelos-ai/modelos-ai-delete.php';
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/modelos-ai/modelos-ai-edit.php';
+    'includes/modules/enhance-image/ajax-enhance-image.php',
+    'includes/modules/enhance-image/shortcode-enhance-image.php',
 
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/auth/auth-dropdown.php';
+    'includes/modules/tendencias/trending-shortcode.php',
+    'includes/modules/tendencias/trending-ajax.php',
 
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/Home/antes-y-despues/before-after-shortcode.php';
+    'includes/modules/modelos-ai/modelos-ai-shortcode.php',
+    'includes/modules/modelos-ai/modelos-ai-historial-shortcode.php',
+    'includes/modules/modelos-ai/modelos-ai-ajax.php',
+    'includes/modules/modelos-ai/modelos-ai-delete.php',
+    'includes/modules/modelos-ai/modelos-ai-edit.php',
 
-
+    'includes/modules/auth/auth-dropdown.php',
+    'includes/modules/ux/maquinaEscribir.php',
+    'includes/modules/ux/cardsSkills.php',
+    'includes/modules/Home/antes-y-despues/before-after-shortcode.php',
+));
 
 
 /* ESTILOS Y JS */
@@ -103,7 +109,7 @@ require_once BENDIDOAI_PLUGIN_PATH . 'includes/modules/Home/antes-y-despues/befo
 function benditoai_enqueue_assets() {
 
 
-    // 🔥 Font Awesome version gratuita solo aceptan 5.0 https://fontawesome.com/v5/search
+    // ðŸ”¥ Font Awesome version gratuita solo aceptan 5.0 https://fontawesome.com/v5/search
     wp_enqueue_style(
         'font-awesome',
         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css',

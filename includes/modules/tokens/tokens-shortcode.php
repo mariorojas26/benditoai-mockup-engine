@@ -27,7 +27,7 @@ function benditoai_tokens_shortcode() {
     ?>
 
     <!-- CONTADOR DE TOKENS -->
-    <div id="benditoai-token-counter" class="benditoai-token-counter-box">
+    <div id="benditoai-token-counter" class="benditoai-token-counter-box benditoai-desktop-token-counter">
         <?php if ($is_admin) : ?>
             <label class="benditoai-admin-check-inline" title="Admin tokens ilimitados">
                 <input type="checkbox" class="benditoai-admin-unlimited-toggle" <?php echo $checked; ?> aria-label="Admin tokens ilimitados">

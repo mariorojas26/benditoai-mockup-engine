@@ -41,7 +41,7 @@ estas reglas para integrarse correctamente al sistema.
 5️⃣ Base de Datos
 ---------------------------------------------------------
 - Crear tabla si la herramienta requiere historial
-- Función en includes/install.php
+- Función en includes/core/install.php
     benditoai_create_mi_herramienta_table();
 - Registrar en hook de activación del plugin
 

@@ -1,8 +1,8 @@
 <?php
-// includes/prompts.php
+// includes/core/prompts.php
 if (!defined('ABSPATH')) exit;
 
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/variables.php';
+require_once BENDIDOAI_PLUGIN_PATH . 'includes/core/variables.php';
 
 function benditoai_get_prompt($producto, $formato, $color, $estilo_camiseta = '', $entorno_texto = '', $modelo_texto = '') {
 

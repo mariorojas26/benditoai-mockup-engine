@@ -55,7 +55,7 @@ High quality, clean, sharp, and professional result. Photorealistic, high detail
      * Consumir API Gemini
      */
 
-    require_once plugin_dir_path(dirname(__FILE__,2)) . "gemini-api.php";
+    require_once BENDIDOAI_PLUGIN_PATH . 'includes/services/gemini/gemini-api.php';
 
     $response = benditoai_call_gemini($base64_image, $prompt);
 

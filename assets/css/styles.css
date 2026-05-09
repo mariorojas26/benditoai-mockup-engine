@@ -431,6 +431,7 @@ img.benditoai-download-icon {
 
     border:1.5px solid rgba(94, 29, 247, 0.30) !important;
 
+    font: caption;
     font-weight:600;
 
     box-shadow:none !important;
@@ -455,14 +456,23 @@ img.benditoai-download-icon {
 .benditoai-token-counter-box .benditoai-token-label,
 .benditoai-token-counter-box .benditoai-user-tokens,
 .benditoai-token-counter-box .benditoai-admin-check-inline{
-    display: inline-flex;
+    display: inline-flex !important;
     align-items: center;
     line-height: 1;
     vertical-align: middle;
 }
 
+.benditoai-token-counter-box .benditoai-token-label,
+.benditoai-token-counter-box .benditoai-user-tokens{
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: currentColor !important;
+    font: inherit !important;
+    min-width: max-content;
+}
+
 .benditoai-token-counter-box .benditoai-admin-check-inline{
-    display:none;
+    display:none !important;
 }
 
 
@@ -1378,6 +1388,10 @@ pointer-events:none;
 DESKTOP Y MOBILE (CLICK)
 ================================ */
 @media (min-width: 769px) {
+    .benditoai-desktop-token-counter {
+        display: inline-flex !important;
+    }
+
     .benditoai-user-menu {
         display: none !important;
     }
@@ -2065,6 +2079,7 @@ button.benditoai-toggle-info:active {
     color: #c4b5fd !important;
     margin-bottom: 0;
     letter-spacing: 0.3px;
+    font-size: 11px;
     
 }
 
@@ -2682,3 +2697,10 @@ color: white !important;
     border-radius: 0px !important;
 }
 /* Menu hamburguesa */
+
+
+@media (min-width: 769px) {
+    .benditoai-desktop-user-login {
+        display: none !important;
+    }
+}

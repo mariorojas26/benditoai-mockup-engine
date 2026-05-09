@@ -2,9 +2,9 @@
 
 if (!defined('ABSPATH')) exit;
 
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/gemini-api.php';
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/prompts.php';
-require_once BENDIDOAI_PLUGIN_PATH . 'includes/gemini-api-multi-image.php';
+require_once BENDIDOAI_PLUGIN_PATH . 'includes/services/gemini/gemini-api.php';
+require_once BENDIDOAI_PLUGIN_PATH . 'includes/core/prompts.php';
+require_once BENDIDOAI_PLUGIN_PATH . 'includes/services/gemini/gemini-api-multi-image.php';
 
 function benditoai_generar_mockup() {
 

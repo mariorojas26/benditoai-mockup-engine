@@ -1,6 +1,6 @@
 <?php
 /*
-  includes/install.php
+  includes/core/install.php
  
   AquÃ­ creamos las tablas de la base de datos para guardar el historial de generaciones
   y los modelos AI.

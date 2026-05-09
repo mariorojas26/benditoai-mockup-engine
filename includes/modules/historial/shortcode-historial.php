@@ -1,5 +1,5 @@
 <?php
-// includes/shortcode-historial.php
+// includes/modules/historial/shortcode-historial.php
 if (!defined('ABSPATH')) exit;
 
 function benditoai_historial_shortcode() {
