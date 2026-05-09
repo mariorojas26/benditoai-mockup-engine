@@ -30,13 +30,14 @@ add_action('admin_init', 'benditoai_block_admin_area');
  * Personalizar pantalla wp-login.php con el estilo de BenditoAI.
  */
 function benditoai_customize_login_screen() {
-    $logo_url = BENDIDOAI_PLUGIN_URL . 'assets/images/icoben.png';
+    $logo_url = BENDIDOAI_PLUGIN_URL . 'assets/images/icobenbla.png';
     ?>
     <style>
         :root{
-            --bendito-bg: #07030f;
-            --bendito-surface: rgba(18, 10, 39, 0.86);
-            --bendito-surface-border: rgba(124, 58, 255, 0.40);
+            --bendito-bg: #06030f;
+            --bendito-grid: rgba(124, 58, 255, 0.12);
+            --bendito-surface: rgba(13, 9, 30, 0.78);
+            --bendito-surface-border: rgba(124, 58, 255, 0.32);
             --bendito-primary: #7c3aff;
             --bendito-primary-2: #5e1df7;
             --bendito-text: #f8f7ff;
@@ -53,30 +54,54 @@ function benditoai_customize_login_screen() {
         body.login {
             margin: 0;
             background:
-                radial-gradient(900px 400px at 10% 8%, rgba(124,58,255,.28), transparent 70%),
-                radial-gradient(700px 340px at 90% 88%, rgba(94,29,247,.22), transparent 70%),
+                radial-gradient(900px 440px at 50% 35%, rgba(124,58,255,.16), transparent 70%),
+                radial-gradient(680px 360px at 15% 8%, rgba(124,58,255,.12), transparent 72%),
                 var(--bendito-bg);
             color: var(--bendito-text);
             font-family: "Segoe UI", "Inter", "Helvetica Neue", Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             gap: 14px;
-            padding: clamp(12px, 2.6dvh, 24px) 14px;
+            padding: clamp(18px, 3dvh, 32px) 14px clamp(28px, 4dvh, 42px);
             box-sizing: border-box;
             overflow-x: hidden;
-            overflow-y: auto;
+            overflow-y: scroll;
+            position: relative;
+        }
+
+        body.login::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(to right, var(--bendito-grid) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--bendito-grid) 1px, transparent 1px);
+            background-size: 64px 64px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body.login::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at center, rgba(124,58,255,.11) 0%, transparent 68%);
+            pointer-events: none;
+            z-index: 0;
         }
 
         body.login #login {
             width: min(440px, 100%);
             max-width: 440px;
-            margin: auto;
-            padding: 0;
+            margin: 0 auto;
+            padding: 0 0 8px;
             display: grid;
-            align-content: center;
+            align-content: start;
             justify-items: stretch;
+            position: relative;
+            z-index: 1;
         }
 
         body.login h1 {
@@ -92,14 +117,36 @@ function benditoai_customize_login_screen() {
             margin: 0 auto 8px;
         }
 
+        .benditoai-login-context {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 34px;
+            padding: 0 14px;
+            margin: 0 auto 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(124, 58, 255, 0.48);
+            background: rgba(94, 29, 247, 0.14);
+            color: var(--bendito-muted);
+            line-height: 1.1;
+            letter-spacing: 0.2px;
+            text-transform: uppercase;
+            font-size: 11px;
+            font-weight: 600;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+        }
+
         #loginform,
         #registerform,
         #lostpasswordform {
             background: var(--bendito-surface);
             border: 1px solid var(--bendito-surface-border);
-            border-radius: 16px;
-            box-shadow: 0 18px 60px rgba(0,0,0,.45);
-            padding: 26px 24px 22px;
+            border-radius: 18px;
+            box-shadow:
+                0 24px 60px rgba(0,0,0,.5),
+                inset 0 1px 0 rgba(255,255,255,.03);
+            backdrop-filter: blur(4px);
+            padding: 24px 22px 20px;
         }
 
         #loginform label,
@@ -113,14 +160,18 @@ function benditoai_customize_login_screen() {
         .login form input[type="text"],
         .login form input[type="password"],
         .login form input[type="email"] {
-            background: rgba(8, 6, 18, .7);
-            border: 1px solid rgba(167, 139, 250, .35);
+            background: rgba(8, 6, 18, .84);
+            border: 1px solid rgba(167, 139, 250, .28);
             color: var(--bendito-text);
             border-radius: 12px;
             min-height: 52px;
             box-shadow: none;
             font-size: 17px;
             padding: 0 14px;
+        }
+
+        .benditoai-register-password-wrap {
+            margin-top: 8px;
         }
 
         .login form .input:focus,
@@ -156,16 +207,18 @@ function benditoai_customize_login_screen() {
         }
 
         .wp-core-ui .button-primary {
-            background: linear-gradient(135deg, var(--bendito-primary), var(--bendito-primary-2)) !important;
+            background: #5E1DF7 !important;
             border: 1px solid rgba(167, 139, 250, .36);
-            border-radius: 12px;
-            min-height: 46px;
-            padding: 0 22px;
+            border-radius: 12px !important;
+            min-height: 52px;
+             padding: 5px 10px !important;
             color: #fff !important;
             font-weight: 600;
             text-shadow: none;
-            box-shadow: 0 10px 24px rgba(94, 29, 247, .35);
+            box-shadow: 0 12px 28px rgba(94, 29, 247, .42);
             transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+            margin-top: 16px !important;
+            border-color: transparent !important;
         }
 
         .wp-core-ui .button-primary:hover,
@@ -182,11 +235,13 @@ function benditoai_customize_login_screen() {
 
         .login #nav,
         .login #backtoblog {
-            margin: 12px 2px 0;
+            margin: 14px 2px 0;
             padding: 0;
             text-align: center;
             font-size: 15px;
             line-height: 1.45;
+            position: relative;
+            z-index: 1;
         }
 
         .login #nav a,
@@ -246,6 +301,8 @@ function benditoai_customize_login_screen() {
             flex-direction: column;
             align-items: center;
             gap: 10px;
+            position: relative;
+            z-index: 1;
         }
 
         .login .language-switcher form {
@@ -285,9 +342,9 @@ function benditoai_customize_login_screen() {
 
         @media (max-width: 640px) {
             body.login {
-                justify-content: center;
+                justify-content: flex-start;
                 align-items: center;
-                padding: 14px 12px 18px;
+                padding: 16px 12px 24px;
                 gap: 10px;
             }
 
@@ -307,6 +364,13 @@ function benditoai_customize_login_screen() {
                 width: min(170px, 50vw);
                 height: 88px;
                 margin-bottom: 4px;
+            }
+
+            .benditoai-login-context {
+                min-height: 32px;
+                padding: 0 12px;
+                margin-bottom: 10px;
+                font-size: 10px;
             }
 
             .login form .input,
@@ -363,6 +427,97 @@ function benditoai_login_logo_title() {
     return get_bloginfo('name');
 }
 add_filter('login_headertext', 'benditoai_login_logo_title');
+
+function benditoai_register_password_fields() {
+    ?>
+    <p class="benditoai-register-password-wrap">
+        <label for="benditoai_register_password"><?php esc_html_e('Contrasena', 'bendidoai-mockup-engine'); ?></label>
+        <input
+            type="password"
+            name="benditoai_register_password"
+            id="benditoai_register_password"
+            class="input"
+            autocomplete="new-password"
+            required
+            minlength="8"
+        >
+    </p>
+    <p class="benditoai-register-password-wrap">
+        <label for="benditoai_register_password_confirm"><?php esc_html_e('Confirmar contrasena', 'bendidoai-mockup-engine'); ?></label>
+        <input
+            type="password"
+            name="benditoai_register_password_confirm"
+            id="benditoai_register_password_confirm"
+            class="input"
+            autocomplete="new-password"
+            required
+            minlength="8"
+        >
+    </p>
+    <?php
+}
+add_action('register_form', 'benditoai_register_password_fields');
+
+function benditoai_validate_register_password($errors, $sanitized_user_login, $user_email) {
+    $password = isset($_POST['benditoai_register_password']) ? (string) wp_unslash($_POST['benditoai_register_password']) : '';
+    $password_confirm = isset($_POST['benditoai_register_password_confirm']) ? (string) wp_unslash($_POST['benditoai_register_password_confirm']) : '';
+
+    if ($password === '' || $password_confirm === '') {
+        $errors->add('benditoai_register_password_required', '<strong>Error:</strong> Debes definir una contrasena y confirmarla.');
+        return $errors;
+    }
+
+    if ($password !== $password_confirm) {
+        $errors->add('benditoai_register_password_mismatch', '<strong>Error:</strong> Las contrasenas no coinciden.');
+        return $errors;
+    }
+
+    if (strlen($password) < 8) {
+        $errors->add('benditoai_register_password_length', '<strong>Error:</strong> La contrasena debe tener al menos 8 caracteres.');
+    }
+
+    return $errors;
+}
+add_filter('registration_errors', 'benditoai_validate_register_password', 10, 3);
+
+function benditoai_set_registered_user_password($user_id) {
+    if (empty($_POST['benditoai_register_password'])) {
+        return;
+    }
+
+    $password = (string) wp_unslash($_POST['benditoai_register_password']);
+
+    if ($password !== '') {
+        wp_set_password($password, $user_id);
+    }
+}
+add_action('user_register', 'benditoai_set_registered_user_password');
+
+function benditoai_registration_redirect_to_login($redirect_to) {
+    return add_query_arg('benditoai_registered', '1', wp_login_url());
+}
+add_filter('registration_redirect', 'benditoai_registration_redirect_to_login');
+
+function benditoai_login_context_label($message) {
+    $action = isset($_REQUEST['action']) ? sanitize_key(wp_unslash($_REQUEST['action'])) : 'login';
+
+    $labels = array(
+        'login' => 'Iniciar sesion',
+        'register' => 'Registrarse',
+        'lostpassword' => 'Recuperar acceso',
+        'rp' => 'Nueva contrasena',
+        'resetpass' => 'Nueva contrasena',
+    );
+
+    $label = isset($labels[$action]) ? $labels[$action] : 'Iniciar sesion';
+
+    if (isset($_GET['benditoai_registered']) && $_GET['benditoai_registered'] === '1') {
+        $message = '<p class="message">Registro completado. Inicia sesion con tu nueva contrasena.</p>' . $message;
+    }
+
+    return '<div class="benditoai-login-context">' . esc_html($label) . '</div>' . $message;
+}
+add_filter('login_message', 'benditoai_login_context_label');
 
 /**
  * UX limpia: ocultar switcher de idioma en wp-login.

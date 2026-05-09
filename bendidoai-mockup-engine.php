@@ -58,6 +58,7 @@ benditoai_require_files(array(
 
     'includes/core/variables.php',
     'includes/core/prompts.php',
+    'includes/core/browser-theme.php',
 
     'includes/services/gemini/gemini-api.php',
     'includes/services/gemini/gemini-api-text.php',

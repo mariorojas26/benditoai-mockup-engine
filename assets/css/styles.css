@@ -1175,13 +1175,13 @@ pointer-events:none;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    gap: 5px;
+    gap: 4px;
     padding: 0 !important;
     border-radius: 12px !important;
-    border: 1.5px solid rgba(124, 58, 255, 0.60) !important;
-    background: rgba(17, 8, 37, 0.92) !important;
-    color: #f8f7ff !important;
-    box-shadow: 0 10px 26px rgba(35, 12, 86, 0.22) !important;
+    border: 1px solid rgba(94,29,247,0.4) !important;
+    background: rgba(94,29,247,0.15) !important;
+    color: #c4b5fd !important;
+    box-shadow: none !important;
     cursor: pointer;
     overflow: hidden;
     transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
@@ -1190,22 +1190,22 @@ pointer-events:none;
 .benditoai-user-trigger:hover,
 .benditoai-user-trigger:focus-visible,
 .benditoai-user-menu.active .benditoai-user-trigger {
-    background: rgba(36, 18, 72, 0.98) !important;
-    border-color: rgba(167, 139, 250, 0.95) !important;
-    box-shadow: 0 0 0 3px rgba(124, 58, 255, 0.22) !important;
+    background: rgba(94,29,247,0.24) !important;
+    border-color: rgba(167,139,250,0.72) !important;
+    box-shadow: 0 0 0 3px rgba(94,29,247,0.18) !important;
     outline: none;
 }
 
 .benditoai-menu-line {
-    width: 23px;
-    height: 3px;
+    width: 20px;
+    height: 2px;
     border-radius: 999px;
     background: currentColor;
     transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 .benditoai-user-menu.active .benditoai-menu-line:nth-child(1) {
-    transform: translateY(8px) rotate(45deg);
+    transform: translateY(6px) rotate(45deg);
 }
 
 .benditoai-user-menu.active .benditoai-menu-line:nth-child(2) {
@@ -1213,7 +1213,7 @@ pointer-events:none;
 }
 
 .benditoai-user-menu.active .benditoai-menu-line:nth-child(3) {
-    transform: translateY(-8px) rotate(-45deg);
+    transform: translateY(-6px) rotate(-45deg);
 }
 
 /* DROPDOWN BASE (OCULTO) */
@@ -2079,7 +2079,7 @@ button.benditoai-toggle-info:active {
     color: #c4b5fd !important;
     margin-bottom: 0;
     letter-spacing: 0.3px;
-    font-size: 11px;
+        font-size: 10px;
     
 }
 
