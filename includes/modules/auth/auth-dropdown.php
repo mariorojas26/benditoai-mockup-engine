@@ -120,3 +120,64 @@ function benditoai_user_dropdown() {
 }
 
 add_shortcode('benditoai_user_menu', 'benditoai_user_dropdown');
+
+function benditoai_desktop_user_shortcode() {
+
+    if (!is_user_logged_in()) {
+
+        $login_url = wp_login_url(get_permalink());
+
+        return '<a href="' . esc_url($login_url) . '" class="benditoai-btn-login benditoai-desktop-user-login">Iniciar sesi&oacute;n</a>';
+    }
+
+    $current_user = wp_get_current_user();
+    $display_name = $current_user->display_name ? $current_user->display_name : $current_user->user_login;
+    $logout_url = wp_logout_url(home_url());
+    $user_id = get_current_user_id();
+    $is_admin = current_user_can('administrator');
+    $enabled = get_user_meta($user_id, 'benditoai_admin_unlimited_tokens', true);
+    $checked = ($enabled === 'yes') ? 'checked' : '';
+    $menu_id = 'benditoai-desktop-user-menu-' . wp_unique_id();
+
+    ob_start();
+    ?>
+
+    <div class="benditoai-desktop-user">
+        <button
+            type="button"
+            class="benditoai-desktop-user__button"
+            aria-label="Abrir menu de cuenta"
+            aria-expanded="false"
+            aria-controls="<?php echo esc_attr($menu_id); ?>"
+        >
+            <svg class="benditoai-desktop-user__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2Z"/></svg>
+            <span class="benditoai-desktop-user__label">Hola,</span>
+            <span class="benditoai-desktop-user__name"><?php echo esc_html($display_name); ?></span>
+        </button>
+
+        <div class="benditoai-desktop-user__dropdown" id="<?php echo esc_attr($menu_id); ?>">
+            <?php if ($is_admin) : ?>
+                <div class="benditoai-desktop-user__item benditoai-desktop-user__item--admin-toggle">
+                    <label class="benditoai-admin-check-inline" title="Admin tokens ilimitados">
+                        <input type="checkbox" class="benditoai-admin-unlimited-toggle" <?php echo $checked; ?> aria-label="Admin tokens ilimitados">
+                        <span class="benditoai-admin-check-ui" aria-hidden="true"></span>
+                    </label>
+                    <span>Tokens ilimitados</span>
+                </div>
+            <?php endif; ?>
+            <a href="<?php echo esc_url(home_url('/mis-modelos/')); ?>" class="benditoai-desktop-user__item">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9Z"/><path d="m12 12 8-4.5"/><path d="M12 12v9"/><path d="M12 12 4 7.5"/></svg>
+                <span>Mis modelos</span>
+            </a>
+            <a href="<?php echo esc_url($logout_url); ?>" class="benditoai-desktop-user__item benditoai-desktop-user__item--logout">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17 15 12l-5-5"/><path d="M15 12H3"/><path d="M14 5V4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2v-1"/></svg>
+                <span>Cerrar sesi&oacute;n</span>
+            </a>
+        </div>
+    </div>
+
+    <?php
+    return ob_get_clean();
+}
+
+add_shortcode('benditoai_desktop_user', 'benditoai_desktop_user_shortcode');

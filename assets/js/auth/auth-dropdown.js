@@ -79,6 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!event.target.closest(".benditoai-user-menu")) {
             closeAllMenus();
         }
+
     });
 
     document.addEventListener("keydown", function (event) {

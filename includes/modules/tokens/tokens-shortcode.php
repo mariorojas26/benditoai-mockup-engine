@@ -44,4 +44,4 @@ function benditoai_tokens_shortcode() {
 }
 
 add_shortcode('benditoai_tokens', 'benditoai_tokens_shortcode');
-
+add_shortcode('benditoai_desktop_tokens', 'benditoai_tokens_shortcode');
