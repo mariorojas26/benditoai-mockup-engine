@@ -83,7 +83,7 @@ function benditoai_customize_login_screen() {
             background-position: 0 0;
             pointer-events: none;
             z-index: 0;
-            animation: benditoai-grid-drift 28s linear infinite;
+            animation: benditoai-grid-drift 11s ease-in-out infinite alternate;
         }
 
         body.login::after {
@@ -95,15 +95,18 @@ function benditoai_customize_login_screen() {
                 radial-gradient(ellipse at 70% 76%, rgba(94,29,247,.08) 0%, transparent 62%);
             pointer-events: none;
             z-index: 0;
-            animation: benditoai-glow-drift 18s ease-in-out infinite alternate;
+            animation: benditoai-glow-drift 9s ease-in-out infinite alternate;
         }
 
         @keyframes benditoai-grid-drift {
             0% {
                 transform: translate3d(0, 0, 0);
             }
+            50% {
+                transform: translate3d(-18px, -12px, 0);
+            }
             100% {
-                transform: translate3d(-12px, -10px, 0);
+                transform: translate3d(-34px, -24px, 0);
             }
         }
 
@@ -112,9 +115,13 @@ function benditoai_customize_login_screen() {
                 transform: translate3d(0, 0, 0) scale(1);
                 opacity: .90;
             }
-            100% {
-                transform: translate3d(-10px, 8px, 0) scale(1.03);
+            50% {
+                transform: translate3d(-18px, 12px, 0) scale(1.05);
                 opacity: 1;
+            }
+            100% {
+                transform: translate3d(14px, -10px, 0) scale(1.08);
+                opacity: .96;
             }
         }
 

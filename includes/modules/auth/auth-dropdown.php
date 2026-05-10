@@ -1,5 +1,49 @@
 <?php
 
+if (!function_exists('benditoai_render_nav_items')) {
+    function benditoai_render_nav_items($nav_items) {
+        foreach ($nav_items as $item) {
+            $has_children = !empty($item['children']) && is_array($item['children']);
+
+            if ($has_children) {
+                $submenu_id = 'benditoai-submenu-' . wp_unique_id();
+                ?>
+                <div class="benditoai-dropdown-group">
+                    <button
+                        type="button"
+                        class="benditoai-dropdown-item benditoai-dropdown-item--has-children"
+                        aria-expanded="false"
+                        aria-controls="<?php echo esc_attr($submenu_id); ?>"
+                    >
+                        <?php echo $item['icon']; ?>
+                        <span><?php echo wp_kses_post($item['label']); ?></span>
+                        <svg class="benditoai-dropdown-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                    </button>
+
+                    <div class="benditoai-dropdown-submenu" id="<?php echo esc_attr($submenu_id); ?>">
+                        <?php foreach ($item['children'] as $child) : ?>
+                            <a href="<?php echo esc_url($child['url']); ?>" class="benditoai-dropdown-subitem">
+                                <span><?php echo esc_html($child['label']); ?></span>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php
+                continue;
+            }
+            ?>
+            <a href="<?php echo esc_url($item['url']); ?>" class="benditoai-dropdown-item">
+                <?php echo $item['icon']; ?>
+                <span><?php echo wp_kses_post($item['label']); ?></span>
+                <?php if (!empty($item['has_children'])) : ?>
+                    <svg class="benditoai-dropdown-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                <?php endif; ?>
+            </a>
+            <?php
+        }
+    }
+}
+
 function benditoai_user_dropdown() {
 
     $login_url = wp_login_url(get_permalink());
@@ -14,6 +58,12 @@ function benditoai_user_dropdown() {
             'url' => home_url('/herramientas-ia/'),
             'icon' => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.7 5.1L19 10l-5.3 1.9L12 17l-1.7-5.1L5 10l5.3-1.9Z"/><path d="m5 15 .8 2.4L8 18l-2.2.6L5 21l-.8-2.4L2 18l2.2-.6Z"/></svg>',
             'has_children' => true,
+            'children' => array(
+                array(
+                    'label' => 'Crear modelo',
+                    'url' => home_url('/crea-modelo/'),
+                ),
+            ),
         ),
         array(
             'label' => 'Campa&ntilde;as',
@@ -54,15 +104,7 @@ function benditoai_user_dropdown() {
                 <nav class="benditoai-dropdown-section benditoai-dropdown-nav" aria-labelledby="<?php echo esc_attr($guest_menu_id); ?>-nav">
                     <h3 class="benditoai-dropdown-heading" id="<?php echo esc_attr($guest_menu_id); ?>-nav">Navegación</h3>
 
-                    <?php foreach ($nav_items as $item) : ?>
-                        <a href="<?php echo esc_url($item['url']); ?>" class="benditoai-dropdown-item">
-                            <?php echo $item['icon']; ?>
-                            <span><?php echo wp_kses_post($item['label']); ?></span>
-                            <?php if (!empty($item['has_children'])) : ?>
-                                <svg class="benditoai-dropdown-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
-                            <?php endif; ?>
-                        </a>
-                    <?php endforeach; ?>
+                    <?php benditoai_render_nav_items($nav_items); ?>
                 </nav>
 
                 <div class="benditoai-dropdown-section benditoai-guest-login-section">
@@ -153,15 +195,7 @@ function benditoai_user_dropdown() {
             <nav class="benditoai-dropdown-section benditoai-dropdown-nav" aria-labelledby="<?php echo esc_attr($menu_id); ?>-nav">
                 <h3 class="benditoai-dropdown-heading" id="<?php echo esc_attr($menu_id); ?>-nav">Navegaci&oacute;n</h3>
 
-                <?php foreach ($nav_items as $item) : ?>
-                    <a href="<?php echo esc_url($item['url']); ?>" class="benditoai-dropdown-item">
-                        <?php echo $item['icon']; ?>
-                        <span><?php echo wp_kses_post($item['label']); ?></span>
-                        <?php if (!empty($item['has_children'])) : ?>
-                            <svg class="benditoai-dropdown-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
-                        <?php endif; ?>
-                    </a>
-                <?php endforeach; ?>
+                <?php benditoai_render_nav_items($nav_items); ?>
             </nav>
 
             <a href="<?php echo esc_url($logout_url); ?>" class="benditoai-dropdown-item benditoai-dropdown-logout">

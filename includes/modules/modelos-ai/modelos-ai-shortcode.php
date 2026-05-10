@@ -21,13 +21,10 @@ function benditoai_modelos_ai_shortcode() {
         <section class="baiw-config-stage" id="benditoai-config-stage">
             <header class="baiw-header">
                 <div>
-                                       <h2 class="baiw-title-main">Crea tu modelo AI en 3 pasos</h2>
-                    <p>Flujo claro, rapido y listo para reutilizar en campanas.</p>
+                    <h2 class="baiw-title-main">Crea tu modelo</h2>
+                    <p>Con solo unos pasos, tu modelo estará listo vender tus productos</p>
                 </div>
-                <div class="baiw-credits">
-                    <span>Consumo estimado</span>
-                    <strong>1 credito</strong>
-                </div>
+
             </header>
 
             <ol class="baiw-stepper" aria-label="Progreso del wizard">

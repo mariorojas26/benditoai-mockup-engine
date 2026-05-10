@@ -1372,6 +1372,7 @@ pointer-events:none;
 }
 
 .benditoai-dropdown-item {
+    width: 100%;
     display: flex;
     align-items: center;
     gap: 16px;
@@ -1384,6 +1385,24 @@ pointer-events:none;
     text-decoration: none !important;
     cursor: pointer;
     transition: background 0.2s ease, color 0.2s ease;
+}
+
+.benditoai-dropdown-item--has-children {
+    border: 0;
+    background: transparent;
+    text-align: left;
+    border-radius: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+}
+
+.benditoai-dropdown-group {
+    border-top: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.benditoai-dropdown-group .benditoai-dropdown-item {
+    border-top: 0;
 }
 
 .benditoai-dropdown-item:hover,
@@ -1406,6 +1425,47 @@ pointer-events:none;
 
 .benditoai-dropdown-chevron {
     margin-left: auto;
+    transition: transform 0.2s ease;
+}
+
+.benditoai-dropdown-group.is-open .benditoai-dropdown-chevron {
+    transform: rotate(180deg);
+}
+
+.benditoai-dropdown-item--has-children[aria-expanded="true"] .benditoai-dropdown-chevron {
+    transform: rotate(180deg);
+}
+
+.benditoai-dropdown-submenu {
+    display: none;
+    padding: 0 0 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.benditoai-dropdown-group.is-open .benditoai-dropdown-submenu {
+    display: block;
+}
+
+.benditoai-dropdown-item--has-children[aria-expanded="true"] + .benditoai-dropdown-submenu {
+    display: block;
+}
+
+.benditoai-dropdown-subitem {
+    display: flex;
+    align-items: center;
+    min-height: 52px;
+    padding: 0 26px 0 66px;
+    color: #a78bfa !important;
+    text-decoration: none !important;
+    line-height: 1.2;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.benditoai-dropdown-subitem:hover,
+.benditoai-dropdown-subitem:focus-visible {
+    background: rgba(124, 58, 255, 0.10);
+    color: #ffffff !important;
+    outline: none;
 }
 
 .benditoai-dropdown-logout {
@@ -1525,6 +1585,12 @@ MOBILE (CLICK)
 
     .benditoai-dropdown-item {
         min-height: 64px;
+    }
+
+    .benditoai-dropdown-subitem {
+        min-height: 56px;
+        padding-inline: 20px;
+        padding-left: 60px;
     }
 
     .benditoai-dropdown-item--admin-toggle {
@@ -2752,4 +2818,8 @@ color: white !important;
     .benditoai-desktop-user-login {
         display: none !important;
     }
+}
+
+.benditoai-modelos-wizard .baiw-header p {
+    font-size: 0.75rem;
 }

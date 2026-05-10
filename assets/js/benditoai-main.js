@@ -19,7 +19,7 @@ import "./trending/trending-generator.js";
 import "./trending/trending-ui.js";
 
 /* auth */
-import "./auth/auth-dropdown.js";
+import "./auth/auth-dropdown.js?v=20260509b";
 
 /* modelos */
 import "./modelos/delete-modelo.js";
