@@ -8,12 +8,12 @@ function benditoai_scroll_video_shortcode($atts) {
 
     $atts = shortcode_atts(
         array(
-            'src' => 'assets/images/senora2.mp4',
+            'src' => 'assets/images/senora.mp4',
 
             // Menor recorrido = experiencia más fluida.
             // Si quieres más lento, sube estos valores.
-            'scroll_vh' => 360,
-            'scroll_vh_mobile' => 420,
+            'scroll_vh' => 260,
+            'scroll_vh_mobile' => 300,
 
             'class' => '',
         ),
@@ -32,8 +32,8 @@ function benditoai_scroll_video_shortcode($atts) {
         $extra_classes = implode(' ', $class_parts);
     }
 
-    $scroll_vh = max(240, (int) $atts['scroll_vh']);
-    $scroll_vh_mobile = max(280, (int) $atts['scroll_vh_mobile']);
+    $scroll_vh = max(180, (int) $atts['scroll_vh']);
+    $scroll_vh_mobile = max(220, (int) $atts['scroll_vh_mobile']);
 
     if (filter_var($video_src, FILTER_VALIDATE_URL)) {
         $video_src_url = esc_url($video_src);

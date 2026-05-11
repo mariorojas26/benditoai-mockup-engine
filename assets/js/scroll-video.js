@@ -4,6 +4,7 @@
     const instances = [];
     let rafId = 0;
     let resizeTimer = 0;
+    let trackingUntil = 0;
 
     const mobileQuery = window.matchMedia("(max-width: 768px)");
 
@@ -76,18 +77,18 @@
         const delta = Math.abs(video.currentTime - targetTime);
         const isMobile = mobileQuery.matches;
 
-        const epsilon = isMobile ? 1 / 24 : 1 / 40;
-        const minDelay = isMobile ? 55 : 34;
+        const epsilon = isMobile ? 1 / 20 : 1 / 36;
+        const minDelay = isMobile ? 22 : 16;
 
         if (delta < epsilon) {
             return;
         }
 
-        if (video.seeking && now - instance.lastSeekAt < 120) {
+        if (video.seeking && now - instance.lastSeekAt < 45) {
             return;
         }
 
-        if (now - instance.lastSeekAt < minDelay && delta < 0.22) {
+        if (now - instance.lastSeekAt < minDelay && delta < 0.09) {
             return;
         }
 
@@ -124,9 +125,14 @@
 
     function updateAll(now) {
         rafId = 0;
+        const tickNow = now || performance.now();
 
         for (let i = 0; i < instances.length; i += 1) {
-            updateProgress(instances[i], now || performance.now());
+            updateProgress(instances[i], tickNow);
+        }
+
+        if (tickNow < trackingUntil) {
+            requestUpdate();
         }
     }
 
@@ -136,12 +142,18 @@
         }
     }
 
+    function bumpTracking(ms) {
+        const now = performance.now();
+        trackingUntil = Math.max(trackingUntil, now + ms);
+        requestUpdate();
+    }
+
     function refreshLayout() {
         for (let i = 0; i < instances.length; i += 1) {
             setSectionHeight(instances[i]);
         }
 
-        requestUpdate();
+        bumpTracking(320);
     }
 
     function requestRefreshLayout() {
@@ -226,13 +238,32 @@
             return;
         }
 
-        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("scroll", function () {
+            bumpTracking(260);
+        }, { passive: true });
+
+        window.addEventListener("touchstart", function () {
+            bumpTracking(520);
+        }, { passive: true });
+        window.addEventListener("touchmove", function () {
+            bumpTracking(300);
+        }, { passive: true });
+        window.addEventListener("touchend", function () {
+            bumpTracking(420);
+        }, { passive: true });
+
+        window.addEventListener("wheel", function () {
+            bumpTracking(240);
+        }, { passive: true });
+
         window.addEventListener("resize", requestRefreshLayout, { passive: true });
         window.addEventListener("orientationchange", requestRefreshLayout, { passive: true });
 
         if (window.visualViewport) {
             window.visualViewport.addEventListener("resize", requestRefreshLayout, { passive: true });
-            window.visualViewport.addEventListener("scroll", requestUpdate, { passive: true });
+            window.visualViewport.addEventListener("scroll", function () {
+                bumpTracking(220);
+            }, { passive: true });
         }
 
         refreshLayout();
