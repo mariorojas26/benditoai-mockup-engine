@@ -2873,3 +2873,128 @@ color: white !important;
         padding: 28px 22px;
     }
 }
+/* =============================================
+   BENDITOAI SCROLL VIDEO
+============================================= */
+
+.benditoai-scroll-video {
+    --bsv-enter-opacity: 1;
+    --bsv-exit-opacity: 0;
+    --bsv-vh: 100svh;
+
+    position: relative;
+    width: 100%;
+    height: 360vh;
+    background: #000;
+    isolation: isolate;
+    overflow: visible;
+    touch-action: pan-y;
+}
+
+.benditoai-scroll-video__sticky {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: var(--bsv-vh);
+    min-height: 100svh;
+    overflow: hidden;
+    background: #000;
+}
+
+.benditoai-scroll-video__viewport {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    overflow: hidden;
+}
+
+.benditoai-scroll-video__media {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    background: #000;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+.benditoai-scroll-video__curtain-enter,
+.benditoai-scroll-video__curtain-exit,
+.benditoai-scroll-video__vignette {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.benditoai-scroll-video__curtain-enter {
+    background: #000;
+    opacity: var(--bsv-enter-opacity);
+    will-change: opacity;
+}
+
+.benditoai-scroll-video__curtain-exit {
+    background: #000;
+    opacity: var(--bsv-exit-opacity);
+    will-change: opacity;
+}
+
+.benditoai-scroll-video__vignette {
+    background:
+        radial-gradient(
+            120% 90% at 50% 50%,
+            rgba(0, 0, 0, 0) 58%,
+            rgba(0, 0, 0, 0.24) 100%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0.18) 0%,
+            rgba(0, 0, 0, 0.06) 32%,
+            rgba(0, 0, 0, 0.18) 100%
+        );
+}
+
+.benditoai-scroll-video:not(.is-ready)::before {
+    content: "";
+    position: sticky;
+    top: 0;
+    display: block;
+    width: 100%;
+    height: var(--bsv-vh);
+    background: #000;
+    z-index: 2;
+}
+
+@media (max-width: 768px) {
+    .benditoai-scroll-video {
+        height: 420vh;
+    }
+
+    .benditoai-scroll-video__sticky {
+        height: var(--bsv-vh);
+        min-height: 100svh;
+    }
+
+    .benditoai-scroll-video__media {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center center;
+    }
+
+    .benditoai-scroll-video__vignette {
+        background:
+            radial-gradient(
+                130% 100% at 50% 50%,
+                rgba(0, 0, 0, 0) 60%,
+                rgba(0, 0, 0, 0.26) 100%
+            ),
+            linear-gradient(
+                180deg,
+                rgba(0, 0, 0, 0.22) 0%,
+                rgba(0, 0, 0, 0.08) 35%,
+                rgba(0, 0, 0, 0.2) 100%
+            );
+    }
+}

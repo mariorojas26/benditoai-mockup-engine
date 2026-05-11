@@ -79,6 +79,7 @@ benditoai_require_files(array(
     'includes/modules/mockup/ajax-mockup.php',
     'includes/modules/mockup/shortcodes.php',
     'includes/modules/historial/shortcode-historial.php',
+    'includes/modules/scroll-video/scroll-video-shortcode.php',
 
     'includes/modules/campanas-ai/campanas-ai-shortcode.php',
     'includes/modules/campanas-ai/campanas-ai-ajax.php',
@@ -148,6 +149,17 @@ function benditoai_enqueue_assets() {
             'ajax_url'   => admin_url('admin-ajax.php'),
             'plugin_url' => BENDIDOAI_PLUGIN_URL
         )
+    );
+
+    $scroll_video_script_path = BENDIDOAI_PLUGIN_PATH . 'assets/js/scroll-video.js';
+    $scroll_video_script_version = file_exists($scroll_video_script_path) ? (string) filemtime($scroll_video_script_path) : '1.0';
+
+    wp_register_script(
+        'benditoai-scroll-video',
+        BENDIDOAI_PLUGIN_URL . 'assets/js/scroll-video.js',
+        array(),
+        $scroll_video_script_version,
+        true
     );
 
 }
