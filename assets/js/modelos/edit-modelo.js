@@ -69,12 +69,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!imageUrl) {
             previewWrap.hidden = true;
+            previewWrap.classList.remove("is-ready");
+            previewImg.hidden = true;
             previewImg.src = "";
             triggerText.textContent = "Una prenda de vestir (opcional)";
             return;
         }
 
         previewWrap.hidden = false;
+        previewWrap.classList.remove("is-ready");
+        previewImg.hidden = true;
+        previewImg.onload = () => {
+            previewImg.hidden = false;
+            previewWrap.classList.add("is-ready");
+        };
+        previewImg.onerror = () => {
+            previewWrap.hidden = true;
+            previewWrap.classList.remove("is-ready");
+            previewImg.hidden = true;
+            previewImg.src = "";
+            triggerText.textContent = "Una prenda de vestir (opcional)";
+        };
         previewImg.src = imageUrl;
         triggerText.textContent = labelText || "Referencia lista";
     };

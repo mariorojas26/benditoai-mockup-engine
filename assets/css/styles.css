@@ -4309,6 +4309,14 @@ body.benditoai-modal-open {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.16s ease;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-inline-edit-ref-trigger-preview.is-ready {
+    visibility: visible;
+    opacity: 1;
 }
 
 .benditoai-wrapper-historia-modelos .benditoai-inline-edit-ref-trigger-preview-img {
@@ -5158,10 +5166,11 @@ body.benditoai-modal-open {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 7px;
+        align-items: stretch;
     }
 
     .benditoai-wrapper-historia-modelos .benditoai-outfit-thumb {
-        height: 84px;
+        height: clamp(160px, 7.5vw, 236px);
         border-radius: 9px;
         border: 1px solid rgba(124, 58, 255, 0.3);
         background: rgba(10, 5, 24, 0.82);
@@ -5175,7 +5184,7 @@ body.benditoai-modal-open {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        object-position: center;
+        object-position: center top;
         display: block;
     }
 
