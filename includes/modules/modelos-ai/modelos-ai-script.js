@@ -1,4 +1,128 @@
 document.addEventListener("DOMContentLoaded", function () {
+    const initHistorialPaginator = () => {
+        const grid = document.getElementById("benditoai-historial-mockups");
+        const pagination = document.getElementById("benditoai-historial-pagination");
+        const scrollHint = document.getElementById("benditoai-historial-scroll-hint");
+        if (!grid || !pagination) return;
+
+        const prevBtn = pagination.querySelector("[data-history-page='prev']");
+        const nextBtn = pagination.querySelector("[data-history-page='next']");
+        const status = pagination.querySelector("[data-history-page='status']");
+        if (!prevBtn || !nextBtn || !status) return;
+
+        let currentPage = 1;
+        const perPageDesktop = 3;
+        const isMobileView = () => window.matchMedia("(max-width: 768px)").matches;
+        const thumbsClass = "benditoai-mobile-history-thumbs";
+        const escapeAttr = (value) => String(value || "").replace(/"/g, "&quot;");
+
+        const getItems = () => Array.from(grid.querySelectorAll(".benditoai-historial-item"));
+        const getPerPage = () => (isMobileView() ? 1 : perPageDesktop);
+        const getTotalPages = () => Math.max(1, Math.ceil(getItems().length / getPerPage()));
+
+        const getItemImage = (item) => item?.querySelector(".benditoai-historial-img")?.src || "";
+
+        const clearThumbs = () => {
+            grid.querySelectorAll(`.${thumbsClass}`).forEach((node) => node.remove());
+        };
+
+        const renderMobileThumbs = (items, activeIndex) => {
+            clearThumbs();
+            if (!isMobileView() || items.length <= 1) return;
+
+            const activeItem = items[activeIndex];
+            if (!activeItem) return;
+
+            const toggleBtn = activeItem.querySelector(".benditoai-toggle-info");
+            if (!toggleBtn) return;
+
+            const rail = document.createElement("div");
+            rail.className = thumbsClass;
+
+            const thumbs = items.map((item, index) => {
+                const src = getItemImage(item);
+                const label = item.querySelector(".benditoai-historial-name")?.textContent?.trim() || `Modelo ${index + 1}`;
+                const selected = index === activeIndex;
+                return `
+                    <button
+                        type="button"
+                        class="benditoai-mobile-history-thumb${selected ? " is-active" : ""}"
+                        data-history-index="${index}"
+                        aria-label="Ver ${escapeAttr(label)}"
+                        aria-pressed="${selected ? "true" : "false"}"
+                    >
+                        <img src="${src}" alt="" loading="lazy" />
+                    </button>
+                `;
+            }).join("");
+
+            rail.innerHTML = thumbs;
+            activeItem.insertBefore(rail, toggleBtn);
+        };
+
+        const render = () => {
+            const items = getItems();
+            const perPage = getPerPage();
+            const totalPages = getTotalPages();
+
+            if (currentPage > totalPages) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+
+            const start = (currentPage - 1) * perPage;
+            const end = start + perPage;
+
+            items.forEach((item, index) => {
+                const visible = index >= start && index < end;
+                item.hidden = !visible;
+                item.setAttribute("aria-hidden", visible ? "false" : "true");
+            });
+
+            pagination.hidden = isMobileView() || items.length <= perPage;
+            status.textContent = `${currentPage} / ${totalPages}`;
+            prevBtn.disabled = currentPage <= 1;
+            nextBtn.disabled = currentPage >= totalPages;
+            renderMobileThumbs(items, start);
+            if (scrollHint) scrollHint.hidden = true;
+        };
+
+        prevBtn.addEventListener("click", () => {
+            if (currentPage <= 1) return;
+            currentPage -= 1;
+            render();
+        });
+
+        nextBtn.addEventListener("click", () => {
+            const totalPages = getTotalPages();
+            if (currentPage >= totalPages) return;
+            currentPage += 1;
+            render();
+        });
+
+        grid.addEventListener("click", (event) => {
+            const thumb = event.target.closest("[data-history-index]");
+            if (!thumb || !isMobileView()) return;
+            const targetIndex = Number(thumb.dataset.historyIndex || -1);
+            if (targetIndex < 0) return;
+            currentPage = targetIndex + 1;
+            render();
+        });
+
+        window.addEventListener("resize", render);
+        grid.addEventListener("benditoai:historial-updated", render);
+        document.addEventListener("benditoai:historial-updated", render);
+
+        window.benditoaiRefreshHistorialPagination = () => {
+            const totalPages = getTotalPages();
+            if (currentPage > totalPages) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+            render();
+        };
+
+        render();
+    };
+
+    initHistorialPaginator();
+
     const root = document.querySelector(".benditoai-modelos-wizard");
     const form = document.getElementById("benditoai-form-modelo-ai");
     if (!root || !form) return;
@@ -411,6 +535,9 @@ document.addEventListener("DOMContentLoaded", function () {
         if (emptyMsg) emptyMsg.remove();
 
         const noCacheUrl = `${d.image_url}?t=${Date.now()}`;
+        const iconDownload = `${benditoai_ajax.plugin_url}assets/images/icon-download.png`;
+        const iconEdit = `${benditoai_ajax.plugin_url}assets/images/icon-edit.png`;
+        const iconDelete = `${benditoai_ajax.plugin_url}assets/images/icon-delete.png`;
         const genero = escapeHtml(d.genero || "-");
         const edad = escapeHtml(d.edad || "-");
         const estilo = escapeHtml(d.estilo || d.modo_label || "-");
@@ -425,27 +552,59 @@ document.addEventListener("DOMContentLoaded", function () {
                 <p class="benditoai-historial-name">${nombreModelo}</p>
                 <div class="benditoai-img-wrap">
                     <img src="${noCacheUrl}" alt="${nombreModelo}" class="benditoai-historial-img" />
+                    <div class="benditoai-inline-edit" hidden>
+                        <div class="benditoai-inline-edit-surface">
+                            <label class="benditoai-inline-edit-label">Que deseas cambiar</label>
+                            <textarea class="benditoai-inline-edit-text" placeholder="Ej: cambia solo la chaqueta por una bomber negra."></textarea>
+                            <div class="benditoai-inline-edit-ref-block">
+                                <p class="benditoai-inline-edit-ref-help">
+                                    Opcional: sube una imagen de prenda para que la IA la use como referencia de vestuario.
+                                </p>
+                                <input type="file" class="benditoai-inline-edit-ref-file" accept="image/png,image/jpeg,image/webp" hidden>
+                                <button type="button" class="benditoai-inline-edit-ref-trigger">
+                                    <i class="fas fa-plus" aria-hidden="true"></i>
+                                    Una prenda de vestir (opcional)
+                                </button>
+                                <p class="benditoai-inline-edit-ref-name"></p>
+                            </div>
+                            <div class="benditoai-inline-edit-submit-block">
+                                <div class="benditoai-inline-edit-actions">
+                                    <button type="button" class="benditoai-inline-edit-submit">Enviar</button>
+                                    <button type="button" class="benditoai-inline-edit-cancel">Volver</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="benditoai-action-buttons">
                         <div class="hoverselect">
-                            <a href="${noCacheUrl}" download class="benditoai-btn benditoai-btn--download">
-                                <img src="${benditoai_ajax.plugin_url}assets/images/icon-download.png" alt="Descargar" class="benditoai-btn-icon">
+                            <a href="${noCacheUrl}" download class="benditoai-btn benditoai-btn--download benditoai-icon-btn" aria-label="Descargar modelo">
+                                <img src="${iconDownload}" class="benditoai-btn-icon" alt="" aria-hidden="true" />
                             </a>
                         </div>
                         <div class="hoverselect">
-                            <button class="benditoai-edit-modelo-btn" data-id="${d.id}" data-image="${d.image_url}">
-                                <img src="${benditoai_ajax.plugin_url}assets/images/icon-edit.png" alt="Editar" class="benditoai-btn-icon">
+                            <button class="benditoai-edit-modelo-btn benditoai-icon-btn" data-id="${d.id}" data-image="${d.image_url}" aria-label="Editar modelo">
+                                <img src="${iconEdit}" class="benditoai-btn-icon" alt="" aria-hidden="true" />
                             </button>
                         </div>
                         <div class="hoverselect">
-                            <button class="benditoai-delete-modelo-btn benditoai-action-btn" data-id="${d.id}">
-                                <img src="${benditoai_ajax.plugin_url}assets/images/icon-delete.png" alt="Eliminar" class="benditoai-btn-icon">
+                            <button class="benditoai-delete-modelo-btn benditoai-action-btn benditoai-icon-btn" data-id="${d.id}" aria-label="Eliminar modelo">
+                                <img src="${iconDelete}" class="benditoai-btn-icon" alt="" aria-hidden="true" />
                             </button>
                         </div>
                     </div>
+                    <button
+                        type="button"
+                        class="benditoai-use-campaign-btn"
+                        data-modelo-id="${d.id}"
+                        data-modelo-nombre="${nombreModelo}"
+                        data-modelo-image="${d.image_url}"
+                    >
+                        Usar para campaña
+                    </button>
                 </div>
-                <div class="benditoai-edit-box" style="display:none;">
-                    <textarea class="benditoai-edit-text" placeholder="Ej: cambia vestuario y expresion."></textarea>
-                    <button class="benditoai-save-edit-btn">Guardar cambios</button>
+                <div class="benditoai-edit-decision" hidden>
+                    <button type="button" class="benditoai-edit-apply-btn">Conservar</button>
+                    <button type="button" class="benditoai-edit-discard-btn">Deshacer</button>
                 </div>
                 <button class="benditoai-toggle-info">Ver detalles</button>
                 <div class="benditoai-historial-info" style="display:none;">
@@ -461,6 +620,11 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
 
         grid.insertAdjacentHTML("afterbegin", nuevoItem);
+        grid.dispatchEvent(new CustomEvent("benditoai:historial-updated"));
+        document.dispatchEvent(new CustomEvent("benditoai:historial-updated"));
+        if (typeof window.benditoaiRefreshHistorialPagination === "function") {
+            window.benditoaiRefreshHistorialPagination();
+        }
     };
 
     const submitRequest = () => {

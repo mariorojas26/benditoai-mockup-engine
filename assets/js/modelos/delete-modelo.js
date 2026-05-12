@@ -35,6 +35,24 @@ document.addEventListener("click", async function(e){
 
             setTimeout(()=>{
                 card.remove();
+                const grid = document.getElementById("benditoai-historial-mockups");
+                if (grid && grid.querySelectorAll(".benditoai-historial-item").length === 0) {
+                    const wrapper = grid.closest(".benditoai-wrapper-historia-modelos");
+                    if (wrapper && !wrapper.querySelector("#benditoai-empty-message")) {
+                        const empty = document.createElement("p");
+                        empty.className = "benditoai-message";
+                        empty.id = "benditoai-empty-message";
+                        empty.textContent = "No has generado ningun modelo todavia.";
+                        grid.insertAdjacentElement("beforebegin", empty);
+                    }
+                }
+                if (grid) {
+                    grid.dispatchEvent(new CustomEvent("benditoai:historial-updated"));
+                }
+                document.dispatchEvent(new CustomEvent("benditoai:historial-updated"));
+                if (typeof window.benditoaiRefreshHistorialPagination === "function") {
+                    window.benditoaiRefreshHistorialPagination();
+                }
             },200);
 
         }else{

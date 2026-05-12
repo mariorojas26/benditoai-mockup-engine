@@ -24,6 +24,7 @@ import "./auth/auth-dropdown.js?v=20260509b";
 /* modelos */
 import "./modelos/delete-modelo.js";
 import "./modelos/edit-modelo.js";
+import "./modelos/use-for-campana-bridge.js";
 
 /* campañas */
 import "./campanas/campanas-ai-script.js";

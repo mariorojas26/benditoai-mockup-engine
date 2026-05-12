@@ -19,10 +19,17 @@ function benditoai_modelos_ai_historial_shortcode() {
     );
 
     $sin_modelos = (!is_array($historial) || count($historial) === 0);
+    $campaign_url = apply_filters('benditoai_modelos_ai_campaign_url', home_url('/crea-campana/'));
+    $icon_download = BENDIDOAI_PLUGIN_URL . 'assets/images/icon-download.png';
+    $icon_edit = BENDIDOAI_PLUGIN_URL . 'assets/images/icon-edit.png';
+    $icon_delete = BENDIDOAI_PLUGIN_URL . 'assets/images/icon-delete.png';
 
     ob_start();
     ?>
-    <div class="benditoai-wrapper-historia-modelos">
+    <div
+        class="benditoai-wrapper-historia-modelos"
+        data-campaign-url="<?php echo esc_url($campaign_url); ?>"
+    >
 
         <h2 class="benditoai-historial-title">Mis Modelos AI</h2>
 
@@ -60,31 +67,93 @@ function benditoai_modelos_ai_historial_shortcode() {
                                 class="benditoai-historial-img"
                             />
 
+                            <div class="benditoai-inline-edit" hidden>
+                                <div class="benditoai-inline-edit-surface">
+                                    <label class="benditoai-inline-edit-label" for="benditoai-inline-edit-text-<?php echo esc_attr($item->id); ?>">
+                                        Que deseas cambiar
+                                    </label>
+                                    <textarea
+                                        id="benditoai-inline-edit-text-<?php echo esc_attr($item->id); ?>"
+                                        class="benditoai-inline-edit-text"
+                                        placeholder="Ej: cambia solo la chaqueta por una bomber negra."
+                                    ></textarea>
+
+                                    <div class="benditoai-inline-edit-ref-block">
+                                        <p class="benditoai-inline-edit-ref-help">
+                                            Opcional: sube una imagen de prenda para que la IA la use como referencia de vestuario.
+                                        </p>
+                                        <input
+                                            type="file"
+                                            class="benditoai-inline-edit-ref-file"
+                                            accept="image/png,image/jpeg,image/webp"
+                                            hidden
+                                        >
+                                        <button type="button" class="benditoai-inline-edit-ref-trigger">
+                                            <i class="fas fa-plus" aria-hidden="true"></i>
+                                            Una prenda de vestir (opcional)
+                                        </button>
+                                        <p class="benditoai-inline-edit-ref-name"></p>
+                                    </div>
+
+                                    <div class="benditoai-inline-edit-submit-block">
+                                        <div class="benditoai-inline-edit-actions">
+                                            <button type="button" class="benditoai-inline-edit-submit">Enviar</button>
+                                            <button type="button" class="benditoai-inline-edit-cancel">Volver</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="benditoai-action-buttons">
                                 <div class="hoverselect">
-                                    <a href="<?php echo esc_url($item->image_url); ?>" download class="benditoai-btn benditoai-btn--download">
-                                        <img src="<?php echo plugin_dir_url(__FILE__) . '../../../assets/images/icon-download.png'; ?>" alt="Descargar" class="benditoai-btn-icon">
+                                    <a href="<?php echo esc_url($item->image_url); ?>" download class="benditoai-btn benditoai-btn--download benditoai-icon-btn" aria-label="Descargar modelo">
+                                        <img
+                                            src="<?php echo esc_url($icon_download); ?>"
+                                            class="benditoai-btn-icon"
+                                            alt=""
+                                            aria-hidden="true"
+                                        />
                                     </a>
                                 </div>
 
                                 <div class="hoverselect">
-                                    <button class="benditoai-edit-modelo-btn" data-id="<?php echo esc_attr($item->id); ?>" data-image="<?php echo esc_url($item->image_url); ?>">
-                                        <img src="<?php echo plugin_dir_url(__FILE__) . '../../../assets/images/icon-edit.png'; ?>" alt="Editar" class="benditoai-btn-icon">
+                                    <button class="benditoai-edit-modelo-btn benditoai-icon-btn" data-id="<?php echo esc_attr($item->id); ?>" data-image="<?php echo esc_url($item->image_url); ?>" aria-label="Editar modelo">
+                                        <img
+                                            src="<?php echo esc_url($icon_edit); ?>"
+                                            class="benditoai-btn-icon"
+                                            alt=""
+                                            aria-hidden="true"
+                                        />
                                     </button>
                                 </div>
 
                                 <div class="hoverselect">
-                                    <button class="benditoai-delete-modelo-btn benditoai-action-btn" data-id="<?php echo esc_attr($item->id); ?>">
-                                        <img src="<?php echo plugin_dir_url(__FILE__) . '../../../assets/images/icon-delete.png'; ?>" alt="Eliminar" class="benditoai-btn-icon">
+                                    <button class="benditoai-delete-modelo-btn benditoai-action-btn benditoai-icon-btn" data-id="<?php echo esc_attr($item->id); ?>" aria-label="Eliminar modelo">
+                                        <img
+                                            src="<?php echo esc_url($icon_delete); ?>"
+                                            class="benditoai-btn-icon"
+                                            alt=""
+                                            aria-hidden="true"
+                                        />
                                     </button>
                                 </div>
                             </div>
+
+                            <button
+                                type="button"
+                                class="benditoai-use-campaign-btn"
+                                data-modelo-id="<?php echo esc_attr($item->id); ?>"
+                                data-modelo-nombre="<?php echo esc_attr($item->nombre_modelo); ?>"
+                                data-modelo-image="<?php echo esc_url($item->image_url); ?>"
+                            >
+                                Usar para campaña
+                            </button>
                         </div>
                     <?php endif; ?>
 
-                    <div class="benditoai-edit-box" style="display:none;">
-                        <textarea class="benditoai-edit-text" placeholder="Ej: cambiale el pantalon por uno jean oscuro..."></textarea>
-                        <button class="benditoai-save-edit-btn">Guardar cambios</button>
+                    <div class="benditoai-edit-decision" hidden>
+                        <button type="button" class="benditoai-edit-apply-btn">Conservar</button>
+                        <button type="button" class="benditoai-edit-discard-btn">Deshacer</button>
                     </div>
 
                     <button class="benditoai-toggle-info">Ver detalles</button>
@@ -112,7 +181,22 @@ function benditoai_modelos_ai_historial_shortcode() {
             <?php endif; ?>
 
         </div>
+        <p class="benditoai-historial-scroll-hint" id="benditoai-historial-scroll-hint" hidden>
+            <i class="fas fa-arrows-alt-h" aria-hidden="true"></i>
+            Desliza para ver mas modelos
+        </p>
+
+        <div class="benditoai-historial-pagination" id="benditoai-historial-pagination" hidden>
+            <button type="button" class="benditoai-historial-page-btn" data-history-page="prev" aria-label="Ver modelos anteriores">
+                <span aria-hidden="true">&lsaquo;</span>
+            </button>
+            <p class="benditoai-historial-page-status" data-history-page="status">1 / 1</p>
+            <button type="button" class="benditoai-historial-page-btn" data-history-page="next" aria-label="Ver mas modelos">
+                <span aria-hidden="true">&rsaquo;</span>
+            </button>
+        </div>
     </div>
+
     <?php
 
     return ob_get_clean();
