@@ -1,4 +1,60 @@
 document.addEventListener("DOMContentLoaded", function () {
+    const historyWrapper = document.querySelector(".benditoai-wrapper-historia-modelos");
+    const getOutfitCatalog = () => {
+        if (!historyWrapper) return [];
+        const raw = historyWrapper.dataset.outfitCatalog || "[]";
+        try {
+            const parsed = JSON.parse(raw);
+            return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+            return [];
+        }
+    };
+
+    const renderOutfitRailMarkup = () => {
+        const outfits = getOutfitCatalog();
+        if (!outfits.length) return "";
+
+        const cards = outfits
+            .filter((outfit) => outfit && outfit.id && (outfit.thumb_url || outfit.reference_url))
+            .map((outfit) => {
+                const id = escapeHtml(outfit.id || "");
+                const name = escapeHtml(outfit.name || "Outfit");
+                const thumb = escapeHtml(outfit.thumb_url || outfit.reference_url || "");
+                const reference = escapeHtml(outfit.reference_url || outfit.thumb_url || "");
+                const prompt = escapeHtml(outfit.prompt_hint || "");
+                return `
+                    <button
+                        type="button"
+                        class="benditoai-outfit-thumb"
+                        data-outfit-id="${id}"
+                        data-outfit-label="${name}"
+                        data-outfit-reference="${reference}"
+                        data-outfit-prompt="${prompt}"
+                        aria-label="Usar outfit: ${name}"
+                        aria-pressed="false"
+                    >
+                        <img src="${thumb}" alt="${name}" loading="lazy" />
+                    </button>
+                `;
+            })
+            .join("");
+
+        if (!cards) return "";
+
+        return `
+            <div class="benditoai-desktop-outfit-thumbs" data-outfit-catalog-rail>
+                <div class="benditoai-desktop-outfit-thumbs-head">
+                    <span>Outfits sugeridos</span>
+                    <small>Global</small>
+                </div>
+                <div class="benditoai-desktop-outfit-thumbs-list">
+                    ${cards}
+                </div>
+            </div>
+        `;
+    };
+
     const initHistorialPaginator = () => {
         const grid = document.getElementById("benditoai-historial-mockups");
         const pagination = document.getElementById("benditoai-historial-pagination");
@@ -11,42 +67,39 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!prevBtn || !nextBtn || !status) return;
 
         let currentPage = 1;
-        const perPageDesktop = 3;
         const isMobileView = () => window.matchMedia("(max-width: 768px)").matches;
         const thumbsClass = "benditoai-mobile-history-thumbs";
+        const desktopThumbsClass = "benditoai-desktop-history-thumbs";
         const escapeAttr = (value) => String(value || "").replace(/"/g, "&quot;");
 
         const getItems = () => Array.from(grid.querySelectorAll(".benditoai-historial-item"));
-        const getPerPage = () => (isMobileView() ? 1 : perPageDesktop);
+        const getPerPage = () => 1;
         const getTotalPages = () => Math.max(1, Math.ceil(getItems().length / getPerPage()));
+        const smoothScrollToHistoryTop = () => {
+            const wrapper = grid.closest(".benditoai-wrapper-historia-modelos");
+            if (!wrapper) return;
+            const top = Math.max(0, wrapper.getBoundingClientRect().top + window.scrollY - 24);
+            window.requestAnimationFrame(() => {
+                window.scrollTo({ top, behavior: "smooth" });
+            });
+        };
 
         const getItemImage = (item) => item?.querySelector(".benditoai-historial-img")?.src || "";
 
         const clearThumbs = () => {
             grid.querySelectorAll(`.${thumbsClass}`).forEach((node) => node.remove());
+            grid.querySelectorAll(`.${desktopThumbsClass}`).forEach((node) => node.remove());
         };
 
-        const renderMobileThumbs = (items, activeIndex) => {
-            clearThumbs();
-            if (!isMobileView() || items.length <= 1) return;
-
-            const activeItem = items[activeIndex];
-            if (!activeItem) return;
-
-            const toggleBtn = activeItem.querySelector(".benditoai-toggle-info");
-            if (!toggleBtn) return;
-
-            const rail = document.createElement("div");
-            rail.className = thumbsClass;
-
-            const thumbs = items.map((item, index) => {
+        const buildThumbsMarkup = (items, activeIndex, thumbClass) => {
+            return items.map((item, index) => {
                 const src = getItemImage(item);
                 const label = item.querySelector(".benditoai-historial-name")?.textContent?.trim() || `Modelo ${index + 1}`;
                 const selected = index === activeIndex;
                 return `
                     <button
                         type="button"
-                        class="benditoai-mobile-history-thumb${selected ? " is-active" : ""}"
+                        class="${thumbClass}${selected ? " is-active" : ""}"
                         data-history-index="${index}"
                         aria-label="Ver ${escapeAttr(label)}"
                         aria-pressed="${selected ? "true" : "false"}"
@@ -55,9 +108,40 @@ document.addEventListener("DOMContentLoaded", function () {
                     </button>
                 `;
             }).join("");
+        };
 
-            rail.innerHTML = thumbs;
-            activeItem.insertBefore(rail, toggleBtn);
+        const renderThumbs = (items, activeIndex) => {
+            clearThumbs();
+            if (items.length <= 1) return;
+
+            const activeItem = items[activeIndex];
+            if (!activeItem) return;
+
+            if (isMobileView()) {
+                const toggleBtn = activeItem.querySelector(".benditoai-toggle-info");
+                if (!toggleBtn) return;
+                const rail = document.createElement("div");
+                rail.className = thumbsClass;
+                rail.innerHTML = buildThumbsMarkup(items, activeIndex, "benditoai-mobile-history-thumb");
+                activeItem.insertBefore(rail, toggleBtn);
+                return;
+            }
+
+            const imageWrap = activeItem.querySelector(".benditoai-img-wrap");
+            if (!imageWrap) return;
+
+            const desktopRail = document.createElement("div");
+            desktopRail.className = desktopThumbsClass;
+            desktopRail.innerHTML = `
+                <div class="benditoai-desktop-history-thumbs-head">
+                    <span>Mis modelos</span>
+                    <small>${activeIndex + 1} / ${items.length}</small>
+                </div>
+                <div class="benditoai-desktop-history-thumbs-list">
+                    ${buildThumbsMarkup(items, activeIndex, "benditoai-desktop-history-thumb")}
+                </div>
+            `;
+            imageWrap.insertAdjacentElement("afterend", desktopRail);
         };
 
         const render = () => {
@@ -75,13 +159,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 const visible = index >= start && index < end;
                 item.hidden = !visible;
                 item.setAttribute("aria-hidden", visible ? "false" : "true");
+                if (visible) {
+                    item.style.removeProperty("display");
+                } else {
+                    item.style.setProperty("display", "none", "important");
+                }
             });
 
             pagination.hidden = isMobileView() || items.length <= perPage;
             status.textContent = `${currentPage} / ${totalPages}`;
             prevBtn.disabled = currentPage <= 1;
             nextBtn.disabled = currentPage >= totalPages;
-            renderMobileThumbs(items, start);
+            renderThumbs(items, start);
             if (scrollHint) scrollHint.hidden = true;
         };
 
@@ -89,6 +178,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (currentPage <= 1) return;
             currentPage -= 1;
             render();
+            smoothScrollToHistoryTop();
         });
 
         nextBtn.addEventListener("click", () => {
@@ -96,15 +186,17 @@ document.addEventListener("DOMContentLoaded", function () {
             if (currentPage >= totalPages) return;
             currentPage += 1;
             render();
+            smoothScrollToHistoryTop();
         });
 
         grid.addEventListener("click", (event) => {
             const thumb = event.target.closest("[data-history-index]");
-            if (!thumb || !isMobileView()) return;
+            if (!thumb) return;
             const targetIndex = Number(thumb.dataset.historyIndex || -1);
             if (targetIndex < 0) return;
             currentPage = targetIndex + 1;
             render();
+            smoothScrollToHistoryTop();
         });
 
         window.addEventListener("resize", render);
@@ -302,7 +394,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         if (referenceImageInput) {
-            referenceImageInput.required = mode === "referencia";
+            referenceImageInput.required = false;
         }
 
         if (stepThree) {
@@ -424,14 +516,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
-        if (stepNumber === 2 && activeMode === "referencia" && referenceImageInput) {
-            if (!referenceImageInput.files || referenceImageInput.files.length === 0) {
-                showInlineError("Sube la imagen de referencia para avanzar.");
-                referenceImageInput.focus();
-                return false;
-            }
-        }
-
         return true;
     };
 
@@ -540,10 +624,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const iconDelete = `${benditoai_ajax.plugin_url}assets/images/icon-delete.png`;
         const genero = escapeHtml(d.genero || "-");
         const edad = escapeHtml(d.edad || "-");
+        const cuerpo = escapeHtml(d.cuerpo || "Personalizable");
         const estilo = escapeHtml(d.estilo || d.modo_label || "-");
         const modo = escapeHtml(d.modo_label || "-");
         const nacionalidad = escapeHtml(d.nacionalidad || "-");
         const nombreModelo = escapeHtml(d.nombre_modelo || "Modelo AI");
+        const descripcionModelo = escapeHtml(d.descripcion_modelo || "Modelo AI listo para campanas de moda, redes y lookbooks.");
         const fecha = escapeHtml(d.fecha || "-");
         const publico = Number(d.perfil_publico) === 1 ? "Publico" : "Privado";
 
@@ -558,12 +644,15 @@ document.addEventListener("DOMContentLoaded", function () {
                             <textarea class="benditoai-inline-edit-text" placeholder="Ej: cambia solo la chaqueta por una bomber negra."></textarea>
                             <div class="benditoai-inline-edit-ref-block">
                                 <p class="benditoai-inline-edit-ref-help">
-                                    Opcional: sube una imagen de prenda para que la IA la use como referencia de vestuario.
+                                    Opcional: sube una imagen de prenda o elige un outfit sugerido para usarlo como referencia de vestuario.
                                 </p>
                                 <input type="file" class="benditoai-inline-edit-ref-file" accept="image/png,image/jpeg,image/webp" hidden>
                                 <button type="button" class="benditoai-inline-edit-ref-trigger">
                                     <i class="fas fa-plus" aria-hidden="true"></i>
-                                    Una prenda de vestir (opcional)
+                                    <span class="benditoai-inline-edit-ref-trigger-preview" hidden>
+                                        <img src="" alt="" class="benditoai-inline-edit-ref-trigger-preview-img" />
+                                    </span>
+                                    <span class="benditoai-inline-edit-ref-trigger-text">Una prenda de vestir (opcional)</span>
                                 </button>
                                 <p class="benditoai-inline-edit-ref-name"></p>
                             </div>
@@ -599,8 +688,57 @@ document.addEventListener("DOMContentLoaded", function () {
                         data-modelo-nombre="${nombreModelo}"
                         data-modelo-image="${d.image_url}"
                     >
-                        Usar para campaña
+                        Usar para campana
                     </button>
+                </div>
+                <div class="benditoai-desktop-model-panel">
+                    <div class="benditoai-desktop-model-head">
+                        <h3>${nombreModelo}</h3>
+                        <div class="benditoai-desktop-model-badges">
+                            <span class="benditoai-model-badge benditoai-model-badge--status">${Number(d.perfil_publico) === 1 ? "Activo" : "Privado"}</span>
+                            <span class="benditoai-model-badge">${estilo}</span>
+                            <span class="benditoai-model-badge">Listo para campana</span>
+                        </div>
+                        <p>${descripcionModelo}</p>
+                    </div>
+                    <div class="benditoai-desktop-model-actions">
+                        <p class="benditoai-desktop-model-section-label">Accion principal</p>
+                        <button
+                            type="button"
+                            class="benditoai-use-campaign-btn benditoai-use-campaign-btn--panel"
+                            data-modelo-id="${d.id}"
+                            data-modelo-nombre="${nombreModelo}"
+                            data-modelo-image="${d.image_url}"
+                        >
+                            Usar para campana <span aria-hidden="true">&rarr;</span>
+                        </button>
+                        <p class="benditoai-desktop-model-section-label">Herramientas</p>
+                        <div class="benditoai-desktop-model-secondary">
+                            <button class="benditoai-edit-modelo-btn" data-id="${d.id}" data-image="${d.image_url}">
+                                <i class="fas fa-pen" aria-hidden="true"></i>
+                                <span>Editar modelo</span>
+                            </button>
+                            <a href="${noCacheUrl}" download>
+                                <i class="fas fa-download" aria-hidden="true"></i>
+                                <span>Descargar</span>
+                            </a>
+                        </div>
+                        ${renderOutfitRailMarkup()}
+                    </div>
+                    <div class="benditoai-desktop-model-meta">
+                        <div class="benditoai-desktop-model-box">
+                            <h4>Atributos</h4>
+                            <p><span>Complexion</span><strong>${cuerpo}</strong></p>
+                            <p><span>Edad aparente</span><strong>${edad}</strong></p>
+                            <p><span>Origen</span><strong>${nacionalidad}</strong></p>
+                        </div>
+                        <div class="benditoai-desktop-model-box">
+                            <h4>Campanas</h4>
+                            <p><span>Estado</span><strong>Disponible</strong></p>
+                            <p><span>Uso sugerido</span><strong>Moda y redes</strong></p>
+                            <p><span>Flujo</span><strong>${modo}</strong></p>
+                        </div>
+                    </div>
                 </div>
                 <div class="benditoai-edit-decision" hidden>
                     <button type="button" class="benditoai-edit-apply-btn">Conservar</button>

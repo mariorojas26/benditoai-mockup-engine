@@ -22,7 +22,7 @@ function benditoai_modelos_ai_shortcode() {
             <header class="baiw-header">
                 <div>
                     <h2 class="baiw-title-main">Crea tu modelo</h2>
-                    <p>Con solo unos pasos, tu modelo estará listo vender tus productos</p>
+                    <p>Con solo unos pasos, tu modelo estara listo para vender tus productos.</p>
                 </div>
 
             </header>
@@ -65,7 +65,7 @@ function benditoai_modelos_ai_shortcode() {
                                         ?
                                         <span class="baiw-tip-bubble">Usa una foto base y la IA la toma como guia principal.</span>
                                     </span>
-                                    <small>Sube una foto y la IA la usa como base.</small>
+                                    <small>Sube una foto opcional; la IA la usa como base si esta presente.</small>
                                 </span>
                             </label>
 
@@ -88,10 +88,10 @@ function benditoai_modelos_ai_shortcode() {
 
                         <div class="baiw-field">
                             <label class="baiw-label-tip" for="benditoai_imagen_referencia">
-                                <span>Imagen de referencia</span>
+                                <span>Imagen de referencia (opcional)</span>
                                 <span class="baiw-tip" tabindex="0" aria-label="Ayuda imagen de referencia">
                                     ?
-                                    <span class="baiw-tip-bubble">Sube una imagen nitida.</span>
+                                    <span class="baiw-tip-bubble">Si la subes, la IA la toma como guia principal; si no, genera desde texto.</span>
                                 </span>
                             </label>
                             <label class="baiw-file-smart" for="benditoai_imagen_referencia" id="benditoai-file-smart">

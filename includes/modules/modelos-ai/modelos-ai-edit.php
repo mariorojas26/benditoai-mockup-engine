@@ -4,6 +4,12 @@ if (!defined('ABSPATH')) exit;
 add_action('wp_ajax_benditoai_preview_edit_modelo', 'benditoai_preview_edit_modelo');
 add_action('wp_ajax_benditoai_confirm_edit_modelo', 'benditoai_confirm_edit_modelo');
 
+if (!function_exists('benditoai_modelos_ai_get_outfit_catalog')) {
+    function benditoai_modelos_ai_get_outfit_catalog() {
+        return array();
+    }
+}
+
 function benditoai_modelo_get_owned_row($modelo_id, $user_id) {
     global $wpdb;
     $table = $wpdb->prefix . 'benditoai_modelos_ai';
@@ -71,12 +77,89 @@ function benditoai_modelo_read_reference_file() {
     );
 }
 
-function benditoai_modelo_build_edit_prompt($texto, $has_reference) {
+function benditoai_modelo_get_catalog_outfit_reference() {
+    $catalog_id = isset($_POST['outfit_catalog_id']) ? sanitize_key(wp_unslash($_POST['outfit_catalog_id'])) : '';
+    if ($catalog_id === '') {
+        return null;
+    }
+
+    $catalog = benditoai_modelos_ai_get_outfit_catalog();
+    if (!is_array($catalog) || empty($catalog)) {
+        return null;
+    }
+
+    foreach ($catalog as $item) {
+        if (!is_array($item)) {
+            continue;
+        }
+        $id = isset($item['id']) ? sanitize_key((string) $item['id']) : '';
+        if ($id === '' || $id !== $catalog_id) {
+            continue;
+        }
+
+        $reference_url = isset($item['reference_url']) ? esc_url_raw((string) $item['reference_url']) : '';
+        $label = isset($item['name']) ? sanitize_text_field((string) $item['name']) : 'Outfit';
+        $hint = isset($item['prompt_hint']) ? sanitize_text_field((string) $item['prompt_hint']) : '';
+        if ($reference_url === '') {
+            return null;
+        }
+
+        return array(
+            'id' => $id,
+            'name' => $label,
+            'reference_url' => $reference_url,
+            'prompt_hint' => $hint,
+        );
+    }
+
+    return null;
+}
+
+function benditoai_modelo_read_catalog_image_base64($image_url) {
+    if (!$image_url || !wp_http_validate_url($image_url)) {
+        return new WP_Error('invalid_catalog_url', 'Outfit de referencia invalido');
+    }
+
+    $response = wp_remote_get($image_url, array('timeout' => 35));
+    if (is_wp_error($response)) {
+        return new WP_Error('catalog_fetch_failed', 'No se pudo cargar el outfit de referencia');
+    }
+
+    $code = (int) wp_remote_retrieve_response_code($response);
+    $body = wp_remote_retrieve_body($response);
+    $mime = (string) wp_remote_retrieve_header($response, 'content-type');
+    if ($code < 200 || $code >= 300 || empty($body)) {
+        return new WP_Error('catalog_fetch_failed', 'No se pudo cargar el outfit de referencia');
+    }
+
+    if ($mime === '') {
+        $mime = 'image/png';
+    }
+    if (strpos($mime, ';') !== false) {
+        $mime = trim(explode(';', $mime)[0]);
+    }
+
+    $allowed_mimes = array('image/jpeg', 'image/png', 'image/webp');
+    if (!in_array($mime, $allowed_mimes, true)) {
+        $mime = 'image/png';
+    }
+
+    return array(
+        'mime' => $mime,
+        'data' => base64_encode($body),
+    );
+}
+
+function benditoai_modelo_build_edit_prompt($texto, $has_reference, $reference_context = '') {
     $reference_rules = $has_reference
         ? "A second image is attached as REFERENCE GARMENT.\nUse that exact reference garment to replace ONLY the garment requested.\nCopy the reference garment faithfully: type, structure, material, color and key details.\nDo NOT transfer reference attributes to any other garment."
         : "No reference garment image is attached.\nApply only the user text instruction to the requested garment.";
 
-    return "Edit this image.\n\nKEEP EXACT SAME PERSON.\nKEEP same face, body, identity, proportions.\nKEEP same pose, background, lighting, framing, and camera angle.\n\nLOCK all clothing and elements in the image.\n\nUser change request:\n$texto\n\n$reference_rules\n\nStrict editing rules:\n- Do NOT change any other clothing items\n- Do NOT remove, replace, or restyle any existing garments outside the requested change\n- Do NOT modify colors, textures, or fit of other clothes\n- Do NOT change hairstyle, expression, or skin tone\n- Do NOT alter body shape or proportions\n- Do NOT reinterpret the outfit\n\nThe change must be isolated ONLY to the requested garment.\n\nIf the request refers to shoes:\n- Replace ONLY the footwear\n- Keep pants exactly the same (no length change, no overlap issues)\n- Ensure natural contact with the ground\n- Match perspective and lighting perfectly\n\nPreserve full realism:\n- Maintain shadows, lighting direction, and reflections\n- Match textures and materials accurately\n- Keep the edit seamless and natural\n\nDo not generate a new image from scratch.\nDo not redesign the scene.\nOnly perform a precise in-place edit.\n\nHigh quality, photorealistic, 4K.";
+    $context_rules = $reference_context !== ''
+        ? "Reference hint: {$reference_context}\n"
+        : '';
+
+    return "Edit this image.\n\nKEEP EXACT SAME PERSON.\nKEEP same face, body, identity, proportions.\nKEEP same pose, background, lighting, framing, and camera angle.\n\nLOCK all clothing and elements in the image.\n\nUser change request:\n$texto\n\n$reference_rules\n$context_rules\nStrict editing rules:\n- Do NOT change any other clothing items\n- Do NOT remove, replace, or restyle any existing garments outside the requested change\n- Do NOT modify colors, textures, or fit of other clothes\n- Do NOT change hairstyle, expression, or skin tone\n- Do NOT alter body shape or proportions\n- Do NOT reinterpret the outfit\n\nThe change must be isolated ONLY to the requested garment.\n\nIf the request refers to shoes:\n- Replace ONLY the footwear\n- Keep pants exactly the same (no length change, no overlap issues)\n- Ensure natural contact with the ground\n- Match perspective and lighting perfectly\n\nPreserve full realism:\n- Maintain shadows, lighting direction, and reflections\n- Match textures and materials accurately\n- Keep the edit seamless and natural\n\nDo not generate a new image from scratch.\nDo not redesign the scene.\nOnly perform a precise in-place edit.\n\nHigh quality, photorealistic, 4K.";
 }
 
 function benditoai_preview_edit_modelo() {
@@ -115,9 +198,30 @@ function benditoai_preview_edit_modelo() {
         wp_send_json_error(array('message' => $reference_image->get_error_message()));
     }
 
-    $has_reference = is_array($reference_image) && !empty($reference_image['data']) && !empty($reference_image['mime']);
-    $extra_images = $has_reference ? array($reference_image) : array();
-    $prompt = benditoai_modelo_build_edit_prompt($texto, $has_reference);
+    $catalog_outfit = benditoai_modelo_get_catalog_outfit_reference();
+    $catalog_ref_image = null;
+    if ((!is_array($reference_image) || empty($reference_image['data'])) && is_array($catalog_outfit)) {
+        $catalog_ref_image = benditoai_modelo_read_catalog_image_base64($catalog_outfit['reference_url']);
+        if (is_wp_error($catalog_ref_image)) {
+            wp_send_json_error(array('message' => $catalog_ref_image->get_error_message()));
+        }
+    }
+
+    $extra_images = array();
+    $reference_context = '';
+
+    if (is_array($reference_image) && !empty($reference_image['data']) && !empty($reference_image['mime'])) {
+        $extra_images[] = $reference_image;
+    } elseif (is_array($catalog_ref_image) && !empty($catalog_ref_image['data']) && !empty($catalog_ref_image['mime'])) {
+        $extra_images[] = $catalog_ref_image;
+        $reference_context = trim((string) ($catalog_outfit['prompt_hint'] ?? ''));
+        if ($reference_context === '' && !empty($catalog_outfit['name'])) {
+            $reference_context = 'Use the selected catalog outfit: ' . sanitize_text_field((string) $catalog_outfit['name']);
+        }
+    }
+
+    $has_reference = !empty($extra_images);
+    $prompt = benditoai_modelo_build_edit_prompt($texto, $has_reference, $reference_context);
 
     require_once BENDIDOAI_PLUGIN_PATH . 'includes/services/gemini/gemini-api.php';
     $response = benditoai_call_gemini($main_base64, $prompt, $extra_images);

@@ -22,6 +22,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const getInlineFile = (item) => item?.querySelector(".benditoai-inline-edit-ref-file");
     const getInlineFileName = (item) => item?.querySelector(".benditoai-inline-edit-ref-name");
     const getInlineSubmit = (item) => item?.querySelector(".benditoai-inline-edit-submit");
+    const getInlineRefTriggerText = (item) => item?.querySelector(".benditoai-inline-edit-ref-trigger-text");
+    const getInlineRefTriggerPreview = (item) => item?.querySelector(".benditoai-inline-edit-ref-trigger-preview");
+    const getInlineRefTriggerPreviewImg = (item) => item?.querySelector(".benditoai-inline-edit-ref-trigger-preview-img");
+    const getOutfitThumbs = (item) => item ? Array.from(item.querySelectorAll(".benditoai-outfit-thumb")) : [];
 
     const getDecision = (item) => item?.querySelector(".benditoai-edit-decision");
     const getDecisionApply = (item) => item?.querySelector(".benditoai-edit-apply-btn");
@@ -46,9 +50,33 @@ document.addEventListener("DOMContentLoaded", function () {
         const text = getInlineText(item);
         const file = getInlineFile(item);
         const fileName = getInlineFileName(item);
+        const outfitThumbs = getOutfitThumbs(item);
         if (text) text.value = "";
         if (file) file.value = "";
         if (fileName) fileName.textContent = "";
+        outfitThumbs.forEach((thumb) => {
+            thumb.classList.remove("is-active");
+            thumb.setAttribute("aria-pressed", "false");
+        });
+        syncRefTriggerPreview(item, null, "");
+    };
+
+    const syncRefTriggerPreview = (item, imageUrl, labelText) => {
+        const previewWrap = getInlineRefTriggerPreview(item);
+        const previewImg = getInlineRefTriggerPreviewImg(item);
+        const triggerText = getInlineRefTriggerText(item);
+        if (!previewWrap || !previewImg || !triggerText) return;
+
+        if (!imageUrl) {
+            previewWrap.hidden = true;
+            previewImg.src = "";
+            triggerText.textContent = "Una prenda de vestir (opcional)";
+            return;
+        }
+
+        previewWrap.hidden = false;
+        previewImg.src = imageUrl;
+        triggerText.textContent = labelText || "Referencia lista";
     };
 
     const showDecision = (item) => {
@@ -80,16 +108,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const updateImageInCard = (item, imageUrl) => {
         const img = getCardImage(item);
-        const editBtn = getEditBtn(item);
-        const downloadBtn = getDownloadBtn(item);
-        const campaignUseBtn = item?.querySelector(".benditoai-use-campaign-btn");
+        const editBtns = item ? Array.from(item.querySelectorAll(".benditoai-edit-modelo-btn")) : [];
+        const downloadBtns = item ? Array.from(item.querySelectorAll(".benditoai-btn--download")) : [];
+        const campaignUseBtns = item ? Array.from(item.querySelectorAll(".benditoai-use-campaign-btn")) : [];
         if (!img || !imageUrl) return;
 
         const noCache = `${imageUrl}?t=${Date.now()}`;
         img.src = noCache;
-        if (editBtn) editBtn.dataset.image = imageUrl;
-        if (downloadBtn) downloadBtn.href = noCache;
-        if (campaignUseBtn) campaignUseBtn.dataset.modeloImage = imageUrl;
+        editBtns.forEach((button) => {
+            button.dataset.image = imageUrl;
+        });
+        downloadBtns.forEach((link) => {
+            link.href = noCache;
+        });
+        campaignUseBtns.forEach((button) => {
+            button.dataset.modeloImage = imageUrl;
+        });
     };
 
     const closeAllEditors = () => {
@@ -141,6 +175,14 @@ document.addEventListener("DOMContentLoaded", function () {
         formData.append("texto", texto);
         if (file && file.files && file.files[0]) {
             formData.append("prenda_referencia", file.files[0]);
+        }
+
+        const selectedOutfit = item?.querySelector(".benditoai-outfit-thumb.is-active");
+        if ((!file || !file.files || !file.files[0]) && selectedOutfit) {
+            const outfitId = selectedOutfit.dataset.outfitId || "";
+            if (outfitId) {
+                formData.append("outfit_catalog_id", outfitId);
+            }
         }
 
         setLoading(item, true);
@@ -264,6 +306,42 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+        const outfitThumb = e.target.closest(".benditoai-outfit-thumb");
+        if (outfitThumb) {
+            const item = outfitThumb.closest(".benditoai-historial-item");
+            if (!item) return;
+            if (!item.classList.contains("is-editing")) {
+                openInlineEditor(item);
+            }
+            const thumbs = getOutfitThumbs(item);
+            const isActive = outfitThumb.classList.contains("is-active");
+            thumbs.forEach((thumb) => {
+                thumb.classList.remove("is-active");
+                thumb.setAttribute("aria-pressed", "false");
+            });
+            const fileName = getInlineFileName(item);
+            const fileInput = getInlineFile(item);
+            if (isActive) {
+                if (fileInput) fileInput.value = "";
+                if (fileName && (!fileInput?.files || !fileInput.files[0])) {
+                    fileName.textContent = "";
+                }
+                syncRefTriggerPreview(item, "", "");
+            } else {
+                outfitThumb.classList.add("is-active");
+                outfitThumb.setAttribute("aria-pressed", "true");
+                if (fileInput) fileInput.value = "";
+                if (fileName && (!fileInput?.files || !fileInput.files[0])) {
+                    const outfitLabel = outfitThumb.dataset.outfitLabel || "Outfit";
+                    fileName.textContent = `Outfit seleccionado: ${outfitLabel}`;
+                }
+                const outfitImage = outfitThumb.dataset.outfitReference || "";
+                const outfitLabel = outfitThumb.dataset.outfitLabel || "Outfit sugerido";
+                syncRefTriggerPreview(item, outfitImage, outfitLabel);
+            }
+            return;
+        }
+
         const submitInline = e.target.closest(".benditoai-inline-edit-submit");
         if (submitInline) {
             const item = submitInline.closest(".benditoai-historial-item");
@@ -308,6 +386,24 @@ document.addEventListener("DOMContentLoaded", function () {
         const name = getInlineFileName(item);
         if (!name) return;
         const file = input.files && input.files[0];
+        if (file) {
+            const thumbs = getOutfitThumbs(item);
+            thumbs.forEach((thumb) => {
+                thumb.classList.remove("is-active");
+                thumb.setAttribute("aria-pressed", "false");
+            });
+            const reader = new FileReader();
+            reader.onload = () => {
+                const src = typeof reader.result === "string" ? reader.result : "";
+                syncRefTriggerPreview(item, src, "Imagen adjunta");
+            };
+            reader.onerror = () => {
+                syncRefTriggerPreview(item, "", "");
+            };
+            reader.readAsDataURL(file);
+        } else {
+            syncRefTriggerPreview(item, "", "");
+        }
         name.textContent = file ? file.name : "";
     });
 });

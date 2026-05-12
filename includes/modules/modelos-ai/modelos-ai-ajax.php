@@ -113,10 +113,10 @@ FACIAL AND PERSONAL TRAITS
 {$data['rasgos_caracteristicas']}
 
 OUTFIT DESCRIPTION
-Upper clothing: plain white t-shirt
-Lower clothing: white shorts
-Shoes: barefoot
-Accessories: none
+Upper clothing: {$data['prenda_superior']}
+Lower clothing: {$data['prenda_inferior']}
+Shoes: {$data['zapatos']}
+Accessories: {$data['accesorios']}
 
 EXTRA REQUIREMENTS
 {$data['campo_adicional']}
@@ -153,15 +153,18 @@ subject fully visible head to feet
 ";
 }
 
-function benditoai_modelos_ai_build_prompt_referencia($data) {
+function benditoai_modelos_ai_build_prompt_referencia($data, $has_reference = true) {
+    $reference_instruction = $has_reference
+        ? "Use the uploaded image as the main visual reference.\nPreserve identity cues from reference: face structure, skin tone and natural proportions."
+        : "No reference image was uploaded.\nBuild the avatar from text fields while preserving realism and full body composition.";
+
     return "
 Ultra realistic human avatar.
 
 Single person only.
 
 CREATIVE MODE
-Use the uploaded image as the main visual reference.
-Preserve identity cues from reference: face structure, skin tone and natural proportions.
+{$reference_instruction}
 Do not copy watermarks, text or logos.
 
 MODEL SUMMARY
@@ -169,6 +172,12 @@ MODEL SUMMARY
 
 OPTIONAL STYLE HINT
 {$data['estilo']}
+
+OPTIONAL OUTFIT HINTS
+Upper clothing: {$data['prenda_superior']}
+Lower clothing: {$data['prenda_inferior']}
+Shoes: {$data['zapatos']}
+Accessories: {$data['accesorios']}
 
 EXTRA REQUIREMENTS
 {$data['campo_adicional']}
@@ -337,12 +346,16 @@ function benditoai_modelos_ai_cleanup_deprecated_columns($table_name) {
 
 function benditoai_modelos_ai_get_reference_base64() {
     if (!isset($_FILES['imagen_referencia'])) {
-        return new WP_Error('missing_file', 'Debes subir una imagen de referencia');
+        return null;
     }
 
     $file = $_FILES['imagen_referencia'];
 
-    if (!isset($file['error']) || $file['error'] !== UPLOAD_ERR_OK) {
+    if (!isset($file['error']) || $file['error'] === UPLOAD_ERR_NO_FILE) {
+        return null;
+    }
+
+    if ($file['error'] !== UPLOAD_ERR_OK) {
         return new WP_Error('upload_error', 'No se pudo leer la imagen de referencia');
     }
 
@@ -451,10 +464,23 @@ function benditoai_generar_modelo_ai() {
     $rasgos_caracteristicas = benditoai_modelos_ai_textarea_field('rasgos_caracteristicas');
     $campo_adicional = benditoai_modelos_ai_textarea_field('campo_adicional');
 
-    $prenda_superior = 'plain white t-shirt';
-    $prenda_inferior = 'white shorts';
-    $zapatos = 'barefoot';
-    $accesorios = 'none';
+    $prenda_superior = benditoai_modelos_ai_textarea_field('prenda_superior', 'plain white t-shirt');
+    $prenda_inferior = benditoai_modelos_ai_textarea_field('prenda_inferior', 'white shorts');
+    $zapatos = benditoai_modelos_ai_textarea_field('zapatos', 'barefoot');
+    $accesorios = benditoai_modelos_ai_textarea_field('accesorios', 'none');
+
+    if (trim((string) $prenda_superior) === '') {
+        $prenda_superior = 'plain white t-shirt';
+    }
+    if (trim((string) $prenda_inferior) === '') {
+        $prenda_inferior = 'white shorts';
+    }
+    if (trim((string) $zapatos) === '') {
+        $zapatos = 'barefoot';
+    }
+    if (trim((string) $accesorios) === '') {
+        $accesorios = 'none';
+    }
 
     $color_ojos = benditoai_modelos_ai_text_field('color_ojos');
     $peinado = benditoai_modelos_ai_text_field('peinado');
@@ -507,14 +533,19 @@ function benditoai_generar_modelo_ai() {
     );
 
     if ($modo_creacion === 'referencia') {
-        $prompt = benditoai_modelos_ai_build_prompt_referencia($prompt_data);
         $reference_base64 = benditoai_modelos_ai_get_reference_base64();
+        $has_reference = !is_wp_error($reference_base64) && !empty($reference_base64);
+        $prompt = benditoai_modelos_ai_build_prompt_referencia($prompt_data, $has_reference);
 
         if (is_wp_error($reference_base64)) {
             wp_send_json_error(array('message' => $reference_base64->get_error_message()));
         }
 
-        $response = benditoai_call_gemini($reference_base64, $prompt);
+        if ($has_reference) {
+            $response = benditoai_call_gemini($reference_base64, $prompt);
+        } else {
+            $response = benditoai_call_gemini_text($prompt);
+        }
     } else {
         $prompt = benditoai_modelos_ai_build_prompt_rasgos($prompt_data);
         $response = benditoai_call_gemini_text($prompt);
@@ -603,8 +634,15 @@ function benditoai_generar_modelo_ai() {
         'modo_label' => $modo_label,
         'genero' => $genero,
         'edad' => $edad,
+        'cuerpo' => $cuerpo,
+        'etnia' => $etnia,
         'estilo' => $estilo,
+        'descripcion_modelo' => $descripcion_modelo,
         'nacionalidad' => $nacionalidad,
+        'prenda_superior' => $prenda_superior,
+        'prenda_inferior' => $prenda_inferior,
+        'zapatos' => $zapatos,
+        'accesorios' => $accesorios,
         'perfil_publico' => $perfil_publico,
         'fecha' => date('d/m/Y H:i', strtotime($created_at)),
     ));
