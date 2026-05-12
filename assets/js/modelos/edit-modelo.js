@@ -25,16 +25,51 @@ document.addEventListener("DOMContentLoaded", function () {
     const getInlineRefTriggerText = (item) => item?.querySelector(".benditoai-inline-edit-ref-trigger-text");
     const getInlineRefTriggerPreview = (item) => item?.querySelector(".benditoai-inline-edit-ref-trigger-preview");
     const getInlineRefTriggerPreviewImg = (item) => item?.querySelector(".benditoai-inline-edit-ref-trigger-preview-img");
-    const getOutfitThumbs = (item) => item ? Array.from(item.querySelectorAll(".benditoai-outfit-thumb")) : [];
+    const getStyleOptions = (item) => item ? Array.from(item.querySelectorAll(".benditoai-style-option")) : [];
+    const getInlineSelectedStyleInput = (item) => item?.querySelector(".benditoai-inline-edit-selected-style");
+    const getInlineSelectedStyleIdInput = (item) => item?.querySelector(".benditoai-inline-edit-selected-style-id");
+    const getInlineSelectedStyleBlock = (item) => item?.querySelector(".benditoai-inline-edit-style");
+    const getInlineSelectedStyleValue = (item) => item?.querySelector(".benditoai-inline-edit-style-value");
 
     const getDecision = (item) => item?.querySelector(".benditoai-edit-decision");
     const getDecisionApply = (item) => item?.querySelector(".benditoai-edit-apply-btn");
     const getDecisionDiscard = (item) => item?.querySelector(".benditoai-edit-discard-btn");
+    const getAllEditButtons = (item) => item ? Array.from(item.querySelectorAll(".benditoai-edit-modelo-btn")) : [];
+    const getPanelCampaignButtons = (item) => item ? Array.from(item.querySelectorAll(".benditoai-use-campaign-btn--panel")) : [];
+
+    const setEditButtonsActiveState = (item, isActive) => {
+        getAllEditButtons(item).forEach((button) => {
+            button.classList.toggle("is-active", Boolean(isActive));
+            button.setAttribute("aria-pressed", isActive ? "true" : "false");
+        });
+    };
+
+    const setCampaignButtonsEditingState = (item, isEditing) => {
+        getPanelCampaignButtons(item).forEach((button) => {
+            if (!button.dataset.originalHtml) {
+                button.dataset.originalHtml = button.innerHTML;
+            }
+            if (isEditing) {
+                button.classList.add("is-editing-state");
+                button.disabled = true;
+                button.setAttribute("aria-disabled", "true");
+                button.innerHTML = 'Editando modelo <span aria-hidden="true">&bull;</span>';
+                return;
+            }
+
+            button.classList.remove("is-editing-state");
+            button.disabled = false;
+            button.setAttribute("aria-disabled", "false");
+            button.innerHTML = button.dataset.originalHtml || 'Lanzar campana <span aria-hidden="true">&rarr;</span>';
+        });
+    };
 
     const showEditor = (item) => {
         const edit = getInlineEdit(item);
         if (!edit) return;
         item.classList.add("is-editing");
+        setEditButtonsActiveState(item, true);
+        setCampaignButtonsEditingState(item, true);
         edit.hidden = false;
         const text = getInlineText(item);
         if (text) {
@@ -47,14 +82,24 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!edit) return;
         edit.hidden = true;
         item.classList.remove("is-editing");
+        setEditButtonsActiveState(item, false);
+        setCampaignButtonsEditingState(item, false);
         const text = getInlineText(item);
         const file = getInlineFile(item);
         const fileName = getInlineFileName(item);
-        const outfitThumbs = getOutfitThumbs(item);
+        const styleOptions = getStyleOptions(item);
+        const selectedStyleInput = getInlineSelectedStyleInput(item);
+        const selectedStyleIdInput = getInlineSelectedStyleIdInput(item);
+        const selectedStyleBlock = getInlineSelectedStyleBlock(item);
+        const selectedStyleValue = getInlineSelectedStyleValue(item);
         if (text) text.value = "";
         if (file) file.value = "";
         if (fileName) fileName.textContent = "";
-        outfitThumbs.forEach((thumb) => {
+        if (selectedStyleInput) selectedStyleInput.value = "";
+        if (selectedStyleIdInput) selectedStyleIdInput.value = "";
+        if (selectedStyleValue) selectedStyleValue.textContent = "";
+        if (selectedStyleBlock) selectedStyleBlock.hidden = true;
+        styleOptions.forEach((thumb) => {
             thumb.classList.remove("is-active");
             thumb.setAttribute("aria-pressed", "false");
         });
@@ -92,6 +137,35 @@ document.addEventListener("DOMContentLoaded", function () {
         };
         previewImg.src = imageUrl;
         triggerText.textContent = labelText || "Referencia lista";
+    };
+
+    const setSelectedStyle = (item, styleLabel, styleId, styleImage) => {
+        const selectedStyleInput = getInlineSelectedStyleInput(item);
+        const selectedStyleIdInput = getInlineSelectedStyleIdInput(item);
+        const selectedStyleBlock = getInlineSelectedStyleBlock(item);
+        const selectedStyleValue = getInlineSelectedStyleValue(item);
+        const normalizedStyle = String(styleLabel || "").trim();
+        const normalizedId = String(styleId || "").trim();
+
+        if (selectedStyleInput) {
+            selectedStyleInput.value = normalizedStyle;
+        }
+        if (selectedStyleIdInput) {
+            selectedStyleIdInput.value = normalizedId;
+        }
+
+        if (!selectedStyleBlock || !selectedStyleValue) return;
+
+        if (!normalizedStyle) {
+            selectedStyleValue.textContent = "";
+            selectedStyleBlock.hidden = true;
+            syncRefTriggerPreview(item, "", "");
+            return;
+        }
+
+        selectedStyleValue.textContent = normalizedStyle;
+        selectedStyleBlock.hidden = false;
+        syncRefTriggerPreview(item, styleImage || "", `Estilo: ${normalizedStyle}`);
     };
 
     const showDecision = (item) => {
@@ -149,12 +223,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const centerEditorInView = (item) => {
         if (!item) return;
-        const target = item.querySelector(".benditoai-img-wrap") || item;
+        const surface = item.querySelector(".benditoai-inline-edit-surface");
+        const fallbackTarget = item.querySelector(".benditoai-img-wrap") || item;
+        const target = surface || fallbackTarget;
+
         window.requestAnimationFrame(() => {
-            target.scrollIntoView({
+            const rect = target.getBoundingClientRect();
+            const viewportCenter = window.innerHeight / 2;
+            const targetCenter = rect.top + (rect.height / 2);
+            const delta = targetCenter - viewportCenter;
+
+            if (Math.abs(delta) < 12) return;
+
+            window.scrollTo({
+                top: Math.max(0, window.scrollY + delta),
                 behavior: "smooth",
-                block: "center",
-                inline: "nearest",
             });
         });
     };
@@ -165,7 +248,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const info = item.querySelector(".benditoai-historial-info");
         if (info) info.style.display = "none";
         showEditor(item);
-        window.setTimeout(() => centerEditorInView(item), 30);
+        window.setTimeout(() => centerEditorInView(item), 70);
     };
 
     const handlePreviewEdit = async (item) => {
@@ -192,12 +275,15 @@ document.addEventListener("DOMContentLoaded", function () {
             formData.append("prenda_referencia", file.files[0]);
         }
 
-        const selectedOutfit = item?.querySelector(".benditoai-outfit-thumb.is-active");
-        if ((!file || !file.files || !file.files[0]) && selectedOutfit) {
-            const outfitId = selectedOutfit.dataset.outfitId || "";
-            if (outfitId) {
-                formData.append("outfit_catalog_id", outfitId);
-            }
+        const selectedStyleInput = getInlineSelectedStyleInput(item);
+        const selectedStyle = selectedStyleInput?.value?.trim() || "";
+        const selectedStyleIdInput = getInlineSelectedStyleIdInput(item);
+        const selectedStyleId = selectedStyleIdInput?.value?.trim() || "";
+        if (selectedStyle) {
+            formData.append("selected_style", selectedStyle);
+        }
+        if (selectedStyleId) {
+            formData.append("selected_style_id", selectedStyleId);
         }
 
         setLoading(item, true);
@@ -302,7 +388,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const editTrigger = e.target.closest(".benditoai-edit-modelo-btn");
         if (editTrigger) {
             const item = editTrigger.closest(".benditoai-historial-item");
-            openInlineEditor(item);
+            if (item?.classList.contains("is-editing")) {
+                hideEditor(item);
+            } else {
+                openInlineEditor(item);
+            }
             return;
         }
 
@@ -321,38 +411,28 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        const outfitThumb = e.target.closest(".benditoai-outfit-thumb");
-        if (outfitThumb) {
-            const item = outfitThumb.closest(".benditoai-historial-item");
+        const styleOption = e.target.closest(".benditoai-style-option");
+        if (styleOption) {
+            const item = styleOption.closest(".benditoai-historial-item");
             if (!item) return;
             if (!item.classList.contains("is-editing")) {
                 openInlineEditor(item);
             }
-            const thumbs = getOutfitThumbs(item);
-            const isActive = outfitThumb.classList.contains("is-active");
-            thumbs.forEach((thumb) => {
+            const styleOptions = getStyleOptions(item);
+            const isActive = styleOption.classList.contains("is-active");
+            styleOptions.forEach((thumb) => {
                 thumb.classList.remove("is-active");
                 thumb.setAttribute("aria-pressed", "false");
             });
-            const fileName = getInlineFileName(item);
-            const fileInput = getInlineFile(item);
             if (isActive) {
-                if (fileInput) fileInput.value = "";
-                if (fileName && (!fileInput?.files || !fileInput.files[0])) {
-                    fileName.textContent = "";
-                }
-                syncRefTriggerPreview(item, "", "");
+                setSelectedStyle(item, "", "", "");
             } else {
-                outfitThumb.classList.add("is-active");
-                outfitThumb.setAttribute("aria-pressed", "true");
-                if (fileInput) fileInput.value = "";
-                if (fileName && (!fileInput?.files || !fileInput.files[0])) {
-                    const outfitLabel = outfitThumb.dataset.outfitLabel || "Outfit";
-                    fileName.textContent = `Outfit seleccionado: ${outfitLabel}`;
-                }
-                const outfitImage = outfitThumb.dataset.outfitReference || "";
-                const outfitLabel = outfitThumb.dataset.outfitLabel || "Outfit sugerido";
-                syncRefTriggerPreview(item, outfitImage, outfitLabel);
+                styleOption.classList.add("is-active");
+                styleOption.setAttribute("aria-pressed", "true");
+                const styleLabel = styleOption.dataset.styleLabel || "Estilo";
+                const styleId = styleOption.dataset.styleId || "";
+                const styleImage = styleOption.dataset.styleReference || "";
+                setSelectedStyle(item, styleLabel, styleId, styleImage);
             }
             return;
         }
@@ -402,11 +482,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!name) return;
         const file = input.files && input.files[0];
         if (file) {
-            const thumbs = getOutfitThumbs(item);
-            thumbs.forEach((thumb) => {
-                thumb.classList.remove("is-active");
-                thumb.setAttribute("aria-pressed", "false");
-            });
             const reader = new FileReader();
             reader.onload = () => {
                 const src = typeof reader.result === "string" ? reader.result : "";

@@ -4155,7 +4155,7 @@ body.benditoai-modal-open {
         font-size: 0.86rem;
     }
 
-    .benditoai-wrapper-historia-modelos .benditoai-desktop-outfit-thumbs {
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-style-pills {
         display: none !important;
     }
 
@@ -4257,6 +4257,33 @@ body.benditoai-modal-open {
 
 .benditoai-wrapper-historia-modelos .benditoai-inline-edit-ref-block {
     margin-top: 10px;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-inline-edit-style {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    padding: 6px 10px;
+    border-radius: 9px;
+    border: 1px solid rgba(124, 58, 255, 0.3);
+    background: rgba(124, 58, 255, 0.1);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 100%;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-inline-edit-style-label {
+    color: rgba(226, 214, 255, 0.85);
+    font-size: 0.68rem;
+    font-weight: 700;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-inline-edit-style-value {
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.2;
+    word-break: break-word;
 }
 
 .benditoai-wrapper-historia-modelos .benditoai-inline-edit-ref-help {
@@ -4637,7 +4664,7 @@ body.benditoai-modal-open {
 .benditoai-wrapper-historia-modelos .benditoai-img-wrap > .benditoai-action-buttons {
     position: absolute !important;
     top: 10px;
-    right: 10px;
+    left: 10px;
     z-index: 3;
     width: 36px !important;
     display: flex !important;
@@ -4744,10 +4771,17 @@ body.benditoai-modal-open {
     cursor: wait;
 }
 
-.benditoai-wrapper-historia-modelos .benditoai-historial-item.is-editing .benditoai-use-campaign-btn,
-.benditoai-wrapper-historia-modelos .benditoai-historial-item.is-edit-submitted .benditoai-use-campaign-btn,
-.benditoai-wrapper-historia-modelos .benditoai-historial-item.is-awaiting-decision .benditoai-use-campaign-btn {
-    display: none !important;
+.benditoai-wrapper-historia-modelos .benditoai-use-campaign-btn--panel.is-editing-state {
+    border-color: rgba(255, 154, 154, 0.55) !important;
+    background: linear-gradient(90deg, rgba(112, 46, 58, 0.88) 0%, rgba(136, 59, 75, 0.9) 100%) !important;
+    color: rgba(255, 236, 239, 0.92) !important;
+    box-shadow: 0 0 0 1px rgba(185, 65, 82, 0.16) !important;
+    cursor: not-allowed !important;
+    opacity: 0.95 !important;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-use-campaign-btn--panel.is-editing-state:hover {
+    background: linear-gradient(90deg, rgba(112, 46, 58, 0.88) 0%, rgba(136, 59, 75, 0.9) 100%) !important;
 }
 
 /* =========================================
@@ -4923,7 +4957,7 @@ body.benditoai-modal-open {
         border-radius: 8px;
         background: rgba(124, 58, 255, 0.16);
         color: #e0d4ff;
-        font-size: 12px;
+        font-size: 10px;
         font-weight: 680;
     }
 
@@ -5036,6 +5070,31 @@ body.benditoai-modal-open {
         background: rgba(124, 58, 255, 0.2);
     }
 
+.benditoai-wrapper-historia-modelos .benditoai-edit-modelo-btn.is-active,
+.benditoai-wrapper-historia-modelos .benditoai-desktop-model-secondary .benditoai-edit-modelo-btn.is-active,
+.benditoai-wrapper-historia-modelos .benditoai-panel-title-edit.is-active {
+    border-color: rgba(174, 146, 255, 0.9) !important;
+        background: rgba(124, 58, 255, 0.24) !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 0 2px rgba(139, 85, 255, 0.22) !important;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-edit-modelo-btn.is-active:hover,
+.benditoai-wrapper-historia-modelos .benditoai-edit-modelo-btn.is-active:focus,
+.benditoai-wrapper-historia-modelos .benditoai-edit-modelo-btn.is-active:focus-visible,
+.benditoai-wrapper-historia-modelos .benditoai-desktop-model-secondary .benditoai-edit-modelo-btn.is-active:hover,
+.benditoai-wrapper-historia-modelos .benditoai-desktop-model-secondary .benditoai-edit-modelo-btn.is-active:focus,
+.benditoai-wrapper-historia-modelos .benditoai-desktop-model-secondary .benditoai-edit-modelo-btn.is-active:focus-visible,
+.benditoai-wrapper-historia-modelos .benditoai-panel-title-edit.is-active:hover,
+.benditoai-wrapper-historia-modelos .benditoai-panel-title-edit.is-active:focus,
+.benditoai-wrapper-historia-modelos .benditoai-panel-title-edit.is-active:focus-visible {
+    border-color: rgba(174, 146, 255, 0.9) !important;
+    background: rgba(124, 58, 255, 0.24) !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 0 2px rgba(139, 85, 255, 0.22) !important;
+    transform: none !important;
+}
+
     .benditoai-wrapper-historia-modelos .benditoai-desktop-model-secondary button:focus,
     .benditoai-wrapper-historia-modelos .benditoai-desktop-model-secondary button:focus-visible,
     .benditoai-wrapper-historia-modelos .benditoai-desktop-model-secondary a:focus,
@@ -5142,7 +5201,7 @@ body.benditoai-modal-open {
         box-shadow: 0 0 0 2px rgba(139, 85, 255, 0.26);
     }
 
-    .benditoai-wrapper-historia-modelos .benditoai-desktop-outfit-thumbs {
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-style-pills {
         display: block;
         margin-top: 12px;
         padding: 10px;
@@ -5151,7 +5210,7 @@ body.benditoai-modal-open {
         background: rgba(16, 8, 35, 0.78);
     }
 
-    .benditoai-wrapper-historia-modelos .benditoai-desktop-outfit-thumbs-head {
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-style-pills-head {
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -5161,44 +5220,101 @@ body.benditoai-modal-open {
         font-weight: 700;
     }
 
-    .benditoai-wrapper-historia-modelos .benditoai-desktop-outfit-thumbs-head small {
-        color: #b89eff;
-        font-size: 0.72rem;
+    .benditoai-wrapper-historia-modelos .benditoai-style-rail-nav {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
     }
 
-    .benditoai-wrapper-historia-modelos .benditoai-desktop-outfit-thumbs-list {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+    .benditoai-wrapper-historia-modelos .benditoai-style-rail-btn {
+        width: 26px;
+        height: 26px;
+        border-radius: 999px;
+        border: 1px solid rgba(124, 58, 255, 0.45);
+        background: rgba(24, 10, 48, 0.86);
+        color: #cdb7ff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        padding: 0;
+        transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-style-rail-btn span {
+        font-size: 0.9rem;
+        line-height: 1;
+        padding: 0;
+        background: transparent;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-style-rail-btn:hover {
+        border-color: rgba(174, 146, 255, 0.86);
+        background: rgba(124, 58, 255, 0.2);
+        color: #ffffff;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-style-pills-list {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
         gap: 7px;
         align-items: stretch;
+        padding-bottom: 4px;
     }
 
-    .benditoai-wrapper-historia-modelos .benditoai-outfit-thumb {
-        height: clamp(160px, 7.5vw, 236px);
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-style-pills-list::-webkit-scrollbar {
+        display: none;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-style-option {
+        flex: 0 0 calc((100% - 21px) / 4);
+        min-width: calc((100% - 21px) / 4);
+        min-height: 132px;
         border-radius: 9px;
         border: 1px solid rgba(124, 58, 255, 0.3);
-        background: rgba(10, 5, 24, 0.82);
+        background: rgba(10, 5, 24, 0.88);
+        color: #dccdff;
+        cursor: pointer;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+        display: grid;
+        grid-template-rows: 1fr auto;
         overflow: hidden;
         padding: 0;
-        cursor: pointer;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
     }
 
-    .benditoai-wrapper-historia-modelos .benditoai-outfit-thumb img {
+    .benditoai-wrapper-historia-modelos .benditoai-style-option img {
         width: 100%;
         height: 100%;
+        min-height: 98px;
         object-fit: cover;
         object-position: center top;
         display: block;
     }
 
-    .benditoai-wrapper-historia-modelos .benditoai-outfit-thumb.is-active {
-        border-color: #8b55ff;
-        box-shadow: 0 0 0 2px rgba(139, 85, 255, 0.28);
+    .benditoai-wrapper-historia-modelos .benditoai-style-option span {
+        font-size: 0.72rem;
+        font-weight: 700;
+        line-height: 1.1;
+        text-transform: none;
+        padding: 8px 6px;
+        background: rgba(10, 5, 24, 0.9);
     }
 
-    .benditoai-wrapper-historia-modelos .benditoai-outfit-thumb:hover {
+    .benditoai-wrapper-historia-modelos .benditoai-style-option.is-active {
+        border-color: #8b55ff;
+        box-shadow: 0 0 0 2px rgba(139, 85, 255, 0.28);
+        background: rgba(124, 58, 255, 0.2);
+        color: #ffffff;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-style-option:hover {
         border-color: rgba(174, 146, 255, 0.8);
+        background: rgba(124, 58, 255, 0.16);
+        color: #ffffff;
         transform: translateY(-1px);
     }
 
@@ -5385,7 +5501,7 @@ body.benditoai-modal-open {
         background: rgba(21, 9, 46, 0.92) !important;
     }
 
-    .benditoai-wrapper-historia-modelos .benditoai-desktop-outfit-thumbs {
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-style-pills {
         margin-top: 2px;
     }
 

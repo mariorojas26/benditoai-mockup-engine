@@ -16,25 +16,26 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!outfits.length) return "";
 
         const cards = outfits
-            .filter((outfit) => outfit && outfit.id && (outfit.thumb_url || outfit.reference_url))
+            .filter((outfit) => outfit && outfit.id && outfit.name)
             .map((outfit) => {
                 const id = escapeHtml(outfit.id || "");
                 const name = escapeHtml(outfit.name || "Outfit");
+                const prompt = escapeHtml(outfit.prompt_hint || "");
                 const thumb = escapeHtml(outfit.thumb_url || outfit.reference_url || "");
                 const reference = escapeHtml(outfit.reference_url || outfit.thumb_url || "");
-                const prompt = escapeHtml(outfit.prompt_hint || "");
                 return `
                     <button
                         type="button"
-                        class="benditoai-outfit-thumb"
-                        data-outfit-id="${id}"
-                        data-outfit-label="${name}"
-                        data-outfit-reference="${reference}"
-                        data-outfit-prompt="${prompt}"
-                        aria-label="Usar outfit: ${name}"
+                        class="benditoai-style-option"
+                        data-style-id="${id}"
+                        data-style-label="${name}"
+                        data-style-prompt="${prompt}"
+                        data-style-reference="${reference}"
+                        aria-label="Usar estilo: ${name}"
                         aria-pressed="false"
                     >
                         <img src="${thumb}" alt="${name}" loading="lazy" />
+                        <span>${name}</span>
                     </button>
                 `;
             })
@@ -43,16 +44,40 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!cards) return "";
 
         return `
-            <div class="benditoai-desktop-outfit-thumbs" data-outfit-catalog-rail>
-                <div class="benditoai-desktop-outfit-thumbs-head">
-                    <span>Outfits sugeridos</span>
-                    <small>Global</small>
+            <div class="benditoai-desktop-style-pills" data-style-catalog-rail>
+                <div class="benditoai-desktop-style-pills-head">
+                    <span>Estilos sugeridos</span>
+                    <div class="benditoai-style-rail-nav" aria-label="Navegar estilos">
+                        <button type="button" class="benditoai-style-rail-btn is-prev" data-style-nav="prev" aria-label="Ver estilos anteriores">
+                            <span aria-hidden="true">&lsaquo;</span>
+                        </button>
+                        <button type="button" class="benditoai-style-rail-btn is-next" data-style-nav="next" aria-label="Ver mas estilos">
+                            <span aria-hidden="true">&rsaquo;</span>
+                        </button>
+                    </div>
                 </div>
-                <div class="benditoai-desktop-outfit-thumbs-list">
+                <div class="benditoai-desktop-style-pills-list">
                     ${cards}
                 </div>
             </div>
         `;
+    };
+
+    const initStyleRailNavigation = () => {
+        document.addEventListener("click", (event) => {
+            const navButton = event.target.closest(".benditoai-style-rail-btn");
+            if (!navButton) return;
+            const rail = navButton.closest(".benditoai-desktop-style-pills");
+            const list = rail?.querySelector(".benditoai-desktop-style-pills-list");
+            if (!list) return;
+
+            const direction = navButton.dataset.styleNav === "prev" ? -1 : 1;
+            const firstCard = list.querySelector(".benditoai-style-option");
+            const cardWidth = firstCard ? firstCard.getBoundingClientRect().width : 140;
+            const gap = 7;
+            const delta = (cardWidth + gap) * 2 * direction;
+            list.scrollBy({ left: delta, behavior: "smooth" });
+        });
     };
 
     const initHistorialPaginator = () => {
@@ -214,6 +239,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     initHistorialPaginator();
+    initStyleRailNavigation();
 
     const root = document.querySelector(".benditoai-modelos-wizard");
     const form = document.getElementById("benditoai-form-modelo-ai");
@@ -642,9 +668,15 @@ document.addEventListener("DOMContentLoaded", function () {
                         <div class="benditoai-inline-edit-surface">
                             <label class="benditoai-inline-edit-label">Que deseas cambiar</label>
                             <textarea class="benditoai-inline-edit-text" placeholder="Ej: cambia solo la chaqueta por una bomber negra."></textarea>
+                            <div class="benditoai-inline-edit-style" hidden>
+                                <span class="benditoai-inline-edit-style-label">Estilo</span>
+                                <span class="benditoai-inline-edit-style-value"></span>
+                            </div>
+                            <input type="hidden" class="benditoai-inline-edit-selected-style" value="">
+                            <input type="hidden" class="benditoai-inline-edit-selected-style-id" value="">
                             <div class="benditoai-inline-edit-ref-block">
                                 <p class="benditoai-inline-edit-ref-help">
-                                    Opcional: sube una imagen de prenda o elige un outfit sugerido para usarlo como referencia de vestuario.
+                                    Opcional: sube una imagen de prenda para usarla como referencia. El estilo seleccionado se aplicara por separado.
                                 </p>
                                 <input type="file" class="benditoai-inline-edit-ref-file" accept="image/png,image/jpeg,image/webp" hidden>
                                 <button type="button" class="benditoai-inline-edit-ref-trigger">

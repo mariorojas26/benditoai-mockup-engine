@@ -3,32 +3,60 @@ if (!function_exists('benditoai_modelos_ai_get_outfit_catalog')) {
     function benditoai_modelos_ai_get_outfit_catalog() {
         $catalog = array(
             array(
-                'id' => 'outfit_casual_olive',
-                'name' => 'Casual Olive',
-                'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/vistemodelo.png',
-                'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/vistemodelo.png',
-                'prompt_hint' => 'Use this outfit reference as primary wardrobe.'
-            ),
-            array(
-                'id' => 'outfit_street_dark',
-                'name' => 'Street Dark',
+                'id' => 'streetwear',
+                'name' => 'Streetwear',
                 'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/vendemodelo.png',
                 'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/vendemodelo.png',
-                'prompt_hint' => 'Replicate this streetwear outfit faithfully.'
+                'prompt_hint' => 'Prioritize a contemporary streetwear wardrobe with layered pieces and urban attitude.'
             ),
             array(
-                'id' => 'outfit_editorial_clean',
-                'name' => 'Editorial Clean',
-                'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/creamodelo.png',
-                'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/creamodelo.png',
-                'prompt_hint' => 'Use this outfit for a clean editorial wardrobe.'
-            ),
-            array(
-                'id' => 'outfit_urban_core',
-                'name' => 'Urban Core',
+                'id' => 'urbano',
+                'name' => 'Urbano',
                 'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/crea3.png',
                 'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/crea3.png',
-                'prompt_hint' => 'Match this urban outfit composition and style.'
+                'prompt_hint' => 'Use a clean urban style with modern silhouettes and wearable pieces for daily fashion.'
+            ),
+            array(
+                'id' => 'elegante',
+                'name' => 'Elegante',
+                'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/creamodelo.png',
+                'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/creamodelo.png',
+                'prompt_hint' => 'Keep the styling elegant and refined with polished garments and premium visual finish.'
+            ),
+            array(
+                'id' => 'minimalista',
+                'name' => 'Minimalista',
+                'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/vistemodelo.png',
+                'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/vistemodelo.png',
+                'prompt_hint' => 'Apply a minimalist outfit direction with reduced color palette and clean composition.'
+            ),
+            array(
+                'id' => 'hip-hop',
+                'name' => 'Hip-hop',
+                'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/vendemodelo.png',
+                'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/vendemodelo.png',
+                'prompt_hint' => 'Apply a hip-hop inspired look with bold street pieces and confident styling.'
+            ),
+            array(
+                'id' => 'deportivo',
+                'name' => 'Deportivo',
+                'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/crea3.png',
+                'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/crea3.png',
+                'prompt_hint' => 'Use a sporty fashion direction with activewear influence and dynamic styling.'
+            ),
+            array(
+                'id' => 'casual',
+                'name' => 'Casual',
+                'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/vistemodelo.png',
+                'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/vistemodelo.png',
+                'prompt_hint' => 'Keep the wardrobe casual and versatile for social content and ecommerce usage.'
+            ),
+            array(
+                'id' => 'editorial',
+                'name' => 'Editorial',
+                'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/creamodelo.png',
+                'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/creamodelo.png',
+                'prompt_hint' => 'Use an editorial fashion tone with stylized garments and high-impact visual storytelling.'
             ),
         );
 
@@ -129,9 +157,16 @@ function benditoai_modelos_ai_historial_shortcode() {
                                         placeholder="Ej: cambia solo la chaqueta por una bomber negra."
                                     ></textarea>
 
+                                    <div class="benditoai-inline-edit-style" hidden>
+                                        <span class="benditoai-inline-edit-style-label">Estilo</span>
+                                        <span class="benditoai-inline-edit-style-value"></span>
+                                    </div>
+                                    <input type="hidden" class="benditoai-inline-edit-selected-style" value="">
+                                    <input type="hidden" class="benditoai-inline-edit-selected-style-id" value="">
+
                                     <div class="benditoai-inline-edit-ref-block">
                                         <p class="benditoai-inline-edit-ref-help">
-                                            Opcional: sube una imagen de prenda o elige un outfit sugerido para usarlo como referencia de vestuario.
+                                           Opcional: sube una foto de tu prenda para vestir al modelo con ella.
                                         </p>
                                         <input
                                             type="file"
@@ -143,7 +178,7 @@ function benditoai_modelos_ai_historial_shortcode() {
                                             <i class="fas fa-plus" aria-hidden="true"></i>
                                             <span class="benditoai-inline-edit-ref-trigger-preview" hidden>
                                                 <img src="" alt="" class="benditoai-inline-edit-ref-trigger-preview-img" />
-                                            </span>
+                                             </span>
                                             <span class="benditoai-inline-edit-ref-trigger-text">Una prenda de vestir (opcional)</span>
                                         </button>
                                         <p class="benditoai-inline-edit-ref-name"></p>
@@ -268,34 +303,42 @@ function benditoai_modelos_ai_historial_shortcode() {
                             </div>
 
                             <?php if (!empty($outfit_catalog) && is_array($outfit_catalog)): ?>
-                                <div class="benditoai-desktop-outfit-thumbs" data-outfit-catalog-rail>
-                                    <div class="benditoai-desktop-outfit-thumbs-head">
-                                        <span>Outfits sugeridos</span>
-                                        <small>Global</small>
+                                <div class="benditoai-desktop-style-pills" data-style-catalog-rail>
+                                    <div class="benditoai-desktop-style-pills-head">
+                                        <span>Estilos sugeridos</span>
+                                        <div class="benditoai-style-rail-nav" aria-label="Navegar estilos">
+                                            <button type="button" class="benditoai-style-rail-btn is-prev" data-style-nav="prev" aria-label="Ver estilos anteriores">
+                                                <span aria-hidden="true">&lsaquo;</span>
+                                            </button>
+                                            <button type="button" class="benditoai-style-rail-btn is-next" data-style-nav="next" aria-label="Ver mas estilos">
+                                                <span aria-hidden="true">&rsaquo;</span>
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div class="benditoai-desktop-outfit-thumbs-list">
+                                    <div class="benditoai-desktop-style-pills-list">
                                         <?php foreach ($outfit_catalog as $outfit): ?>
                                             <?php
                                             $outfit_id = isset($outfit['id']) ? (string) $outfit['id'] : '';
                                             $outfit_name = isset($outfit['name']) ? (string) $outfit['name'] : 'Outfit';
+                                            $outfit_hint = isset($outfit['prompt_hint']) ? (string) $outfit['prompt_hint'] : '';
                                             $outfit_thumb = isset($outfit['thumb_url']) ? (string) $outfit['thumb_url'] : '';
                                             $outfit_ref = isset($outfit['reference_url']) ? (string) $outfit['reference_url'] : $outfit_thumb;
-                                            $outfit_hint = isset($outfit['prompt_hint']) ? (string) $outfit['prompt_hint'] : '';
-                                            if ($outfit_id === '' || $outfit_thumb === '') {
+                                            if ($outfit_id === '') {
                                                 continue;
                                             }
                                             ?>
                                             <button
                                                 type="button"
-                                                class="benditoai-outfit-thumb"
-                                                data-outfit-id="<?php echo esc_attr($outfit_id); ?>"
-                                                data-outfit-label="<?php echo esc_attr($outfit_name); ?>"
-                                                data-outfit-reference="<?php echo esc_url($outfit_ref); ?>"
-                                                data-outfit-prompt="<?php echo esc_attr($outfit_hint); ?>"
-                                                aria-label="<?php echo esc_attr('Usar outfit: ' . $outfit_name); ?>"
+                                                class="benditoai-style-option"
+                                                data-style-id="<?php echo esc_attr($outfit_id); ?>"
+                                                data-style-label="<?php echo esc_attr($outfit_name); ?>"
+                                                data-style-prompt="<?php echo esc_attr($outfit_hint); ?>"
+                                                data-style-reference="<?php echo esc_url($outfit_ref); ?>"
+                                                aria-label="<?php echo esc_attr('Usar estilo: ' . $outfit_name); ?>"
                                                 aria-pressed="false"
                                             >
                                                 <img src="<?php echo esc_url($outfit_thumb); ?>" alt="<?php echo esc_attr($outfit_name); ?>" loading="lazy" />
+                                                <span><?php echo esc_html($outfit_name); ?></span>
                                             </button>
                                         <?php endforeach; ?>
                                     </div>

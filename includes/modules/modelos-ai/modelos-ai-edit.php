@@ -150,6 +150,34 @@ function benditoai_modelo_read_catalog_image_base64($image_url) {
     );
 }
 
+function benditoai_modelo_get_selected_style_context() {
+    $selected_style_id = isset($_POST['selected_style_id']) ? sanitize_key(wp_unslash($_POST['selected_style_id'])) : '';
+    $selected_style = isset($_POST['selected_style']) ? sanitize_text_field(wp_unslash($_POST['selected_style'])) : '';
+    $selected_style = trim($selected_style);
+
+    $catalog = benditoai_modelos_ai_get_outfit_catalog();
+    if (!is_array($catalog) || empty($catalog)) {
+        return $selected_style !== '' ? array('label' => $selected_style, 'hint' => '') : null;
+    }
+
+    foreach ($catalog as $item) {
+        if (!is_array($item)) {
+            continue;
+        }
+        $id = isset($item['id']) ? sanitize_key((string) $item['id']) : '';
+        if ($selected_style_id === '' || $id !== $selected_style_id) {
+            continue;
+        }
+
+        return array(
+            'label' => isset($item['name']) ? sanitize_text_field((string) $item['name']) : $selected_style,
+            'hint' => isset($item['prompt_hint']) ? sanitize_text_field((string) $item['prompt_hint']) : '',
+        );
+    }
+
+    return $selected_style !== '' ? array('label' => $selected_style, 'hint' => '') : null;
+}
+
 function benditoai_modelo_build_edit_prompt($texto, $has_reference, $reference_context = '') {
     $reference_rules = $has_reference
         ? "A second image is attached as REFERENCE GARMENT.\nUse that exact reference garment to replace ONLY the garment requested.\nCopy the reference garment faithfully: type, structure, material, color and key details.\nDo NOT transfer reference attributes to any other garment."
@@ -198,25 +226,22 @@ function benditoai_preview_edit_modelo() {
         wp_send_json_error(array('message' => $reference_image->get_error_message()));
     }
 
-    $catalog_outfit = benditoai_modelo_get_catalog_outfit_reference();
-    $catalog_ref_image = null;
-    if ((!is_array($reference_image) || empty($reference_image['data'])) && is_array($catalog_outfit)) {
-        $catalog_ref_image = benditoai_modelo_read_catalog_image_base64($catalog_outfit['reference_url']);
-        if (is_wp_error($catalog_ref_image)) {
-            wp_send_json_error(array('message' => $catalog_ref_image->get_error_message()));
-        }
-    }
+    $selected_style_context = benditoai_modelo_get_selected_style_context();
 
     $extra_images = array();
     $reference_context = '';
 
     if (is_array($reference_image) && !empty($reference_image['data']) && !empty($reference_image['mime'])) {
         $extra_images[] = $reference_image;
-    } elseif (is_array($catalog_ref_image) && !empty($catalog_ref_image['data']) && !empty($catalog_ref_image['mime'])) {
-        $extra_images[] = $catalog_ref_image;
-        $reference_context = trim((string) ($catalog_outfit['prompt_hint'] ?? ''));
-        if ($reference_context === '' && !empty($catalog_outfit['name'])) {
-            $reference_context = 'Use the selected catalog outfit: ' . sanitize_text_field((string) $catalog_outfit['name']);
+    }
+
+    if (is_array($selected_style_context)) {
+        $style_label = trim((string) ($selected_style_context['label'] ?? ''));
+        $style_hint = trim((string) ($selected_style_context['hint'] ?? ''));
+        if ($style_hint !== '') {
+            $reference_context = $style_hint;
+        } elseif ($style_label !== '') {
+            $reference_context = 'Preferred style selected by user: ' . $style_label . '. Keep this style direction while respecting the exact garment change request.';
         }
     }
 
