@@ -4713,6 +4713,7 @@ body.benditoai-modal-open {
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    padding: 20px !important;
 }
 
 .benditoai-wrapper-historia-modelos .benditoai-use-campaign-btn:hover {
@@ -4940,7 +4941,6 @@ body.benditoai-modal-open {
 
     .benditoai-wrapper-historia-modelos .benditoai-desktop-model-actions {
         padding-top: 14px;
-        border-top: 1px solid rgba(124, 58, 255, 0.24);
         display: grid;
         gap: 10px;
     }
@@ -5007,16 +5007,20 @@ body.benditoai-modal-open {
         background: rgba(14, 8, 32, 0.92) !important;
         color: #f2ebff !important;
         margin-top: 0px !important;
+        padding: 20px !important;
     }
 
     .benditoai-wrapper-historia-modelos .benditoai-desktop-model-secondary button span,
     .benditoai-wrapper-historia-modelos .benditoai-desktop-model-secondary a span {
-        font-size: inherit;
-        font-weight: inherit;
+        font-size: 14px;
+        font-weight: 300;
         line-height: 1.1;
         letter-spacing: 0;
         text-transform: none !important;
     }
+    button.benditoai-delete-modelo-btn.benditoai-action-btn.benditoai-icon-btn {
+    margin-top: 0px;
+}
 
     .benditoai-wrapper-historia-modelos .benditoai-desktop-model-secondary i {
         width: 15px;
@@ -5196,6 +5200,197 @@ body.benditoai-modal-open {
     .benditoai-wrapper-historia-modelos .benditoai-outfit-thumb:hover {
         border-color: rgba(174, 146, 255, 0.8);
         transform: translateY(-1px);
+    }
+
+    /* Columna derecha fidelidad: estructura estilo guia interna */
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-model-head-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-panel-title-edit {
+        width: 30px;
+        height: 30px;
+        min-height: 30px;
+        border-radius: 999px;
+        border: 1px solid rgba(124, 58, 255, 0.58) !important;
+        background: rgba(124, 58, 255, 0.16) !important;
+        color: #cdbbff !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 !important;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-panel-title-edit i {
+        font-size: 0.72rem;
+        line-height: 1;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-model-badge {
+        gap: 6px;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-model-badge i {
+        font-size: 0.72rem;
+        opacity: 0.95;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-model-divider {
+        margin-top: 4px;
+        border-top: 1px solid rgba(124, 58, 255, 0.28);
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-model-intro h4 {
+        margin: 0 0 6px;
+        color: #ffffff;
+        font-size: 1.08rem;
+        font-weight: 780;
+        line-height: 1.2;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-model-intro p {
+        margin: 0;
+        color: rgba(236, 232, 255, 0.88);
+        line-height: 1.35;
+        font-size: 14px;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-model-actions {
+        display: grid;
+        gap: 12px;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-campaign-spotlight {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 12px;
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid rgba(124, 58, 255, 0.28);
+        background: rgba(18, 8, 38, 0.76);
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-campaign-spotlight-main {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 10px;
+        align-items: center;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-campaign-spotlight-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 999px;
+        border: 1px solid rgba(124, 58, 255, 0.46);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #c7b2ff;
+        background: rgba(124, 58, 255, 0.12);
+        font-size: 0.82rem;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-campaign-spotlight-copy h5 {
+        margin: 0 0 4px;
+        color: #ffffff;
+        font-size: 1rem;
+        line-height: 1.2;
+        font-weight: 760;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-campaign-spotlight-copy p {
+        margin: 0;
+        color: rgba(236, 232, 255, 0.82);
+        line-height: 1.3;
+        font-size: 14px;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-campaign-spotlight .benditoai-use-campaign-btn--panel {
+        min-height: 44px;
+        width: auto;
+        min-width: auto;
+        padding: 0 16px;
+        border-radius: 12px !important;
+        font-size: 11px;
+        border: none !important;
+    }
+    .benditoai-desktop-model-intro {
+    padding: 20px 0px 0px;
+}
+
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-manage-title {
+        margin: 2px 0 0;
+        color: #ffffff;
+        font-size: 1.1rem;
+        line-height: 1.2;
+        font-weight: 780;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-model-secondary {
+        gap: 10px;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-tool-card {
+        min-height: 116px;
+        display: grid !important;
+        grid-template-rows: auto 1fr auto;
+        align-items: start !important;
+        justify-content: start !important;
+        text-align: left;
+        padding: 12px !important;
+        border-radius: 12px !important;
+        border: 1px solid rgba(124, 58, 255, 0.36) !important;
+        background: rgba(12, 6, 29, 0.9) !important;
+        white-space: normal !important;
+        line-height: 1.25;
+        position: relative;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-tool-title {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #ffffff;
+        font-weight: 740;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-tool-title i {
+        color: #c7b2ff;
+        font-size: 0.82rem;
+        width: 14px;
+        text-align: center;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-tool-desc {
+        margin-top: 8px;
+        color: rgba(236, 232, 255, 0.8);
+        line-height: 1.32;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-tool-arrow {
+        position: absolute;
+        right: 12px;
+        bottom: 10px;
+        color: #dfd3ff;
+        font-size: 1.25rem;
+        line-height: 1;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-model-secondary .benditoai-desktop-tool-card:hover {
+        border-color: rgba(174, 146, 255, 0.78) !important;
+        background: rgba(21, 9, 46, 0.92) !important;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-outfit-thumbs {
+        margin-top: 2px;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-desktop-model-meta {
+        display: none;
     }
 }
 

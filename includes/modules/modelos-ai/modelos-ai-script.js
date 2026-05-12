@@ -693,34 +693,59 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
                 <div class="benditoai-desktop-model-panel">
                     <div class="benditoai-desktop-model-head">
-                        <h3>${nombreModelo}</h3>
-                        <div class="benditoai-desktop-model-badges">
-                            <span class="benditoai-model-badge benditoai-model-badge--status">${Number(d.perfil_publico) === 1 ? "Activo" : "Privado"}</span>
-                            <span class="benditoai-model-badge">${estilo}</span>
-                            <span class="benditoai-model-badge">Listo para campana</span>
+                        <div class="benditoai-desktop-model-head-row">
+                            <h3>${nombreModelo}</h3>
+                            <button
+                                type="button"
+                                class="benditoai-panel-title-edit benditoai-edit-modelo-btn"
+                                data-id="${d.id}"
+                                data-image="${d.image_url}"
+                                aria-label="Editar modelo"
+                            >
+                                <i class="fas fa-pen" aria-hidden="true"></i>
+                            </button>
                         </div>
-                        <p>${descripcionModelo}</p>
+                        <div class="benditoai-desktop-model-badges">
+                            <span class="benditoai-model-badge benditoai-model-badge--status"><i class="fas fa-lock" aria-hidden="true"></i>${Number(d.perfil_publico) === 1 ? "Activo" : "Privado"}</span>
+                            <span class="benditoai-model-badge"><i class="fas fa-tag" aria-hidden="true"></i>${estilo}</span>
+                            <span class="benditoai-model-badge"><i class="far fa-check-circle" aria-hidden="true"></i>Listo para campana</span>
+                        </div>
+                        <div class="benditoai-desktop-model-divider"></div>
+                        <div class="benditoai-desktop-model-intro">
+                            <h4>Viste este modelo con tu marca</h4>
+                            <p>Personalizalo con tu ropa, accesorios y estilo para crear imagenes unicas que promocionen tus productos.</p>
+                        </div>
                     </div>
                     <div class="benditoai-desktop-model-actions">
-                        <p class="benditoai-desktop-model-section-label">Accion principal</p>
-                        <button
-                            type="button"
-                            class="benditoai-use-campaign-btn benditoai-use-campaign-btn--panel"
-                            data-modelo-id="${d.id}"
-                            data-modelo-nombre="${nombreModelo}"
-                            data-modelo-image="${d.image_url}"
-                        >
-                            Usar para campana <span aria-hidden="true">&rarr;</span>
-                        </button>
-                        <p class="benditoai-desktop-model-section-label">Herramientas</p>
-                        <div class="benditoai-desktop-model-secondary">
-                            <button class="benditoai-edit-modelo-btn" data-id="${d.id}" data-image="${d.image_url}">
-                                <i class="fas fa-pen" aria-hidden="true"></i>
-                                <span>Editar modelo</span>
+                        <div class="benditoai-desktop-campaign-spotlight">
+                            <div class="benditoai-desktop-campaign-spotlight-main">
+                                <span class="benditoai-desktop-campaign-spotlight-icon" aria-hidden="true"><i class="fas fa-rocket"></i></span>
+                                <div class="benditoai-desktop-campaign-spotlight-copy">
+                                    <h5>¿Listo para promocionar tus productos?</h5>
+                                    <p>Lanza una campana con este modelo</p>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                class="benditoai-use-campaign-btn benditoai-use-campaign-btn--panel cards-skills-panel-cta"
+                                data-modelo-id="${d.id}"
+                                data-modelo-nombre="${nombreModelo}"
+                                data-modelo-image="${d.image_url}"
+                            >
+                                Lanzar campana <span aria-hidden="true">&rarr;</span>
                             </button>
-                            <a href="${noCacheUrl}" download>
-                                <i class="fas fa-download" aria-hidden="true"></i>
-                                <span>Descargar</span>
+                        </div>
+                        <h4 class="benditoai-desktop-manage-title">Gestiona tu modelo</h4>
+                        <div class="benditoai-desktop-model-secondary">
+                            <button class="benditoai-edit-modelo-btn benditoai-desktop-tool-card" data-id="${d.id}" data-image="${d.image_url}">
+                                <span class="benditoai-desktop-tool-title"><i class="fas fa-pen" aria-hidden="true"></i><span>Editar modelo</span></span>
+                                <span class="benditoai-desktop-tool-desc">Cambia la apariencia, ropa, accesorios o detalles del modelo.</span>
+                                <span class="benditoai-desktop-tool-arrow" aria-hidden="true">&rarr;</span>
+                            </button>
+                            <a href="${noCacheUrl}" download class="benditoai-desktop-tool-card">
+                                <span class="benditoai-desktop-tool-title"><i class="fas fa-download" aria-hidden="true"></i><span>Descargar modelo</span></span>
+                                <span class="benditoai-desktop-tool-desc">Descarga las imagenes del modelo para usar en tus proyectos.</span>
+                                <span class="benditoai-desktop-tool-arrow" aria-hidden="true">&rarr;</span>
                             </a>
                         </div>
                         ${renderOutfitRailMarkup()}
