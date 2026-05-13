@@ -15,7 +15,10 @@ document.addEventListener("DOMContentLoaded", () => {
         url.searchParams.set("modelo_id", String(payload.id || ""));
         url.searchParams.set("model_url", String(payload.image_url || ""));
         url.searchParams.set("modelo_nombre", String(payload.nombre || ""));
-        url.searchParams.set("source", "historial");
+        if (payload.outfit_id) {
+            url.searchParams.set("outfit_id", String(payload.outfit_id));
+        }
+        url.searchParams.set("source", String(payload.source || "historial"));
         return url.toString();
     };
 
@@ -32,8 +35,10 @@ document.addEventListener("DOMContentLoaded", () => {
         return {
             id: String(id),
             nombre: String(nombre || "Modelo AI"),
+            outfit_id: String(button.dataset.outfitId || ""),
+            outfit_name: String(button.dataset.outfitName || ""),
             image_url: String(imageUrl),
-            source: "modelos_historial",
+            source: String(button.dataset.source || "modelos_historial"),
             created_at: new Date().toISOString(),
         };
     };

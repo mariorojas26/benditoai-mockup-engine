@@ -26,6 +26,15 @@ function benditoai_delete_modelo(){
     );
 
     if($deleted){
+        $outfits_table = $wpdb->prefix . 'benditoai_modelos_ai_outfits';
+        $wpdb->delete(
+            $outfits_table,
+            [
+                'modelo_id' => $modelo_id,
+                'user_id' => $user_id
+            ],
+            ['%d','%d']
+        );
         wp_send_json_success();
     } else {
         wp_send_json_error("No se pudo eliminar");

@@ -28,11 +28,13 @@ function bendidoai_activate_plugin() {
 
     // Crear tabla de modelos AI
     benditoai_create_modelos_ai_table();
+    benditoai_create_modelos_ai_outfits_table();
 
     error_log('BendidoAI activado ðŸš€');
 }
 
 register_activation_hook(__FILE__, 'bendidoai_activate_plugin');
+add_action('plugins_loaded', 'benditoai_maybe_upgrade_database');
 
 
 /* DESACTIVACIÃ“N */
@@ -98,6 +100,7 @@ benditoai_require_files(array(
     'includes/modules/modelos-ai/modelos-ai-ajax.php',
     'includes/modules/modelos-ai/modelos-ai-delete.php',
     'includes/modules/modelos-ai/modelos-ai-edit.php',
+    'includes/modules/modelos-ai/modelos-ai-outfits.php',
 
     'includes/modules/auth/auth-dropdown.php',
     'includes/modules/ux/maquinaEscribir.php',

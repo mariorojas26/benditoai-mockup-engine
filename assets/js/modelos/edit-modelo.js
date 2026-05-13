@@ -266,10 +266,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const modeloId = editBtn.dataset.id || "";
         const currentImageUrl = editBtn.dataset.image || "";
+        const selectedOutfitId = item.dataset.selectedOutfitId || "";
 
         const formData = new FormData();
-        formData.append("action", "benditoai_preview_edit_modelo");
-        formData.append("modelo_id", modeloId);
+        formData.append("action", selectedOutfitId ? "benditoai_preview_edit_modelo_outfit" : "benditoai_preview_edit_modelo");
+        if (selectedOutfitId) {
+            formData.append("outfit_id", selectedOutfitId);
+        } else {
+            formData.append("modelo_id", modeloId);
+        }
         formData.append("texto", texto);
         if (file && file.files && file.files[0]) {
             formData.append("prenda_referencia", file.files[0]);
@@ -336,6 +341,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!state.pendingDecision || !editBtn) return;
 
         const modeloId = editBtn.dataset.id || "";
+        const selectedOutfitId = item.dataset.selectedOutfitId || "";
         const applyBtn = getDecisionApply(item);
         const discardBtn = getDecisionDiscard(item);
         if (applyBtn) applyBtn.disabled = true;
@@ -343,8 +349,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         try {
             const body = new URLSearchParams();
-            body.set("action", "benditoai_confirm_edit_modelo");
-            body.set("modelo_id", modeloId);
+            body.set("action", selectedOutfitId ? "benditoai_confirm_edit_modelo_outfit" : "benditoai_confirm_edit_modelo");
+            if (selectedOutfitId) {
+                body.set("outfit_id", selectedOutfitId);
+            } else {
+                body.set("modelo_id", modeloId);
+            }
             body.set("preview_token", state.previewToken);
             body.set("decision", decision);
 
@@ -368,6 +378,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (decision === "apply") {
                 state.originalUrl = state.previewUrl;
+                if (selectedOutfitId) {
+                    item.dataset.selectedOutfitImage = data?.data?.image_url || state.previewUrl;
+                    document.dispatchEvent(new CustomEvent("benditoai:outfit-updated", {
+                        detail: {
+                            outfit_id: selectedOutfitId,
+                            image_url: data?.data?.image_url || state.previewUrl,
+                        },
+                    }));
+                }
             }
 
             state.previewUrl = "";

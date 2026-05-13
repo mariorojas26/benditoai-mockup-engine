@@ -127,15 +127,8 @@ function benditoai_user_dropdown() {
     $enabled = get_user_meta($user_id, 'benditoai_admin_unlimited_tokens', true);
     $is_unlimited = $is_admin && ($enabled === 'yes');
     $tokens_display = $is_unlimited ? html_entity_decode('&infin;', ENT_QUOTES, 'UTF-8') : number_format((float) $tokens, 0, ',', '.');
-    $plan_key = strtolower(trim(get_user_meta($user_id, 'benditoai_plan', true)));
-    if (!$plan_key) {
-        $plan_key = 'starter';
-    }
-    $plan_label = ucfirst($plan_key);
-    $allowed_plans = array('Starter', 'Pro', 'Elite');
-    if (!in_array($plan_label, $allowed_plans, true)) {
-        $plan_label = 'Starter';
-    }
+    $plan_data = function_exists('benditoai_get_user_plan_data') ? benditoai_get_user_plan_data($user_id) : array('name' => 'Starter');
+    $plan_label = isset($plan_data['name']) ? (string) $plan_data['name'] : 'Starter';
     $checked = ($enabled === 'yes') ? 'checked' : '';
     $display_name = $current_user->display_name ? $current_user->display_name : $current_user->user_login;
     $menu_id = 'benditoai-user-dropdown-' . wp_unique_id();

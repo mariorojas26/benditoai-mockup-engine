@@ -63,6 +63,45 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
     };
 
+    const getOutfitLimit = () => {
+        const parsed = Number(historyWrapper?.dataset.outfitLimit || 1);
+        return Number.isFinite(parsed) && parsed > 0 ? parsed : 1;
+    };
+
+    const getOutfitWarning = () => {
+        return historyWrapper?.dataset.outfitWarning || "Has alcanzado el límite de outfits para este modelo.";
+    };
+
+    const renderSavedOutfitsRailMarkup = () => {
+        const limit = getOutfitLimit();
+        const warning = escapeHtml(getOutfitWarning());
+
+        return `
+            <button
+                type="button"
+                class="benditoai-outfits-toggle"
+                data-outfits-toggle
+                aria-expanded="false"
+            >
+                <i class="fas fa-shirt" aria-hidden="true"></i>
+                <span>Outfits del modelo</span>
+                <strong class="benditoai-outfit-counter" data-outfit-counter>0 de ${limit}</strong>
+            </button>
+            <div class="benditoai-saved-outfits benditoai-saved-outfits-panel" data-saved-outfits-rail hidden>
+                <div class="benditoai-saved-outfits-panel-head">
+                    <span>Mis outfits guardados</span>
+                    <strong class="benditoai-outfit-counter" data-outfit-counter>0 de ${limit} outfits guardados</strong>
+                </div>
+                <p class="benditoai-outfit-limit-warning" data-outfit-warning-message hidden>${warning}</p>
+                <div class="benditoai-saved-outfits-list" data-saved-outfits-list>
+                    <p class="benditoai-saved-outfits-empty" data-saved-outfits-empty>
+                        Aun no tienes outfits guardados para este modelo.
+                    </p>
+                </div>
+            </div>
+        `;
+    };
+
     const initStyleRailNavigation = () => {
         document.addEventListener("click", (event) => {
             const navButton = event.target.closest(".benditoai-style-rail-btn");
@@ -659,11 +698,23 @@ document.addEventListener("DOMContentLoaded", function () {
         const fecha = escapeHtml(d.fecha || "-");
         const publico = Number(d.perfil_publico) === 1 ? "Publico" : "Privado";
 
+        const outfitLimit = getOutfitLimit();
+        const outfitWarning = escapeHtml(getOutfitWarning());
+
         const nuevoItem = `
-            <div class="benditoai-historial-item" data-id="${d.id}">
+            <div class="benditoai-historial-item" data-id="${d.id}" data-outfit-count="0" data-outfit-limit="${outfitLimit}" data-outfit-warning="${outfitWarning}">
                 <p class="benditoai-historial-name">${nombreModelo}</p>
                 <div class="benditoai-img-wrap">
                     <img src="${noCacheUrl}" alt="${nombreModelo}" class="benditoai-historial-img" />
+                    <button
+                        type="button"
+                        class="benditoai-save-outfit-btn"
+                        data-modelo-id="${d.id}"
+                        aria-disabled="false"
+                    >
+                        <i class="fas fa-bookmark" aria-hidden="true"></i>
+                        <span>Guardar outfit</span>
+                    </button>
                     <div class="benditoai-inline-edit" hidden>
                         <div class="benditoai-inline-edit-surface">
                             <label class="benditoai-inline-edit-label">Que deseas cambiar</label>
@@ -722,6 +773,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     >
                         Usar para campana
                     </button>
+                    ${renderSavedOutfitsRailMarkup()}
                 </div>
                 <div class="benditoai-desktop-model-panel">
                     <div class="benditoai-desktop-model-head">

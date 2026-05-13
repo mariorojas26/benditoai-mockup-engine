@@ -5318,6 +5318,207 @@ body.benditoai-modal-open {
         transform: translateY(-1px);
     }
 
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfits .benditoai-desktop-style-pills-head {
+        gap: 10px;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-counter {
+        color: #cdb7ff;
+        font-size: 0.72rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-limit-warning {
+        margin: -2px 0 8px;
+        color: #ffd0d0;
+        font-size: 0.60rem;
+        line-height: 1.35;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-limit-warning[hidden] {
+        display: none !important;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfits-empty {
+        flex: 1 0 100%;
+        margin: 0;
+        padding: 12px;
+        border: 1px dashed rgba(174, 146, 255, 0.32);
+        border-radius: 9px;
+        color: rgba(236, 232, 255, 0.74);
+        font-size: 0.74rem;
+        line-height: 1.3;
+        background: rgba(10, 5, 24, 0.54);
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfit-card {
+        position: relative;
+        flex: 0 0 calc((100% - 21px) / 4);
+        min-width: calc((100% - 21px) / 4);
+        min-height: 156px;
+        border-radius: 9px;
+        border: 1px solid rgba(124, 58, 255, 0.3);
+        background: rgba(10, 5, 24, 0.9);
+        color: #dccdff;
+        cursor: pointer;
+        display: grid;
+        grid-template-rows: minmax(98px, 1fr) auto;
+        overflow: hidden;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfit-card:hover,
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfit-card:focus {
+        border-color: rgba(174, 146, 255, 0.82);
+        background: rgba(124, 58, 255, 0.16);
+        transform: translateY(-1px);
+        outline: none;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfit-card.is-selected {
+        border-color: #8b55ff;
+        box-shadow: 0 0 0 2px rgba(139, 85, 255, 0.3);
+        background: rgba(124, 58, 255, 0.18);
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfit-thumb {
+        position: relative;
+        min-height: 98px;
+        overflow: hidden;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfit-thumb img {
+        width: 100%;
+        height: 100%;
+        min-height: 98px;
+        object-fit: cover;
+        object-position: center top;
+        display: block;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfit-use {
+        position: absolute;
+        left: 7px;
+        bottom: 7px;
+        border-radius: 999px;
+        background: rgba(8, 4, 18, 0.78);
+        color: #ffffff;
+        font-size: 0.64rem;
+        font-weight: 800;
+        line-height: 1;
+        padding: 5px 7px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfit-body {
+        display: grid;
+        align-items: center;
+        padding: 8px 7px;
+        background: rgba(10, 5, 24, 0.94);
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfit-name {
+        color: #ffffff;
+        font-size: 0.60rem;
+        font-weight: 800;
+        line-height: 1.15;
+        overflow-wrap: anywhere;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfit-actions {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 5px;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfit-action {
+        width: 100%;
+        min-height: 28px;
+        border: 1px solid rgba(124, 58, 255, 0.32);
+        border-radius: 8px;
+        background: rgba(24, 10, 48, 0.76);
+        color: #cdb7ff;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfit-action:hover {
+        border-color: rgba(174, 146, 255, 0.82);
+        background: rgba(124, 58, 255, 0.18);
+        color: #ffffff;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-inline-edit,
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-edit-decision {
+        position: absolute;
+        inset: 0;
+        z-index: 5;
+        display: grid;
+        align-content: center;
+        gap: 7px;
+        padding: 10px;
+        background: rgba(7, 3, 18, 0.94);
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-inline-edit[hidden],
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-edit-decision[hidden] {
+        display: none !important;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-inline-edit-text {
+        width: 100%;
+        min-height: 74px;
+        border: 1px solid rgba(124, 58, 255, 0.28);
+        border-radius: 9px;
+        background: rgba(18, 8, 38, 0.92);
+        color: #ffffff;
+        padding: 8px;
+        font-size: 0.72rem;
+        line-height: 1.3;
+        resize: vertical;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-inline-edit-ref-trigger,
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-inline-edit-submit,
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-inline-edit-cancel,
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-edit-apply,
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-edit-discard {
+        min-height: 30px;
+        border-radius: 9px;
+        border: 1px solid rgba(124, 58, 255, 0.35);
+        background: transparent;
+        color: #c4b5fd;
+        font-size: 0.72rem;
+        font-weight: 700;
+        cursor: pointer;
+        padding: 6px 8px;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-inline-edit-submit,
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-edit-apply {
+        background: #5e1df7;
+        border-color: rgba(124, 58, 255, 0.68);
+        color: #ffffff;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-inline-edit-ref-name {
+        margin: 0;
+        color: rgba(236, 232, 255, 0.72);
+        font-size: 0.66rem;
+        line-height: 1.2;
+        overflow-wrap: anywhere;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfit-card.is-edit-loading .benditoai-saved-outfit-thumb img,
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfit-card.is-awaiting-outfit-decision .benditoai-saved-outfit-thumb img {
+        filter: brightness(0.72);
+    }
+
     /* Columna derecha fidelidad: estructura estilo guia interna */
     .benditoai-wrapper-historia-modelos .benditoai-desktop-model-head-row {
         display: flex;
@@ -5523,5 +5724,401 @@ body.benditoai-modal-open {
 
     .benditoai-wrapper-historia-modelos .benditoai-img-wrap {
         min-height: 560px;
+    }
+}
+
+/* =========================================
+   MODELOS AI - OUTFITS GUARDADOS
+========================================= */
+.benditoai-wrapper-historia-modelos .benditoai-save-outfit-btn {
+position: absolute;
+    top: 2px;
+    left: 64px;
+    z-index: 3;
+    min-height: 46px;
+    border-radius: 12px;
+    background: rgba(10, 5, 24, 0.78) !important;
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 7px 16px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 10px 22px rgba(3, 0, 13, 0.28);
+    transition: border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-save-outfit-btn:hover {
+    border-color: rgba(174, 146, 255, 0.76);
+    background: rgba(94, 29, 247, 0.88);
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-save-outfit-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.62;
+    background: rgba(38, 31, 56, 0.78);
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-historial-item.is-editing .benditoai-save-outfit-btn,
+.benditoai-wrapper-historia-modelos .benditoai-historial-item.is-edit-submitted .benditoai-save-outfit-btn,
+.benditoai-wrapper-historia-modelos .benditoai-historial-item.is-awaiting-decision .benditoai-save-outfit-btn {
+    display: none !important;
+}
+
+@media (max-width: 900px) {
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfits {
+        display: block;
+        margin-top: 12px;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid rgba(124, 58, 255, 0.32);
+        background: rgba(16, 8, 35, 0.78);
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfits .benditoai-desktop-style-pills-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 8px;
+        color: #f7f3ff;
+        font-size: 0.82rem;
+        font-weight: 800;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-counter {
+        color: #cdb7ff;
+        font-size: 0.68rem;
+        white-space: nowrap;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-limit-warning {
+        margin: -2px 0 8px;
+        color: #ffd0d0;
+        font-size: 0.72rem;
+        line-height: 1.35;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-limit-warning[hidden] {
+        display: none !important;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfits-list {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        gap: 8px;
+        padding-bottom: 4px;
+        scrollbar-width: none;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfits-list::-webkit-scrollbar {
+        display: none;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfits-empty {
+        flex: 1 0 100%;
+        margin: 0;
+        padding: 12px;
+        border: 1px dashed rgba(174, 146, 255, 0.32);
+        border-radius: 9px;
+        color: rgba(236, 232, 255, 0.74);
+        font-size: 0.74rem;
+        background: rgba(10, 5, 24, 0.54);
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfit-card {
+        position: relative;
+        flex: 0 0 132px;
+        min-width: 132px;
+        border-radius: 9px;
+        border: 1px solid rgba(124, 58, 255, 0.3);
+        background: rgba(10, 5, 24, 0.9);
+        color: #dccdff;
+        cursor: pointer;
+        display: grid;
+        grid-template-rows: 102px auto;
+        overflow: hidden;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfit-card.is-selected {
+        border-color: #8b55ff;
+        box-shadow: 0 0 0 2px rgba(139, 85, 255, 0.3);
+        background: rgba(124, 58, 255, 0.18);
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfit-thumb,
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfit-thumb img {
+        width: 100%;
+        height: 102px;
+        object-fit: cover;
+        object-position: center top;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfit-use {
+        position: absolute;
+        left: 7px;
+        bottom: 7px;
+        border-radius: 999px;
+        background: rgba(8, 4, 18, 0.78);
+        color: #ffffff;
+        font-size: 0.64rem;
+        font-weight: 800;
+        padding: 5px 7px;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfit-body {
+        display: grid;
+        align-items: center;
+        padding: 8px 7px;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfit-name {
+        color: #ffffff;
+        font-size: 0.60rem;
+        font-weight: 800;
+        line-height: 1.15;
+        overflow-wrap: anywhere;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfit-actions {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 5px;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfit-action {
+        min-height: 28px;
+        border: 1px solid rgba(124, 58, 255, 0.32);
+        border-radius: 8px;
+        background: rgba(24, 10, 48, 0.76);
+        color: #cdb7ff;
+        padding: 0;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-inline-edit,
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-edit-decision {
+        position: absolute;
+        inset: 0;
+        z-index: 5;
+        display: grid;
+        align-content: center;
+        gap: 7px;
+        padding: 10px;
+        background: rgba(7, 3, 18, 0.94);
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-inline-edit[hidden],
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-edit-decision[hidden] {
+        display: none !important;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-inline-edit-text {
+        min-height: 72px;
+        border-radius: 9px;
+        border: 1px solid rgba(124, 58, 255, 0.28);
+        background: rgba(18, 8, 38, 0.92);
+        color: #ffffff;
+        padding: 8px;
+        font-size: 0.72rem;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-inline-edit-ref-trigger,
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-inline-edit-submit,
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-inline-edit-cancel,
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-edit-apply,
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-edit-discard {
+        min-height: 30px;
+        border-radius: 9px;
+        border: 1px solid rgba(124, 58, 255, 0.35);
+        background: transparent;
+        color: #c4b5fd;
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 6px 8px;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-inline-edit-submit,
+    .benditoai-wrapper-historia-modelos .benditoai-outfit-edit-apply {
+        background: #5e1df7;
+        border-color: rgba(124, 58, 255, 0.68);
+        color: #ffffff;
+    }
+}
+
+/* =========================================
+   MODELOS AI - PANEL FLOTANTE DE OUTFITS
+========================================= */
+.benditoai-wrapper-historia-modelos .benditoai-outfits-toggle {
+    position: absolute;
+    left: 14px;
+    bottom: 78px;
+    z-index: 4;
+    min-height: 38px;
+    max-width: calc(100% - 28px);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    background: rgba(12, 7, 27, 0.82);
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    padding: 8px 12px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(12px);
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-outfits-toggle:hover,
+.benditoai-wrapper-historia-modelos .benditoai-outfits-toggle:focus-visible {
+    border-color: rgba(196, 181, 253, 0.74);
+    background: rgba(74, 34, 154, 0.9);
+    transform: translateY(-1px);
+    outline: none;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-outfits-toggle .benditoai-outfit-counter {
+    color: #d9ccff;
+    font-size: 0.68rem;
+    font-weight: 800;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-historial-item.is-editing .benditoai-outfits-toggle,
+.benditoai-wrapper-historia-modelos .benditoai-historial-item.is-edit-submitted .benditoai-outfits-toggle,
+.benditoai-wrapper-historia-modelos .benditoai-historial-item.is-awaiting-decision .benditoai-outfits-toggle,
+.benditoai-wrapper-historia-modelos .benditoai-historial-item.is-editing .benditoai-saved-outfits-panel,
+.benditoai-wrapper-historia-modelos .benditoai-historial-item.is-edit-submitted .benditoai-saved-outfits-panel,
+.benditoai-wrapper-historia-modelos .benditoai-historial-item.is-awaiting-decision .benditoai-saved-outfits-panel {
+    display: none !important;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-saved-outfits-panel {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 126px;
+    z-index: 5;
+    margin: 0;
+    border: 1px solid rgba(196, 181, 253, 0.24);
+    border-radius: 12px;
+    background: rgba(8, 4, 20, 0.9);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.36);
+    backdrop-filter: blur(14px);
+    padding: 10px;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: max-height 0.24s ease, opacity 0.2s ease, transform 0.2s ease;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-saved-outfits-panel[hidden] {
+    display: block !important;
+    visibility: hidden;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-saved-outfits-panel.is-open {
+    max-height: 238px;
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+    visibility: visible;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-saved-outfits-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+    color: #f8f5ff;
+    font-size: 0.78rem;
+    font-weight: 900;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-saved-outfits-panel .benditoai-outfit-limit-warning {
+    margin: 0 0 8px;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-saved-outfits-list {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 1px 2px 8px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(196, 181, 253, 0.5) rgba(255, 255, 255, 0.08);
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-saved-outfits-list::-webkit-scrollbar {
+    display: block;
+    height: 7px;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-saved-outfits-list::-webkit-scrollbar-track {
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-saved-outfits-list::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(196, 181, 253, 0.52);
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-saved-outfits-panel .benditoai-saved-outfits-empty {
+    flex: 1 0 100%;
+    min-width: 100%;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-saved-outfits-panel .benditoai-saved-outfit-card {
+    flex: 0 0 118px;
+    min-width: 118px;
+    min-height: 138px;
+    grid-template-rows: 94px auto;
+    scroll-snap-align: start;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-saved-outfits-panel .benditoai-saved-outfit-thumb,
+.benditoai-wrapper-historia-modelos .benditoai-saved-outfits-panel .benditoai-saved-outfit-thumb img {
+    min-height: 94px;
+    height: 94px;
+}
+
+@media (max-width: 900px) {
+    .benditoai-wrapper-historia-modelos .benditoai-outfits-toggle {
+        left: 10px;
+        bottom: 76px;
+        min-height: 36px;
+        max-width: calc(100% - 20px);
+        padding: 8px 10px;
+        font-size: 0.68rem;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfits-panel {
+        left: 10px;
+        right: 10px;
+        bottom: 122px;
+        padding: 9px;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfits-panel.is-open {
+        max-height: 220px;
+    }
+
+    .benditoai-wrapper-historia-modelos .benditoai-saved-outfits-panel .benditoai-saved-outfit-card {
+        flex-basis: 112px;
+        min-width: 112px;
     }
 }

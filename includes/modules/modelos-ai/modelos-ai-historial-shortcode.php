@@ -1,64 +1,64 @@
 <?php
 if (!function_exists('benditoai_modelos_ai_get_outfit_catalog')) {
     function benditoai_modelos_ai_get_outfit_catalog() {
-        $catalog = array(
-            array(
-                'id' => 'streetwear',
-                'name' => 'Streetwear',
-                'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/vendemodelo.png',
-                'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/vendemodelo.png',
-                'prompt_hint' => 'Prioritize a contemporary streetwear wardrobe with layered pieces and urban attitude.'
-            ),
-            array(
-                'id' => 'urbano',
-                'name' => 'Urbano',
-                'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/crea3.png',
-                'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/crea3.png',
-                'prompt_hint' => 'Use a clean urban style with modern silhouettes and wearable pieces for daily fashion.'
-            ),
-            array(
-                'id' => 'elegante',
-                'name' => 'Elegante',
-                'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/creamodelo.png',
-                'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/creamodelo.png',
-                'prompt_hint' => 'Keep the styling elegant and refined with polished garments and premium visual finish.'
-            ),
-            array(
-                'id' => 'minimalista',
-                'name' => 'Minimalista',
-                'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/vistemodelo.png',
-                'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/vistemodelo.png',
-                'prompt_hint' => 'Apply a minimalist outfit direction with reduced color palette and clean composition.'
-            ),
-            array(
-                'id' => 'hip-hop',
-                'name' => 'Hip-hop',
-                'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/vendemodelo.png',
-                'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/vendemodelo.png',
-                'prompt_hint' => 'Apply a hip-hop inspired look with bold street pieces and confident styling.'
-            ),
-            array(
-                'id' => 'deportivo',
-                'name' => 'Deportivo',
-                'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/crea3.png',
-                'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/crea3.png',
-                'prompt_hint' => 'Use a sporty fashion direction with activewear influence and dynamic styling.'
-            ),
-            array(
-                'id' => 'casual',
-                'name' => 'Casual',
-                'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/vistemodelo.png',
-                'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/vistemodelo.png',
-                'prompt_hint' => 'Keep the wardrobe casual and versatile for social content and ecommerce usage.'
-            ),
-            array(
-                'id' => 'editorial',
-                'name' => 'Editorial',
-                'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/creamodelo.png',
-                'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/creamodelo.png',
-                'prompt_hint' => 'Use an editorial fashion tone with stylized garments and high-impact visual storytelling.'
-            ),
-        );
+       $catalog = array(
+    array(
+        'id' => 'hip-hop',
+        'name' => 'Hip-hop',
+        'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/hip-hop.png',
+        'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/hip-hop.png',
+        'prompt_hint' => 'Apply a hip-hop inspired look with bold street pieces and confident styling.'
+    ),
+    array(
+        'id' => 'streetwear',
+        'name' => 'Streetwear',
+        'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/streetwear.png',
+        'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/streetwear.png',
+        'prompt_hint' => 'Prioritize a contemporary streetwear wardrobe with layered pieces and urban attitude.'
+    ),
+    array(
+        'id' => 'urbano',
+        'name' => 'Urbano',
+        'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/urbano.png',
+        'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/urbano.png',
+        'prompt_hint' => 'Use a clean urban style with modern silhouettes and wearable pieces for daily fashion.'
+    ),
+    array(
+        'id' => 'elegante',
+        'name' => 'Elegante',
+        'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/elegante.png',
+        'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/elegante.png',
+        'prompt_hint' => 'Keep the styling elegant and refined with polished garments and premium visual finish.'
+    ),
+    array(
+        'id' => 'minimalista',
+        'name' => 'Minimalista',
+        'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/minimalista.png',
+        'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/minimalista.png',
+        'prompt_hint' => 'Apply a minimalist outfit direction with reduced color palette and clean composition.'
+    ),
+    array(
+        'id' => 'deportivo',
+        'name' => 'Deportivo',
+        'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/deportivo.png',
+        'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/deportivo.png',
+        'prompt_hint' => 'Use a sporty fashion direction with activewear influence and dynamic styling.'
+    ),
+    array(
+        'id' => 'casual',
+        'name' => 'Casual',
+        'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/casual.png',
+        'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/casual.png',
+        'prompt_hint' => 'Keep the wardrobe casual and versatile for social content and ecommerce usage.'
+    ),
+    array(
+        'id' => 'editorial',
+        'name' => 'Editorial',
+        'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/editorial.png',
+        'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/editorial.png',
+        'prompt_hint' => 'Use an editorial fashion tone with stylized garments and high-impact visual storytelling.'
+    ),
+);
 
         return apply_filters('benditoai_modelos_ai_outfit_catalog', $catalog);
     }
@@ -90,6 +90,21 @@ function benditoai_modelos_ai_historial_shortcode() {
     $icon_delete = BENDIDOAI_PLUGIN_URL . 'assets/images/icon-delete.png';
     $outfit_catalog = benditoai_modelos_ai_get_outfit_catalog();
     $outfit_catalog_json = wp_json_encode($outfit_catalog);
+    $modelo_ids = array();
+    foreach ((array) $historial as $historial_item) {
+        if (!empty($historial_item->id)) {
+            $modelo_ids[] = (int) $historial_item->id;
+        }
+    }
+    $saved_outfits_by_model = function_exists('benditoai_modelos_ai_get_saved_outfits_grouped')
+        ? benditoai_modelos_ai_get_saved_outfits_grouped($user_id, $modelo_ids)
+        : array();
+    $outfit_limit = function_exists('benditoai_modelo_outfit_limit')
+        ? benditoai_modelo_outfit_limit($user_id)
+        : 1;
+    $outfit_limit_warning = function_exists('benditoai_modelo_outfit_warning')
+        ? benditoai_modelo_outfit_warning()
+        : 'Has alcanzado el límite de outfits para este modelo.';
 
     ob_start();
     ?>
@@ -97,6 +112,8 @@ function benditoai_modelos_ai_historial_shortcode() {
         class="benditoai-wrapper-historia-modelos"
         data-campaign-url="<?php echo esc_url($campaign_url); ?>"
         data-outfit-catalog="<?php echo esc_attr($outfit_catalog_json ? $outfit_catalog_json : '[]'); ?>"
+        data-outfit-limit="<?php echo esc_attr($outfit_limit); ?>"
+        data-outfit-warning="<?php echo esc_attr($outfit_limit_warning); ?>"
     >
         <div class="benditoai-historial-toolbar" aria-hidden="true">
             <a href="<?php echo esc_url(home_url('/crea-modelo/')); ?>" class="benditoai-historial-new-model">+ Crear nuevo modelo</a>
@@ -130,9 +147,20 @@ function benditoai_modelos_ai_historial_shortcode() {
                 if ($descripcion_panel === '') {
                     $descripcion_panel = 'Modelo AI listo para campanas de moda, redes y lookbooks.';
                 }
+                $saved_outfits = isset($saved_outfits_by_model[(int) $item->id]) && is_array($saved_outfits_by_model[(int) $item->id])
+                    ? $saved_outfits_by_model[(int) $item->id]
+                    : array();
+                $saved_outfits_count = count($saved_outfits);
+                $can_save_outfit = $saved_outfits_count < (int) $outfit_limit;
                 ?>
 
-                <div class="benditoai-historial-item" data-id="<?php echo esc_attr($item->id); ?>">
+                <div
+                    class="benditoai-historial-item"
+                    data-id="<?php echo esc_attr($item->id); ?>"
+                    data-outfit-count="<?php echo esc_attr($saved_outfits_count); ?>"
+                    data-outfit-limit="<?php echo esc_attr($outfit_limit); ?>"
+                    data-outfit-warning="<?php echo esc_attr($outfit_limit_warning); ?>"
+                >
 
                     <p class="benditoai-historial-name">
                         <?php echo esc_html($item->nombre_modelo); ?>
@@ -145,6 +173,87 @@ function benditoai_modelos_ai_historial_shortcode() {
                                 alt="<?php echo esc_attr($item->nombre_modelo); ?>"
                                 class="benditoai-historial-img"
                             />
+
+                            <button
+                                type="button"
+                                class="benditoai-save-outfit-btn"
+                                data-modelo-id="<?php echo esc_attr($item->id); ?>"
+                                <?php disabled(!$can_save_outfit); ?>
+                                aria-disabled="<?php echo $can_save_outfit ? 'false' : 'true'; ?>"
+                            >
+                                <i class="fas fa-bookmark" aria-hidden="true"></i>
+                                <span>Guardar outfit</span>
+                            </button>
+
+                            <button
+                                type="button"
+                                class="benditoai-outfits-toggle"
+                                data-outfits-toggle
+                                aria-expanded="false"
+                            >
+                                <i class="fas fa-shirt" aria-hidden="true"></i>
+                                <span>Outfits del modelo</span>
+                                <strong class="benditoai-outfit-counter" data-outfit-counter>
+                                    <?php echo esc_html($saved_outfits_count . ' de ' . (int) $outfit_limit); ?>
+                                </strong>
+                            </button>
+
+                            <div class="benditoai-saved-outfits benditoai-saved-outfits-panel" data-saved-outfits-rail hidden>
+                                <div class="benditoai-saved-outfits-panel-head">
+                                    <span>Mis outfits guardados</span>
+                                    <strong class="benditoai-outfit-counter" data-outfit-counter>
+                                        <?php echo esc_html($saved_outfits_count . ' de ' . (int) $outfit_limit . ' outfits guardados'); ?>
+                                    </strong>
+                                </div>
+
+                                <p
+                                    class="benditoai-outfit-limit-warning"
+                                    data-outfit-warning-message
+                                    <?php echo $can_save_outfit ? 'hidden' : ''; ?>
+                                >
+                                    <?php echo esc_html($outfit_limit_warning); ?>
+                                </p>
+
+                                <div class="benditoai-saved-outfits-list" data-saved-outfits-list>
+                                    <?php if (empty($saved_outfits)): ?>
+                                        <p class="benditoai-saved-outfits-empty" data-saved-outfits-empty>
+                                            Aun no tienes outfits guardados para este modelo.
+                                        </p>
+                                    <?php else: ?>
+                                        <?php foreach ($saved_outfits as $saved_outfit): ?>
+                                            <?php
+                                            $saved_outfit_id = (int) ($saved_outfit->id ?? 0);
+                                            $saved_outfit_name = (string) ($saved_outfit->nombre_outfit ?? 'Outfit');
+                                            $saved_outfit_image = (string) ($saved_outfit->image_url ?? '');
+                                            if ($saved_outfit_id <= 0 || $saved_outfit_image === '') {
+                                                continue;
+                                            }
+                                            ?>
+                                            <div
+                                                class="benditoai-saved-outfit-card"
+                                                data-outfit-id="<?php echo esc_attr($saved_outfit_id); ?>"
+                                                data-modelo-id="<?php echo esc_attr($item->id); ?>"
+                                                data-modelo-nombre="<?php echo esc_attr($item->nombre_modelo); ?>"
+                                                data-outfit-name="<?php echo esc_attr($saved_outfit_name); ?>"
+                                                data-outfit-image="<?php echo esc_url($saved_outfit_image); ?>"
+                                                role="button"
+                                                tabindex="0"
+                                                aria-pressed="false"
+                                                aria-label="<?php echo esc_attr('Usar outfit: ' . $saved_outfit_name); ?>"
+                                            >
+                                                <div class="benditoai-saved-outfit-thumb">
+                                                    <img src="<?php echo esc_url($saved_outfit_image); ?>" alt="<?php echo esc_attr($saved_outfit_name); ?>" loading="lazy" />
+                                                    <span class="benditoai-saved-outfit-use">Usar</span>
+                                                </div>
+
+                                                <div class="benditoai-saved-outfit-body">
+                                                    <span class="benditoai-saved-outfit-name" data-outfit-name-label><?php echo esc_html($saved_outfit_name); ?></span>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
 
                             <div class="benditoai-inline-edit" hidden>
                                 <div class="benditoai-inline-edit-surface">
@@ -344,6 +453,7 @@ function benditoai_modelos_ai_historial_shortcode() {
                                     </div>
                                 </div>
                             <?php endif; ?>
+
                         </div>
 
                         <div class="benditoai-desktop-model-meta">

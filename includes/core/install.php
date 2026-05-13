@@ -118,3 +118,48 @@ function benditoai_create_modelos_ai_table() {
     error_log("âœ… benditoai_create_modelos_ai_table ejecutada: $table_name");
 }
 
+/**
+ * Crear tabla outfits guardados por modelo AI
+ */
+function benditoai_create_modelos_ai_outfits_table() {
+    global $wpdb;
+
+    $table_name = $wpdb->prefix . 'benditoai_modelos_ai_outfits';
+    $charset_collate = $wpdb->get_charset_collate();
+
+    $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+        id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+        user_id BIGINT UNSIGNED NOT NULL,
+        modelo_id BIGINT UNSIGNED NOT NULL,
+        nombre_outfit VARCHAR(100) NOT NULL,
+        image_url TEXT,
+        prompt TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (id),
+        KEY user_modelo (user_id, modelo_id),
+        KEY modelo_id (modelo_id)
+    ) $charset_collate;";
+
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+    dbDelta($sql);
+
+    error_log("benditoai_create_modelos_ai_outfits_table ejecutada: $table_name");
+}
+
+function benditoai_maybe_upgrade_database() {
+    $db_version = '20260512_outfits';
+    $current_version = get_option('benditoai_db_version', '');
+
+    if ($current_version === $db_version) {
+        return;
+    }
+
+    benditoai_create_historial_table();
+    benditoai_create_campanas_ai_table();
+    benditoai_create_modelos_ai_table();
+    benditoai_create_modelos_ai_outfits_table();
+
+    update_option('benditoai_db_version', $db_version);
+}
+
