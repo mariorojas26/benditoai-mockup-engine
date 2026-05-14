@@ -59,7 +59,7 @@ function benditoai_modelos_ai_shortcode() {
                         <p class="baiw-field-label">Tipo de creacion</p>
                         <div class="baiw-mode-grid" role="radiogroup" aria-label="Tipo de creacion">
                             <label class="baiw-mode-option">
-                                <input type="radio" name="modo_creacion" value="referencia" checked>
+                                <input type="radio" name="modo_creacion" value="referencia">
                                 <span>
                                     <span class="baiw-tip baiw-tip--corner" tabindex="0" aria-label="Ayuda modo referencia">
                                         ?
@@ -806,9 +806,12 @@ function benditoai_modelos_ai_shortcode() {
 }
 
 .benditoai-modelos-wizard .baiw-mode-option input:checked + span {
-    border-color: rgba(124, 58, 255, 0.74);
-    background: rgba(99, 56, 207, 0.34);
-    box-shadow: 0 12px 24px rgba(9, 4, 25, 0.35);
+    border-color: rgba(149, 104, 255, 0.92);
+    background: rgba(112, 66, 236, 0.5);
+    box-shadow:
+        0 0 0 1px rgba(182, 148, 255, 0.75),
+        0 0 24px rgba(124, 58, 255, 0.48),
+        0 12px 28px rgba(9, 4, 25, 0.4);
 }
 
 /* Paso 1 con mejor respiracion tras quitar descripcion */
@@ -1842,7 +1845,16 @@ function benditoai_modelos_ai_shortcode() {
 .benditoai-modelos-wizard .baiw-mode-option input:checked + span {
     border-color: rgba(124, 58, 255, 0.65);
     background: rgba(21, 9, 46, 0.9);
-    box-shadow: none;
+    box-shadow: 0 8px 18px rgba(4, 1, 12, 0.28);
+}
+
+.benditoai-modelos-wizard .baiw-mode-option input:checked + span {
+    border-color: rgba(149, 104, 255, 0.92);
+    background: rgba(112, 66, 236, 0.5);
+    box-shadow:
+        0 0 0 1px rgba(182, 148, 255, 0.75),
+        0 0 24px rgba(124, 58, 255, 0.48),
+        0 12px 28px rgba(9, 4, 25, 0.4);
 }
 
 .benditoai-modelos-wizard .baiw-mode-option > span > small,

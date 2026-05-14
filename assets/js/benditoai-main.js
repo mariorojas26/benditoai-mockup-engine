@@ -20,6 +20,8 @@ import "./trending/trending-ui.js";
 
 /* auth */
 import "./auth/auth-dropdown.js?v=20260509b";
+/* home */
+import "./home/whatsapp-chat-assistant.js";
 
 /* modelos */
 import "./modelos/delete-modelo.js";

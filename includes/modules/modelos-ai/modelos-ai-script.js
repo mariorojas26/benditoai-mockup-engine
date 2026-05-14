@@ -450,7 +450,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     const getActiveMode = () => {
-        return modeInputs.find((input) => input.checked)?.value || "referencia";
+        return modeInputs.find((input) => input.checked)?.value || "";
     };
 
     const setRangeProgress = (range) => {
@@ -528,7 +528,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const stepThree = form.querySelector(".baiw-step[data-step='3']");
 
         modePanels.forEach((panel) => {
-            const isActive = panel.dataset.modePanel === mode;
+            const isActive = !!mode && panel.dataset.modePanel === mode;
             panel.hidden = !isActive;
             panel.setAttribute("aria-hidden", isActive ? "false" : "true");
 
@@ -543,7 +543,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (stepThree) {
-            stepThree.setAttribute("data-active-mode", mode);
+            stepThree.setAttribute("data-active-mode", mode || "none");
         }
 
         initChoicesSelects();
@@ -621,7 +621,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (prevBtn) prevBtn.style.display = currentStep === 1 ? "none" : "inline-flex";
-        if (nextBtn) nextBtn.style.display = currentStep === totalSteps ? "none" : "inline-flex";
+        if (nextBtn) {
+            const hasMode = getActiveMode() !== "";
+            const shouldShow = currentStep !== totalSteps && (currentStep !== 1 || hasMode);
+            nextBtn.style.display = shouldShow ? "inline-flex" : "none";
+        }
         if (submitBtn) submitBtn.style.display = currentStep === totalSteps ? "inline-flex" : "none";
 
         root.classList.toggle("is-step-compact", currentStep > 1);
@@ -634,6 +638,10 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!step) return true;
 
         const activeMode = getActiveMode();
+        if (stepNumber === 1 && !activeMode) {
+            showInlineError("Selecciona un tipo de creacion para continuar.");
+            return false;
+        }
         const fields = Array.from(step.querySelectorAll("input, select, textarea"));
 
         for (const field of fields) {
@@ -1073,6 +1081,7 @@ document.addEventListener("DOMContentLoaded", function () {
     modeInputs.forEach((input) => {
         input.addEventListener("change", () => {
             syncModePanels();
+            updateStepUi();
             clearInlineError();
         });
     });

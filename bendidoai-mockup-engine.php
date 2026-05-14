@@ -106,6 +106,7 @@ benditoai_require_files(array(
     'includes/modules/ux/maquinaEscribir.php',
     'includes/modules/ux/cardsSkills.php',
     'includes/modules/Home/antes-y-despues/before-after-shortcode.php',
+    'includes/modules/Home/whatsapp-chat-assistant.php',
 ));
 
 
