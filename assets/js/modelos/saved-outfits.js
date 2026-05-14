@@ -15,6 +15,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const getSaveButton = (item) => item?.querySelector(".benditoai-save-outfit-btn");
     const getWarning = (item) => item?.querySelector("[data-outfit-warning-message]");
     const getActiveOutfitBadge = (item) => item?.querySelector("[data-active-outfit-badge]");
+    const getActiveOutfitState = (item) => {
+        if (!item) {
+            return { isSaved: false, outfitId: "", outfitTag: "" };
+        }
+
+        const selectedOutfitId = String(item.dataset.selectedOutfitId || "").trim();
+        const selectedOutfitTag = String(item.dataset.selectedOutfitTag || "").trim().toLowerCase();
+        if (selectedOutfitId) {
+            return {
+                isSaved: true,
+                outfitId: selectedOutfitId,
+                outfitTag: selectedOutfitTag || "outfit",
+            };
+        }
+
+        const principalOutfitId = String(item.dataset.principalOutfitId || "").trim();
+        if (principalOutfitId) {
+            return {
+                isSaved: true,
+                outfitId: principalOutfitId,
+                outfitTag: "principal",
+            };
+        }
+
+        return { isSaved: false, outfitId: "", outfitTag: "" };
+    };
 
     const syncActiveOutfitBadge = (item, outfitTag = "principal") => {
         const badge = getActiveOutfitBadge(item);
@@ -63,15 +89,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const button = getSaveButton(item);
         if (button) {
-            button.disabled = reachedLimit || hasPendingDecision;
+            button.disabled = hasPendingDecision;
             button.setAttribute("aria-disabled", button.disabled ? "true" : "false");
-            button.title = reachedLimit ? warningText : "";
-            const isSaved = count > 0;
+            const activeState = getActiveOutfitState(item);
+            const isSaved = activeState.isSaved;
             button.classList.toggle("is-saved", isSaved);
             const icon = button.querySelector("i.fa-bookmark");
             if (icon) {
                 icon.classList.toggle("fas", isSaved);
                 icon.classList.toggle("far", !isSaved);
+            }
+            if (isSaved) {
+                button.title = activeState.outfitTag === "principal"
+                    ? "Este outfit principal esta guardado. Solo se puede reemplazar."
+                    : "Olvidar este outfit guardado";
+            } else {
+                button.title = reachedLimit ? warningText : "Guardar outfit";
             }
         }
     };
@@ -263,8 +296,19 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        if (item.dataset.selectedOutfitId) {
-            clearSelectedOutfit(item);
+        const activeState = getActiveOutfitState(item);
+        if (activeState.isSaved) {
+            if (activeState.outfitTag === "principal") {
+                alert("El outfit principal ya esta guardado y no se puede eliminar. Puedes reemplazarlo desde editar.");
+                syncStats(item);
+                return;
+            }
+
+            const forgot = await window.benditoaiDeleteSelectedOutfit(item, button);
+            if (forgot) {
+                syncStats(item);
+            }
+            return;
         }
 
         const body = new URLSearchParams();
