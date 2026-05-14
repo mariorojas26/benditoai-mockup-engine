@@ -27,8 +27,8 @@ function benditoai_modelos_ai_shortcode() {
                 <aside class="baiw-ai-helper" aria-label="Asistencia de IA">
                     <span class="baiw-ai-helper__spark" aria-hidden="true"><i class="fas fa-magic"></i></span>
                     <span class="baiw-ai-helper__copy">
-                        <strong>La IA se encarga del resto</strong>
-                        <small>Generaremos outfits unicos y realistas listos para tus campanas.</small>
+                        <strong>Viste tu modelo con tu marca</strong>
+                        <small>Podras crear combinaciones de ropa de tu propia marca para cada campaña.</small>
                     </span>
                     <span class="baiw-ai-helper__badge" aria-hidden="true">AI</span>
                 </aside>
@@ -109,8 +109,8 @@ function benditoai_modelos_ai_shortcode() {
                                     <span class="baiw-mode-check" aria-hidden="true"><i class="fas fa-check"></i></span>
                                     <span class="baiw-mode-icon" aria-hidden="true"><i class="fas fa-upload"></i></span>
                                     <span class="baiw-mode-copy">
-                                        <strong>Sube una foto (opcional)</strong>
-                                        <small>La IA la usara como base si esta presente.</small>
+                                        <strong>Sube una foto</strong>
+                                        <small>Crea un avatar con rasgos idénticos a los de tu imagen de referencia.</small>
                                         <em>Recomendado para mayor realismo</em>
                                     </span>
                                 </span>
@@ -122,8 +122,8 @@ function benditoai_modelos_ai_shortcode() {
                                     <span class="baiw-mode-check" aria-hidden="true"><i class="fas fa-check"></i></span>
                                     <span class="baiw-mode-icon" aria-hidden="true"><i class="fas fa-user"></i></span>
                                     <span class="baiw-mode-copy">
-                                        <strong>Construye el avatar desde cero</strong>
-                                        <small>La IA generara un modelo completamente nuevo para ti.</small>
+                                        <strong>Desde cero</strong>
+                                        <small>Diseña el avatar definiendo cuerpo, rasgos y estilo desde cero.</small>
                                         <em>Ideal para empezar desde cero</em>
                                     </span>
                                 </span>
@@ -132,7 +132,7 @@ function benditoai_modelos_ai_shortcode() {
 
                         <div class="baiw-info-note">
                             <i class="fas fa-info-circle" aria-hidden="true"></i>
-                            <span>Puedes cambiar este tipo de creacion mas adelante desde la configuracion del modelo.</span>
+                            <span>Más adelante podrás cambiar la ropa de tu modelo, pero su rostro permanecerá igual.</span>
                         </div>
                     </div>
                 </section>
@@ -2421,8 +2421,8 @@ function benditoai_modelos_ai_shortcode() {
     border: 1px solid rgba(52, 109, 255, 0.48);
     background: rgba(25, 62, 145, 0.28);
     color: rgba(236, 232, 255, 0.9);
-    font-size: 0.92rem;
-    font-weight: 600;
+    font-size: 15px;
+    font-weight: 300;
 }
 
 .benditoai-modelos-wizard .baiw-info-note i {
