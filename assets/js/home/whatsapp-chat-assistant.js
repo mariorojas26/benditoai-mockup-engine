@@ -18,6 +18,49 @@ document.addEventListener("DOMContentLoaded", () => {
         messages.scrollTop = messages.scrollHeight;
     };
 
+    const addPlansBlock = (ui) => {
+        if (!ui || ui.type !== "plans" || !Array.isArray(ui.items) || !ui.items.length) return;
+        const card = document.createElement("div");
+        card.className = "benditoai-wa-chat__msg is-bot is-structured";
+
+        const title = document.createElement("strong");
+        title.className = "benditoai-wa-chat__plans-title";
+        title.textContent = ui.title || "Planes";
+        card.appendChild(title);
+
+        const list = document.createElement("ul");
+        list.className = "benditoai-wa-chat__plans-list";
+        ui.items.forEach((item) => {
+            const li = document.createElement("li");
+            li.className = "benditoai-wa-chat__plans-item";
+            const badge = item.badge ? `<em>${item.badge}</em>` : "";
+            li.innerHTML = [
+                `<div class="benditoai-wa-chat__plan-head">`,
+                `<span>${item.name || "Plan"}</span>`,
+                badge,
+                `</div>`,
+                `<div class="benditoai-wa-chat__plan-meta">`,
+                `<small>${Number(item.tokens || 0)} tokens</small>`,
+                `<small>${Number(item.max_modelos || 0)} modelos</small>`,
+                `<small>${Number(item.max_outfits || 0)} outfits por modelo</small>`,
+                `</div>`,
+            ].join("");
+            list.appendChild(li);
+        });
+        card.appendChild(list);
+
+        if (ui.cta_url) {
+            const cta = document.createElement("a");
+            cta.className = "benditoai-wa-chat__plans-cta";
+            cta.href = ui.cta_url;
+            cta.textContent = ui.cta_label || "Ver planes";
+            card.appendChild(cta);
+        }
+
+        messages.appendChild(card);
+        messages.scrollTop = messages.scrollHeight;
+    };
+
     const openPanel = () => {
         panel.hidden = false;
         root.classList.add("is-open");
@@ -66,6 +109,9 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             const data = await response.json();
             addMessage(data?.data?.reply || "No pude responder en este momento.", "bot");
+            if (data?.data?.ui?.type === "plans") {
+                addPlansBlock(data.data.ui);
+            }
         } catch (error) {
             addMessage("Tuve un error temporal. Intentemos de nuevo.", "bot");
         } finally {
@@ -75,4 +121,3 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
-

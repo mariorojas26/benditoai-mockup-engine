@@ -5299,10 +5299,10 @@ body.benditoai-modal-open {
         display: block;
         max-width: 100%;
         color: #ffffff;
-        font-size: 0.62rem;
         font-weight: 900;
         line-height: 1.05;
         overflow-wrap: anywhere;
+        font-size: 7px;
     }
 
     .benditoai-wrapper-historia-modelos .benditoai-history-add-model small {
@@ -6869,6 +6869,92 @@ body.benditoai-modal-open {
     color: #0a1010;
     justify-self: end;
     max-width: 85%;
+}
+
+.benditoai-wa-chat__msg.is-structured {
+    background: #1a1433;
+    border: 1px solid rgba(124, 58, 255, 0.35);
+}
+
+.benditoai-wa-chat__plans-title {
+    display: block;
+    margin-bottom: 8px;
+    color: #f4efff;
+    font-size: 0.9rem;
+}
+
+.benditoai-wa-chat__plans-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 6px;
+}
+
+.benditoai-wa-chat__plans-item {
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: rgba(124, 58, 255, 0.16);
+    border: 1px solid rgba(124, 58, 255, 0.24);
+}
+
+.benditoai-wa-chat__plans-item span,
+.benditoai-wa-chat__plans-item small {
+    display: block;
+}
+
+.benditoai-wa-chat__plan-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.benditoai-wa-chat__plans-item span {
+    color: #ffffff;
+    font-size: 0.84rem;
+    font-weight: 700;
+}
+
+.benditoai-wa-chat__plans-item em {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 20px;
+    padding: 3px 7px;
+    border-radius: 999px;
+    background: rgba(139, 92, 246, 0.28);
+    color: #d8c4ff;
+    font-size: 0.67rem;
+    font-style: normal;
+    font-weight: 700;
+}
+
+.benditoai-wa-chat__plan-meta {
+    margin-top: 6px;
+    display: grid;
+    gap: 3px;
+}
+
+.benditoai-wa-chat__plans-item small {
+    color: #d9ccff;
+    font-size: 0.76rem;
+}
+
+.benditoai-wa-chat__plans-cta {
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 7px 11px;
+    border-radius: 8px;
+    border: 1px solid rgba(124, 58, 255, 0.65);
+    background: linear-gradient(120deg, #6f30ff, #8e58ff);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-decoration: none;
 }
 
 .benditoai-wa-chat__form {

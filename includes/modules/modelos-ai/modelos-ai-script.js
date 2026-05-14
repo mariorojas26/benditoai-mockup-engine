@@ -404,6 +404,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const referenceFileName = document.getElementById("benditoai-file-name");
     const referenceFilePreview = document.getElementById("benditoai-file-preview");
     const campaignBaseUrl = root.dataset.campaignUrl || "";
+    const cancelUrl = root.dataset.cancelUrl || "/";
+    const nombreModeloInput = document.getElementById("benditoai_nombre_modelo");
+    const nombreModeloCount = document.getElementById("benditoai-modelo-name-count");
     const edadRange = document.getElementById("benditoai_edad_range");
     const edadValue = document.getElementById("benditoai_edad_value");
     const edadHidden = document.getElementById("benditoai_edad");
@@ -477,6 +480,13 @@ document.addEventListener("DOMContentLoaded", function () {
             pesoValue.textContent = `${pesoRange.value} kg`;
             setRangeProgress(pesoRange);
         }
+    };
+
+    const syncNombreModeloCount = () => {
+        if (!nombreModeloInput || !nombreModeloCount) return;
+        const current = String(nombreModeloInput.value || "").length;
+        const max = Number(nombreModeloInput.maxLength || 60);
+        nombreModeloCount.textContent = `${current}/${max > 0 ? max : 60}`;
     };
 
     const showInlineError = (message) => {
@@ -620,7 +630,11 @@ document.addEventListener("DOMContentLoaded", function () {
             progressBar.style.width = `${progress}%`;
         }
 
-        if (prevBtn) prevBtn.style.display = currentStep === 1 ? "none" : "inline-flex";
+        if (prevBtn) {
+            prevBtn.style.display = "inline-flex";
+            prevBtn.textContent = currentStep === 1 ? "Cancelar" : "Anterior";
+            prevBtn.classList.toggle("is-cancel", currentStep === 1);
+        }
         if (nextBtn) {
             const hasMode = getActiveMode() !== "";
             const shouldShow = currentStep !== totalSteps && (currentStep !== 1 || hasMode);
@@ -1053,6 +1067,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         syncVisibilityToggle();
         syncModePanels();
+        syncNombreModeloCount();
         updateStepUi();
         clearInlineError();
         showConfigStage();
@@ -1062,6 +1077,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     prevBtn?.addEventListener("click", () => {
         if (isSubmitting) return;
+        if (currentStep === 1) {
+            window.location.href = cancelUrl;
+            return;
+        }
         goToStep(currentStep - 1);
     });
 
@@ -1091,6 +1110,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     publicToggle?.addEventListener("change", syncVisibilityToggle);
+    nombreModeloInput?.addEventListener("input", syncNombreModeloCount);
 
     referenceImageInput?.addEventListener("change", () => {
         const file = referenceImageInput.files && referenceImageInput.files[0];
@@ -1180,6 +1200,7 @@ document.addEventListener("DOMContentLoaded", function () {
     syncVisibilityToggle();
     syncModePanels();
     initChoicesSelects();
+    syncNombreModeloCount();
     syncRangos();
     updateStepUi();
     resetResult();
