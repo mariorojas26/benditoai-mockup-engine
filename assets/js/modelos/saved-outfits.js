@@ -14,6 +14,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const getEmpty = (item) => item?.querySelector("[data-saved-outfits-empty]");
     const getSaveButton = (item) => item?.querySelector(".benditoai-save-outfit-btn");
     const getWarning = (item) => item?.querySelector("[data-outfit-warning-message]");
+    const getActiveOutfitBadge = (item) => item?.querySelector("[data-active-outfit-badge]");
+
+    const syncActiveOutfitBadge = (item, outfitTag = "principal") => {
+        const badge = getActiveOutfitBadge(item);
+        if (!badge) return;
+        const label = badge.querySelector("[data-active-outfit-label]");
+        const isPrincipal = String(outfitTag || "").toLowerCase() === "principal";
+        if (label) {
+            label.textContent = isPrincipal ? "Principal" : "Outfit";
+        } else {
+            badge.textContent = isPrincipal ? "Principal" : "Outfit";
+        }
+        badge.classList.toggle("is-principal", isPrincipal);
+        badge.classList.toggle("is-outfit", !isPrincipal);
+    };
 
     const getStatsFromItem = (item) => ({
         count: Number(item?.dataset.outfitCount || 0),
@@ -51,6 +66,13 @@ document.addEventListener("DOMContentLoaded", () => {
             button.disabled = reachedLimit || hasPendingDecision;
             button.setAttribute("aria-disabled", button.disabled ? "true" : "false");
             button.title = reachedLimit ? warningText : "";
+            const isSaved = count > 0;
+            button.classList.toggle("is-saved", isSaved);
+            const icon = button.querySelector("i.fa-bookmark");
+            if (icon) {
+                icon.classList.toggle("fas", isSaved);
+                icon.classList.toggle("far", !isSaved);
+            }
         }
     };
 
@@ -64,11 +86,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const modeloNombre = escapeHtml(modelData.name || "Modelo AI");
         const name = escapeHtml(outfit.nombre_outfit || "Outfit");
         const imageUrl = escapeHtml(outfit.image_url || "");
+        const outfitTag = escapeHtml(outfit.outfit_tag || "outfit");
+        const outfitTagLabel = outfitTag === "principal" ? "Principal" : "Outfit";
 
         return `
             <div
                 class="benditoai-saved-outfit-card"
                 data-outfit-id="${id}"
+                data-outfit-tag="${outfitTag}"
                 data-modelo-id="${modeloId}"
                 data-modelo-nombre="${modeloNombre}"
                 data-outfit-name="${name}"
@@ -83,6 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <span class="benditoai-saved-outfit-use">Usar</span>
                 </div>
                 <div class="benditoai-saved-outfit-body">
+                    <span class="benditoai-saved-outfit-tag">${outfitTagLabel}</span>
                     <span class="benditoai-saved-outfit-name" data-outfit-name-label>${name}</span>
                 </div>
             </div>
@@ -129,7 +155,12 @@ document.addEventListener("DOMContentLoaded", () => {
             name: item.querySelector(".benditoai-historial-name")?.textContent?.trim() || "Modelo AI",
         };
 
-        list.insertAdjacentHTML("afterbegin", renderOutfitCard(outfit, modelData));
+        if ((outfit.outfit_tag || "") === "principal") {
+            list.insertAdjacentHTML("afterbegin", renderOutfitCard(outfit, modelData));
+            return;
+        }
+
+        list.insertAdjacentHTML("beforeend", renderOutfitCard(outfit, modelData));
     };
 
     const setButtonLoading = (button, label) => {
@@ -148,6 +179,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const getCleanImageUrl = (url) => String(url || "").split("?")[0];
 
+    const syncDownloadLinks = (item, imageUrl) => {
+        if (!item || !imageUrl) return;
+        const noCache = `${getCleanImageUrl(imageUrl)}?t=${Date.now()}`;
+        item.querySelectorAll("a[download]").forEach((link) => {
+            link.href = noCache;
+        });
+    };
+
     const ensureBaseModelSnapshot = (item) => {
         if (!item || item.dataset.baseModeloImage) return;
 
@@ -157,7 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const name = item.querySelector(".benditoai-historial-name")?.textContent?.trim() || "Modelo AI";
 
         item.dataset.baseModeloImage = getCleanImageUrl(useButton?.dataset.modeloImage || editButton?.dataset.image || mainImage?.src || "");
-        item.dataset.baseModeloName = name;
+        item.dataset.baseModeloName = String(useButton?.dataset.modeloNombre || name);
     };
 
     const clearSelectedOutfit = (item, stats = null) => {
@@ -170,6 +209,9 @@ document.addEventListener("DOMContentLoaded", () => {
         delete item.dataset.selectedOutfitId;
         delete item.dataset.selectedOutfitImage;
         delete item.dataset.selectedOutfitName;
+        delete item.dataset.selectedOutfitTag;
+        item.dataset.liveModeloImage = baseImage;
+        syncActiveOutfitBadge(item, "principal");
 
         item.querySelectorAll(".benditoai-saved-outfit-card").forEach((outfitCard) => {
             outfitCard.classList.remove("is-selected");
@@ -187,18 +229,25 @@ document.addEventListener("DOMContentLoaded", () => {
             item.querySelectorAll(".benditoai-use-campaign-btn").forEach((button) => {
                 button.dataset.modeloImage = baseImage;
                 button.dataset.modeloNombre = baseName;
-                delete button.dataset.outfitId;
-                delete button.dataset.outfitName;
-                delete button.dataset.source;
+                const principalOutfitId = String(item.dataset.principalOutfitId || "");
+                if (principalOutfitId) {
+                    button.dataset.outfitId = principalOutfitId;
+                    button.dataset.outfitName = baseName;
+                    button.dataset.outfitTag = "principal";
+                    button.dataset.source = "principal_outfit";
+                } else {
+                    delete button.dataset.outfitId;
+                    delete button.dataset.outfitName;
+                    delete button.dataset.outfitTag;
+                    delete button.dataset.source;
+                }
             });
 
             item.querySelectorAll(".benditoai-edit-modelo-btn").forEach((button) => {
                 button.dataset.image = baseImage;
             });
 
-            item.querySelectorAll(".benditoai-btn--download").forEach((link) => {
-                link.href = noCache;
-            });
+            syncDownloadLinks(item, baseImage);
         }
 
         syncStats(item, stats);
@@ -257,10 +306,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const payload = {
             id: String(card.dataset.modeloId || item.dataset.id || ""),
             outfit_id: String(card.dataset.outfitId || ""),
+            outfit_tag: String(card.dataset.outfitTag || "outfit"),
             nombre: String(card.dataset.outfitName || card.dataset.modeloNombre || item.querySelector(".benditoai-historial-name")?.textContent?.trim() || "Modelo AI"),
             outfit_name: String(card.dataset.outfitName || "Outfit"),
             image_url: String(card.dataset.outfitImage || ""),
-            source: "saved_outfit",
+            source: String(card.dataset.outfitTag || "") === "principal" ? "principal_outfit" : "saved_outfit",
             created_at: new Date().toISOString(),
         };
 
@@ -276,6 +326,9 @@ document.addEventListener("DOMContentLoaded", () => {
         item.dataset.selectedOutfitId = payload.outfit_id;
         item.dataset.selectedOutfitImage = payload.image_url;
         item.dataset.selectedOutfitName = payload.outfit_name;
+        item.dataset.selectedOutfitTag = payload.outfit_tag;
+        item.dataset.liveModeloImage = payload.image_url;
+        syncActiveOutfitBadge(item, payload.outfit_tag);
         syncStats(item);
 
         const noCache = `${payload.image_url}?t=${Date.now()}`;
@@ -290,16 +343,15 @@ document.addEventListener("DOMContentLoaded", () => {
             button.dataset.modeloNombre = payload.outfit_name;
             button.dataset.outfitId = payload.outfit_id;
             button.dataset.outfitName = payload.outfit_name;
-            button.dataset.source = "saved_outfit";
+            button.dataset.outfitTag = payload.outfit_tag;
+            button.dataset.source = payload.source;
         });
 
         item.querySelectorAll(".benditoai-edit-modelo-btn").forEach((button) => {
             button.dataset.image = payload.image_url;
         });
 
-        item.querySelectorAll(".benditoai-btn--download").forEach((link) => {
-            link.href = noCache;
-        });
+        syncDownloadLinks(item, payload.image_url);
 
         try {
             localStorage.setItem("benditoai_campaign_model_ref", JSON.stringify(payload));
@@ -307,6 +359,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 id: payload.id,
                 name: payload.nombre,
                 outfit_id: payload.outfit_id,
+                outfit_tag: payload.outfit_tag,
                 outfit_name: payload.outfit_name,
                 image_url: payload.image_url,
             }));
@@ -320,6 +373,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.benditoaiDeleteSelectedOutfit = async (item, button) => {
         if (!item?.dataset.selectedOutfitId) return false;
+        if ((item.dataset.selectedOutfitTag || "") === "principal") {
+            alert("El outfit principal no se puede eliminar. Solo se puede reemplazar.");
+            return true;
+        }
 
         const outfitId = item.dataset.selectedOutfitId;
         if (!window.confirm("Eliminar este outfit guardado?")) return true;
@@ -373,10 +430,68 @@ document.addEventListener("DOMContentLoaded", () => {
         card.dataset.outfitImage = imageUrl;
     };
 
+    const renameOutfit = async (card) => {
+        if (!card) return;
+        const outfitId = String(card.dataset.outfitId || "");
+        if (!outfitId) return;
+
+        const currentName = String(card.dataset.outfitName || "").trim() || "Outfit";
+        const nextName = window.prompt("Nuevo nombre del outfit:", currentName);
+        if (nextName === null) return;
+        const cleanName = nextName.trim();
+        if (!cleanName || cleanName === currentName) return;
+
+        const body = new URLSearchParams();
+        body.set("action", "benditoai_rename_modelo_outfit");
+        body.set("outfit_id", outfitId);
+        body.set("nombre_outfit", cleanName);
+
+        try {
+            const response = await fetch(benditoai_ajax.ajax_url, {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: body.toString(),
+            });
+            const data = await response.json();
+            if (!data.success) {
+                alert(data?.data?.message || "No se pudo renombrar el outfit");
+                return;
+            }
+
+            const finalName = String(data?.data?.nombre_outfit || cleanName);
+            card.dataset.outfitName = finalName;
+            const label = card.querySelector("[data-outfit-name-label]");
+            if (label) {
+                label.textContent = finalName;
+            }
+
+            const item = getItem(card);
+            if (item && String(item.dataset.selectedOutfitId || "") === outfitId) {
+                item.dataset.selectedOutfitName = finalName;
+                item.querySelectorAll(".benditoai-use-campaign-btn").forEach((button) => {
+                    button.dataset.modeloNombre = finalName;
+                    button.dataset.outfitName = finalName;
+                });
+            }
+        } catch (error) {
+            alert("Error inesperado");
+        }
+    };
+
     document.addEventListener("click", (event) => {
         const saveButton = event.target.closest(".benditoai-save-outfit-btn");
         if (saveButton) {
             saveOutfit(saveButton);
+            return;
+        }
+
+        const downloadLink = event.target.closest("a[download]");
+        if (downloadLink) {
+            const item = getItem(downloadLink);
+            const liveImage = item?.dataset.liveModeloImage || item?.dataset.selectedOutfitImage || item?.dataset.baseModeloImage || item?.querySelector(".benditoai-historial-img")?.src || "";
+            if (liveImage) {
+                downloadLink.href = `${getCleanImageUrl(liveImage)}?t=${Date.now()}`;
+            }
             return;
         }
 
@@ -392,6 +507,16 @@ document.addEventListener("DOMContentLoaded", () => {
         if (card && !event.target.closest("button, input, textarea, label")) {
             selectOutfitAsMain(card);
         }
+    });
+
+    document.addEventListener("dblclick", (event) => {
+        const label = event.target.closest("[data-outfit-name-label]");
+        if (!label) return;
+        const card = label.closest(".benditoai-saved-outfit-card");
+        if (!card) return;
+        event.preventDefault();
+        event.stopPropagation();
+        renameOutfit(card);
     });
 
     document.addEventListener("keydown", (event) => {
@@ -417,6 +542,47 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    document.addEventListener("benditoai:outfit-committed", (event) => {
+        const detail = event.detail || {};
+        const item = wrapper.querySelector(`.benditoai-historial-item[data-id="${String(detail.modelo_id || "")}"]`);
+        const outfit = detail.outfit || null;
+        if (!item || !outfit || !outfit.id) return;
+
+        const list = getList(item);
+        if (!list) return;
+
+        let card = Array.from(list.querySelectorAll(".benditoai-saved-outfit-card"))
+            .find((candidate) => String(candidate.dataset.outfitId || "") === String(outfit.id));
+
+        if (!card) {
+            appendOutfitCard(item, outfit);
+            card = Array.from(list.querySelectorAll(".benditoai-saved-outfit-card"))
+                .find((candidate) => String(candidate.dataset.outfitId || "") === String(outfit.id));
+        } else {
+            card.dataset.outfitName = outfit.nombre_outfit || card.dataset.outfitName || "Outfit";
+            card.dataset.outfitImage = outfit.image_url || card.dataset.outfitImage || "";
+            card.dataset.outfitTag = outfit.outfit_tag || card.dataset.outfitTag || "outfit";
+            const nameLabel = card.querySelector("[data-outfit-name-label]");
+            if (nameLabel) nameLabel.textContent = card.dataset.outfitName;
+            const tagLabel = card.querySelector(".benditoai-saved-outfit-tag");
+            if (tagLabel) tagLabel.textContent = card.dataset.outfitTag === "principal" ? "Principal" : "Outfit";
+            updateOutfitImage(card, card.dataset.outfitImage || "");
+        }
+
+        syncStats(item, detail.stats || null);
+
+        if (detail.active_outfit_tag === "principal") {
+            item.dataset.principalOutfitId = String(outfit.id || item.dataset.principalOutfitId || "");
+            item.dataset.principalOutfitImage = String(outfit.image_url || item.dataset.principalOutfitImage || "");
+            item.dataset.baseModeloImage = outfit.image_url || item.dataset.baseModeloImage || "";
+            item.dataset.baseModeloName = outfit.nombre_outfit || item.dataset.baseModeloName || "";
+        }
+
+        if (card) {
+            selectOutfitAsMain(card);
+        }
+    });
+
     const observedItems = new WeakSet();
     const observeItem = (item) => {
         if (!item || observedItems.has(item)) return;
@@ -435,12 +601,14 @@ document.addEventListener("DOMContentLoaded", () => {
     wrapper.querySelectorAll(".benditoai-historial-item").forEach((item) => {
         observeItem(item);
         syncStats(item);
+        syncActiveOutfitBadge(item, item.dataset.selectedOutfitTag || "principal");
     });
 
     document.addEventListener("benditoai:historial-updated", () => {
         wrapper.querySelectorAll(".benditoai-historial-item").forEach((item) => {
             observeItem(item);
             syncStats(item);
+            syncActiveOutfitBadge(item, item.dataset.selectedOutfitTag || "principal");
         });
     });
 

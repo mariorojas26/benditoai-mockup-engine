@@ -7,56 +7,63 @@ if (!function_exists('benditoai_modelos_ai_get_outfit_catalog')) {
         'name' => 'Hip-hop',
         'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/hip-hop.png',
         'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/hip-hop.png',
-        'prompt_hint' => 'Apply a hip-hop inspired look with bold street pieces and confident styling.'
+        'prompt_hint' => 'Aplica un look inspirado en el hip-hop, con prendas urbanas llamativas y una actitud segura.'
     ),
     array(
         'id' => 'streetwear',
         'name' => 'Streetwear',
         'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/streetwear.png',
         'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/streetwear.png',
-        'prompt_hint' => 'Prioritize a contemporary streetwear wardrobe with layered pieces and urban attitude.'
+        'prompt_hint' => 'Prioriza un outfit streetwear contemporaneo, con capas y actitud urbana.'
     ),
     array(
         'id' => 'urbano',
         'name' => 'Urbano',
         'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/urbano.png',
         'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/urbano.png',
-        'prompt_hint' => 'Use a clean urban style with modern silhouettes and wearable pieces for daily fashion.'
+        'prompt_hint' => 'Usa un estilo urbano limpio, con siluetas modernas y prendas funcionales para el dia a dia.'
     ),
     array(
         'id' => 'elegante',
         'name' => 'Elegante',
         'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/elegante.png',
         'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/elegante.png',
-        'prompt_hint' => 'Keep the styling elegant and refined with polished garments and premium visual finish.'
+        'prompt_hint' => 'Manten un estilismo elegante y refinado, con prendas pulidas y acabado visual premium.'
     ),
     array(
         'id' => 'minimalista',
         'name' => 'Minimalista',
         'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/minimalista.png',
         'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/minimalista.png',
-        'prompt_hint' => 'Apply a minimalist outfit direction with reduced color palette and clean composition.'
+        'prompt_hint' => 'Aplica una direccion minimalista, con paleta reducida y composicion limpia.'
     ),
     array(
         'id' => 'deportivo',
         'name' => 'Deportivo',
         'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/deportivo.png',
         'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/deportivo.png',
-        'prompt_hint' => 'Use a sporty fashion direction with activewear influence and dynamic styling.'
+        'prompt_hint' => 'Usa una direccion deportiva, con influencia activewear y estilismo dinamico.'
     ),
     array(
         'id' => 'casual',
         'name' => 'Casual',
         'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/casual.png',
         'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/casual.png',
-        'prompt_hint' => 'Keep the wardrobe casual and versatile for social content and ecommerce usage.'
+        'prompt_hint' => 'Manten un vestuario casual y versatil para contenido social y ecommerce.'
     ),
     array(
         'id' => 'editorial',
         'name' => 'Editorial',
         'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/editorial.png',
         'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/editorial.png',
-        'prompt_hint' => 'Use an editorial fashion tone with stylized garments and high-impact visual storytelling.'
+        'prompt_hint' => 'Usa un tono editorial de moda, con prendas estilizadas y narrativa visual de alto impacto.'
+    ),
+    array(
+        'id' => 'oversize',
+        'name' => 'Oversize',
+        'thumb_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/oversize.png',
+        'reference_url' => BENDIDOAI_PLUGIN_URL . 'assets/images/estilosDeModelo/oversize.png',
+        'prompt_hint' => 'Aplica una silueta oversize urbana, con ajuste relajado, proporciones en capas y estilismo contemporaneo.'
     ),
 );
 
@@ -106,23 +113,32 @@ function benditoai_modelos_ai_historial_shortcode() {
         ? benditoai_modelo_outfit_warning()
         : 'Has alcanzado el límite de outfits para este modelo.';
 
+    $plan_data = function_exists('benditoai_get_user_plan_data')
+        ? benditoai_get_user_plan_data($user_id)
+        : array('max_modelos' => 3);
+    $model_limit = max(0, (int) ($plan_data['max_modelos'] ?? 3));
+    $model_count = is_array($historial) ? count($historial) : 0;
+    $model_limit_warning = 'Maximo de modelos alcanzado. Actualiza tu plan para crear mas.';
+
     ob_start();
     ?>
-    <div
-        class="benditoai-wrapper-historia-modelos"
-        data-campaign-url="<?php echo esc_url($campaign_url); ?>"
-        data-outfit-catalog="<?php echo esc_attr($outfit_catalog_json ? $outfit_catalog_json : '[]'); ?>"
-        data-outfit-limit="<?php echo esc_attr($outfit_limit); ?>"
-        data-outfit-warning="<?php echo esc_attr($outfit_limit_warning); ?>"
-    >
-        <div class="benditoai-historial-toolbar" aria-hidden="true">
+    <div class="benditoai-modelos-ai-shell">
+        <div class="benditoai-historial-toolbar">
             <a href="<?php echo esc_url(home_url('/crea-modelo/')); ?>" class="benditoai-historial-new-model">+ Crear nuevo modelo</a>
-            <button type="button" class="benditoai-historial-toolbar-icon" tabindex="-1">
-                <i class="fas fa-bell" aria-hidden="true"></i>
-            </button>
         </div>
 
-        <h2 class="benditoai-historial-title">Mis Modelos AI</h2>
+        <div
+            class="benditoai-wrapper-historia-modelos"
+            data-campaign-url="<?php echo esc_url($campaign_url); ?>"
+            data-outfit-catalog="<?php echo esc_attr($outfit_catalog_json ? $outfit_catalog_json : '[]'); ?>"
+            data-outfit-limit="<?php echo esc_attr($outfit_limit); ?>"
+            data-outfit-warning="<?php echo esc_attr($outfit_limit_warning); ?>"
+            data-create-model-url="<?php echo esc_url(home_url('/crea-modelo/')); ?>"
+            data-model-count="<?php echo esc_attr($model_count); ?>"
+            data-model-limit="<?php echo esc_attr($model_limit); ?>"
+            data-model-warning="<?php echo esc_attr($model_limit_warning); ?>"
+        >
+        <h2 class="benditoai-historial-title benditoai-historial-title-1">Mis Modelos</h2>
 
         <?php if ($sin_modelos): ?>
             <p class="benditoai-message" id="benditoai-empty-message">
@@ -152,6 +168,24 @@ function benditoai_modelos_ai_historial_shortcode() {
                     : array();
                 $saved_outfits_count = count($saved_outfits);
                 $can_save_outfit = $saved_outfits_count < (int) $outfit_limit;
+                $principal_outfit = null;
+                foreach ($saved_outfits as $candidate_outfit) {
+                    if ((string) ($candidate_outfit->outfit_tag ?? '') === 'principal') {
+                        $principal_outfit = $candidate_outfit;
+                        break;
+                    }
+                }
+                if (!$principal_outfit && !empty($saved_outfits)) {
+                    $principal_outfit = $saved_outfits[0];
+                }
+
+                $display_image = !empty($principal_outfit->image_url)
+                    ? (string) $principal_outfit->image_url
+                    : (string) ($item->image_url ?? '');
+                $display_name = !empty($principal_outfit->nombre_outfit)
+                    ? (string) $principal_outfit->nombre_outfit
+                    : (string) $item->nombre_modelo;
+                $principal_outfit_id = (int) ($principal_outfit->id ?? 0);
                 ?>
 
                 <div
@@ -160,17 +194,19 @@ function benditoai_modelos_ai_historial_shortcode() {
                     data-outfit-count="<?php echo esc_attr($saved_outfits_count); ?>"
                     data-outfit-limit="<?php echo esc_attr($outfit_limit); ?>"
                     data-outfit-warning="<?php echo esc_attr($outfit_limit_warning); ?>"
+                    data-principal-outfit-id="<?php echo esc_attr($principal_outfit_id); ?>"
+                    data-principal-outfit-image="<?php echo esc_url($display_image); ?>"
                 >
 
                     <p class="benditoai-historial-name">
                         <?php echo esc_html($item->nombre_modelo); ?>
                     </p>
 
-                    <?php if (!empty($item->image_url)): ?>
+                    <?php if (!empty($display_image)): ?>
                         <div class="benditoai-img-wrap">
                             <img
-                                src="<?php echo esc_url($item->image_url); ?>"
-                                alt="<?php echo esc_attr($item->nombre_modelo); ?>"
+                                src="<?php echo esc_url($display_image); ?>"
+                                alt="<?php echo esc_attr($display_name); ?>"
                                 class="benditoai-historial-img"
                             />
 
@@ -181,7 +217,7 @@ function benditoai_modelos_ai_historial_shortcode() {
                                 <?php disabled(!$can_save_outfit); ?>
                                 aria-disabled="<?php echo $can_save_outfit ? 'false' : 'true'; ?>"
                             >
-                                <i class="fas fa-bookmark" aria-hidden="true"></i>
+                                <i class="far fa-bookmark" aria-hidden="true"></i>
                                 <span>Guardar outfit</span>
                             </button>
 
@@ -225,6 +261,8 @@ function benditoai_modelos_ai_historial_shortcode() {
                                             $saved_outfit_id = (int) ($saved_outfit->id ?? 0);
                                             $saved_outfit_name = (string) ($saved_outfit->nombre_outfit ?? 'Outfit');
                                             $saved_outfit_image = (string) ($saved_outfit->image_url ?? '');
+                                            $saved_outfit_tag = (string) ($saved_outfit->outfit_tag ?? 'outfit');
+                                            $saved_outfit_label = $saved_outfit_tag === 'principal' ? 'Principal' : 'Outfit';
                                             if ($saved_outfit_id <= 0 || $saved_outfit_image === '') {
                                                 continue;
                                             }
@@ -232,6 +270,7 @@ function benditoai_modelos_ai_historial_shortcode() {
                                             <div
                                                 class="benditoai-saved-outfit-card"
                                                 data-outfit-id="<?php echo esc_attr($saved_outfit_id); ?>"
+                                                data-outfit-tag="<?php echo esc_attr($saved_outfit_tag); ?>"
                                                 data-modelo-id="<?php echo esc_attr($item->id); ?>"
                                                 data-modelo-nombre="<?php echo esc_attr($item->nombre_modelo); ?>"
                                                 data-outfit-name="<?php echo esc_attr($saved_outfit_name); ?>"
@@ -247,6 +286,7 @@ function benditoai_modelos_ai_historial_shortcode() {
                                                 </div>
 
                                                 <div class="benditoai-saved-outfit-body">
+                                                    <span class="benditoai-saved-outfit-tag"><?php echo esc_html($saved_outfit_label); ?></span>
                                                     <span class="benditoai-saved-outfit-name" data-outfit-name-label><?php echo esc_html($saved_outfit_name); ?></span>
                                                 </div>
                                             </div>
@@ -304,7 +344,7 @@ function benditoai_modelos_ai_historial_shortcode() {
 
                             <div class="benditoai-action-buttons">
                                 <div class="hoverselect">
-                                    <a href="<?php echo esc_url($item->image_url); ?>" download class="benditoai-btn benditoai-btn--download benditoai-icon-btn" aria-label="Descargar modelo">
+                                    <a href="<?php echo esc_url($display_image); ?>" download class="benditoai-btn benditoai-btn--download benditoai-icon-btn" aria-label="Descargar modelo">
                                         <img
                                             src="<?php echo esc_url($icon_download); ?>"
                                             class="benditoai-btn-icon"
@@ -315,7 +355,7 @@ function benditoai_modelos_ai_historial_shortcode() {
                                 </div>
 
                                 <div class="hoverselect">
-                                    <button class="benditoai-edit-modelo-btn benditoai-icon-btn" data-id="<?php echo esc_attr($item->id); ?>" data-image="<?php echo esc_url($item->image_url); ?>" aria-label="Editar modelo">
+                                    <button class="benditoai-edit-modelo-btn benditoai-icon-btn" data-id="<?php echo esc_attr($item->id); ?>" data-image="<?php echo esc_url($display_image); ?>" aria-label="Editar modelo">
                                         <img
                                             src="<?php echo esc_url($icon_edit); ?>"
                                             class="benditoai-btn-icon"
@@ -341,8 +381,11 @@ function benditoai_modelos_ai_historial_shortcode() {
                                 type="button"
                                 class="benditoai-use-campaign-btn"
                                 data-modelo-id="<?php echo esc_attr($item->id); ?>"
-                                data-modelo-nombre="<?php echo esc_attr($item->nombre_modelo); ?>"
-                                data-modelo-image="<?php echo esc_url($item->image_url); ?>"
+                                data-modelo-nombre="<?php echo esc_attr($display_name); ?>"
+                                data-modelo-image="<?php echo esc_url($display_image); ?>"
+                                data-outfit-id="<?php echo esc_attr($principal_outfit_id); ?>"
+                                data-outfit-tag="principal"
+                                data-source="principal_outfit"
                             >
                                 Usar para campaña
                             </button>
@@ -357,7 +400,7 @@ function benditoai_modelos_ai_historial_shortcode() {
                                     type="button"
                                     class="benditoai-panel-title-edit benditoai-edit-modelo-btn"
                                     data-id="<?php echo esc_attr($item->id); ?>"
-                                    data-image="<?php echo esc_url($item->image_url); ?>"
+                                    data-image="<?php echo esc_url($display_image); ?>"
                                     aria-label="Editar modelo"
                                 >
                                     <i class="fas fa-pen" aria-hidden="true"></i>
@@ -368,6 +411,10 @@ function benditoai_modelos_ai_historial_shortcode() {
                                 <?php if (!empty($item->estilo)): ?>
                                     <span class="benditoai-model-badge"><i class="fas fa-tag" aria-hidden="true"></i><?php echo esc_html($item->estilo); ?></span>
                                 <?php endif; ?>
+                                <span class="benditoai-model-badge benditoai-model-badge--outfit-state" data-active-outfit-badge>
+                                    <i class="fas fa-shirt" aria-hidden="true"></i>
+                                    <span data-active-outfit-label>Principal</span>
+                                </span>
                                 <span class="benditoai-model-badge"><i class="far fa-check-circle" aria-hidden="true"></i>Listo para campana</span>
                             </div>
                             <div class="benditoai-desktop-model-divider"></div>
@@ -390,8 +437,11 @@ function benditoai_modelos_ai_historial_shortcode() {
                                     type="button"
                                     class="benditoai-use-campaign-btn benditoai-use-campaign-btn--panel cards-skills-panel-cta"
                                     data-modelo-id="<?php echo esc_attr($item->id); ?>"
-                                    data-modelo-nombre="<?php echo esc_attr($item->nombre_modelo); ?>"
-                                    data-modelo-image="<?php echo esc_url($item->image_url); ?>"
+                                    data-modelo-nombre="<?php echo esc_attr($display_name); ?>"
+                                    data-modelo-image="<?php echo esc_url($display_image); ?>"
+                                    data-outfit-id="<?php echo esc_attr($principal_outfit_id); ?>"
+                                    data-outfit-tag="principal"
+                                    data-source="principal_outfit"
                                 >
                                     Lanzar campana <span aria-hidden="true">&rarr;</span>
                                 </button>
@@ -399,12 +449,12 @@ function benditoai_modelos_ai_historial_shortcode() {
 
                             <h4 class="benditoai-desktop-manage-title">Gestiona tu modelo</h4>
                             <div class="benditoai-desktop-model-secondary">
-                                <button class="benditoai-edit-modelo-btn benditoai-desktop-tool-card" data-id="<?php echo esc_attr($item->id); ?>" data-image="<?php echo esc_url($item->image_url); ?>">
+                                <button class="benditoai-edit-modelo-btn benditoai-desktop-tool-card" data-id="<?php echo esc_attr($item->id); ?>" data-image="<?php echo esc_url($display_image); ?>">
                                     <span class="benditoai-desktop-tool-title"><i class="fas fa-pen" aria-hidden="true"></i><span>Editar modelo</span></span>
                                     <span class="benditoai-desktop-tool-desc">Cambia la apariencia, ropa, accesorios o detalles del modelo.</span>
                                     <span class="benditoai-desktop-tool-arrow" aria-hidden="true">&rarr;</span>
                                 </button>
-                                <a href="<?php echo esc_url($item->image_url); ?>" download class="benditoai-desktop-tool-card">
+                                <a href="<?php echo esc_url($display_image); ?>" download class="benditoai-desktop-tool-card">
                                     <span class="benditoai-desktop-tool-title"><i class="fas fa-download" aria-hidden="true"></i><span>Descargar modelo</span></span>
                                     <span class="benditoai-desktop-tool-desc">Descarga las imagenes del modelo para usar en tus proyectos.</span>
                                     <span class="benditoai-desktop-tool-arrow" aria-hidden="true">&rarr;</span>
@@ -414,7 +464,7 @@ function benditoai_modelos_ai_historial_shortcode() {
                             <?php if (!empty($outfit_catalog) && is_array($outfit_catalog)): ?>
                                 <div class="benditoai-desktop-style-pills" data-style-catalog-rail>
                                     <div class="benditoai-desktop-style-pills-head">
-                                        <span>Estilos sugeridos</span>
+                                        <span>Estilos para editar tu modelo</span>
                                         <div class="benditoai-style-rail-nav" aria-label="Navegar estilos">
                                             <button type="button" class="benditoai-style-rail-btn is-prev" data-style-nav="prev" aria-label="Ver estilos anteriores">
                                                 <span aria-hidden="true">&lsaquo;</span>
@@ -474,8 +524,8 @@ function benditoai_modelos_ai_historial_shortcode() {
                     </div>
 
                     <div class="benditoai-edit-decision" hidden>
-                        <button type="button" class="benditoai-edit-apply-btn">Conservar</button>
-                        <button type="button" class="benditoai-edit-discard-btn">Deshacer</button>
+                        <button type="button" class="benditoai-edit-add-btn">Agregar</button>
+                        <button type="button" class="benditoai-edit-replace-btn">Reemplazar</button>
                     </div>
 
                     <button class="benditoai-toggle-info">Ver detalles</button>
@@ -517,6 +567,30 @@ function benditoai_modelos_ai_historial_shortcode() {
                 <span aria-hidden="true">&rsaquo;</span>
             </button>
         </div>
+        </div>
+        <section class="benditoai-prompt-debugger is-collapsed" data-prompt-debugger aria-label="Depurador de prompts">
+            <button type="button" class="benditoai-prompt-debugger-toggle" data-prompt-debugger-toggle aria-expanded="false">
+                <i class="fas fa-terminal" aria-hidden="true"></i>
+                <span>Prompts</span>
+            </button>
+            <div class="benditoai-prompt-debugger-panel" data-prompt-debugger-panel>
+                <div class="benditoai-prompt-debugger-head">
+                    <div>
+                        <span class="benditoai-prompt-debugger-kicker">Debug en vivo</span>
+                        <strong>Prompt armado</strong>
+                    </div>
+                    <button type="button" class="benditoai-prompt-debugger-minimize" data-prompt-debugger-minimize aria-label="Minimizar depurador">
+                        <i class="fas fa-minus" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div class="benditoai-prompt-debugger-meta">
+                    <span data-prompt-debug-model>Modelo: sin editor</span>
+                    <span data-prompt-debug-outfit>Outfit: principal</span>
+                    <span data-prompt-debug-mode>Modo: esperando</span>
+                </div>
+                <div class="benditoai-prompt-debugger-output-rich" data-prompt-debug-output>Abre el editor, escribe, selecciona un estilo o sube una prenda para ver aqui el prompt en tiempo real.</div>
+            </div>
+        </section>
     </div>
 
     <?php

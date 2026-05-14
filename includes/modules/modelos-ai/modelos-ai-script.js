@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return `
             <div class="benditoai-desktop-style-pills" data-style-catalog-rail>
                 <div class="benditoai-desktop-style-pills-head">
-                    <span>Estilos sugeridos</span>
+                    <span>Estilos sugerido para editar tus modelos</span>
                     <div class="benditoai-style-rail-nav" aria-label="Navegar estilos">
                         <button type="button" class="benditoai-style-rail-btn is-prev" data-style-nav="prev" aria-label="Ver estilos anteriores">
                             <span aria-hidden="true">&lsaquo;</span>
@@ -72,9 +72,43 @@ document.addEventListener("DOMContentLoaded", function () {
         return historyWrapper?.dataset.outfitWarning || "Has alcanzado el límite de outfits para este modelo.";
     };
 
-    const renderSavedOutfitsRailMarkup = () => {
+    const renderSavedOutfitsRailMarkup = (modelData = null) => {
         const limit = getOutfitLimit();
         const warning = escapeHtml(getOutfitWarning());
+        const principal = modelData && modelData.principal_outfit ? modelData.principal_outfit : null;
+        const principalName = principal?.nombre_outfit || `${modelData?.nombre_modelo || "Modelo AI"} Outfit(1)`;
+        const principalImage = principal?.image_url || modelData?.image_url || "";
+        const principalId = principal?.id || "";
+        const hasPrincipal = Boolean(principalImage);
+        const initialCount = hasPrincipal ? 1 : 0;
+        const canAdd = initialCount < limit;
+        const initialWarning = !canAdd ? warning : "";
+        const principalCard = hasPrincipal
+            ? `
+                <div
+                    class="benditoai-saved-outfit-card"
+                    data-outfit-id="${escapeHtml(principalId)}"
+                    data-outfit-tag="principal"
+                    data-modelo-id="${escapeHtml(modelData?.id || "")}"
+                    data-modelo-nombre="${escapeHtml(modelData?.nombre_modelo || "Modelo AI")}"
+                    data-outfit-name="${escapeHtml(principalName)}"
+                    data-outfit-image="${escapeHtml(principalImage)}"
+                    role="button"
+                    tabindex="0"
+                    aria-pressed="false"
+                    aria-label="Usar outfit: ${escapeHtml(principalName)}"
+                >
+                    <div class="benditoai-saved-outfit-thumb">
+                        <img src="${escapeHtml(principalImage)}" alt="${escapeHtml(principalName)}" loading="lazy" />
+                        <span class="benditoai-saved-outfit-use">Usar</span>
+                    </div>
+                    <div class="benditoai-saved-outfit-body">
+                        <span class="benditoai-saved-outfit-tag">Principal</span>
+                        <span class="benditoai-saved-outfit-name" data-outfit-name-label>${escapeHtml(principalName)}</span>
+                    </div>
+                </div>
+            `
+            : "";
 
         return `
             <button
@@ -85,18 +119,19 @@ document.addEventListener("DOMContentLoaded", function () {
             >
                 <i class="fas fa-shirt" aria-hidden="true"></i>
                 <span>Outfits del modelo</span>
-                <strong class="benditoai-outfit-counter" data-outfit-counter>0 de ${limit}</strong>
+                <strong class="benditoai-outfit-counter" data-outfit-counter>${initialCount} de ${limit}</strong>
             </button>
             <div class="benditoai-saved-outfits benditoai-saved-outfits-panel" data-saved-outfits-rail hidden>
                 <div class="benditoai-saved-outfits-panel-head">
                     <span>Mis outfits guardados</span>
-                    <strong class="benditoai-outfit-counter" data-outfit-counter>0 de ${limit} outfits guardados</strong>
+                    <strong class="benditoai-outfit-counter" data-outfit-counter>${initialCount} de ${limit} outfits guardados</strong>
                 </div>
-                <p class="benditoai-outfit-limit-warning" data-outfit-warning-message hidden>${warning}</p>
+                <p class="benditoai-outfit-limit-warning" data-outfit-warning-message ${canAdd ? "hidden" : ""}>${initialWarning}</p>
                 <div class="benditoai-saved-outfits-list" data-saved-outfits-list>
+                    ${principalCard || `
                     <p class="benditoai-saved-outfits-empty" data-saved-outfits-empty>
                         Aun no tienes outfits guardados para este modelo.
-                    </p>
+                    </p>`}
                 </div>
             </div>
         `;
@@ -135,6 +170,16 @@ document.addEventListener("DOMContentLoaded", function () {
         const thumbsClass = "benditoai-mobile-history-thumbs";
         const desktopThumbsClass = "benditoai-desktop-history-thumbs";
         const escapeAttr = (value) => String(value || "").replace(/"/g, "&quot;");
+        const getCreateModelUrl = () => historyWrapper?.dataset.createModelUrl || "/crea-modelo/";
+        const getModelLimit = () => {
+            const parsed = Number(historyWrapper?.dataset.modelLimit || 0);
+            return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+        };
+        const getModelWarning = () => historyWrapper?.dataset.modelWarning || "Maximo de modelos alcanzado.";
+        const canAddModel = (count) => {
+            const limit = getModelLimit();
+            return limit > 0 && count < limit;
+        };
 
         const getItems = () => Array.from(grid.querySelectorAll(".benditoai-historial-item"));
         const getPerPage = () => 1;
@@ -156,7 +201,15 @@ document.addEventListener("DOMContentLoaded", function () {
         };
 
         const buildThumbsMarkup = (items, activeIndex, thumbClass) => {
-            return items.map((item, index) => {
+            const count = items.length;
+            const limit = getModelLimit();
+            const canAdd = canAddModel(count);
+            const remaining = Math.max(0, limit - count);
+            const addLabel = canAdd ? "Añadir modelo" : "Máximo alcanzado";
+            const addTitle = canAdd
+                ? `Puedes crear ${remaining} modelo${remaining === 1 ? "" : "s"} más`
+                : getModelWarning();
+            const modelThumbs = items.map((item, index) => {
                 const src = getItemImage(item);
                 const label = item.querySelector(".benditoai-historial-name")?.textContent?.trim() || `Modelo ${index + 1}`;
                 const selected = index === activeIndex;
@@ -172,12 +225,28 @@ document.addEventListener("DOMContentLoaded", function () {
                     </button>
                 `;
             }).join("");
+
+            const addThumb = `
+                <button
+                    type="button"
+                    class="${thumbClass} benditoai-history-add-model${canAdd ? "" : " is-disabled"}"
+                    data-history-add-model
+                    aria-label="${escapeAttr(addTitle)}"
+                    aria-disabled="${canAdd ? "false" : "true"}"
+                    title="${escapeAttr(addTitle)}"
+                    ${canAdd ? "" : "disabled"}
+                >
+                    <span class="benditoai-history-add-model-icon" aria-hidden="true">${canAdd ? "+" : "!"}</span>
+                    <span class="benditoai-history-add-model-text">${addLabel}</span>
+                    <small>${count}/${limit}</small>
+                </button>
+            `;
+
+            return modelThumbs + addThumb;
         };
 
         const renderThumbs = (items, activeIndex) => {
             clearThumbs();
-            if (items.length <= 1) return;
-
             const activeItem = items[activeIndex];
             if (!activeItem) return;
 
@@ -254,6 +323,17 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         grid.addEventListener("click", (event) => {
+            const addModel = event.target.closest("[data-history-add-model]");
+            if (addModel) {
+                const items = getItems();
+                if (!canAddModel(items.length)) {
+                    alert(getModelWarning());
+                    return;
+                }
+                window.location.href = getCreateModelUrl();
+                return;
+            }
+
             const thumb = event.target.closest("[data-history-index]");
             if (!thumb) return;
             const targetIndex = Number(thumb.dataset.historyIndex || -1);
@@ -683,7 +763,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const emptyMsg = document.getElementById("benditoai-empty-message");
         if (emptyMsg) emptyMsg.remove();
 
-        const noCacheUrl = `${d.image_url}?t=${Date.now()}`;
+        const principalOutfit = d.principal_outfit || null;
         const iconDownload = `${benditoai_ajax.plugin_url}assets/images/icon-download.png`;
         const iconEdit = `${benditoai_ajax.plugin_url}assets/images/icon-edit.png`;
         const iconDelete = `${benditoai_ajax.plugin_url}assets/images/icon-delete.png`;
@@ -697,22 +777,29 @@ document.addEventListener("DOMContentLoaded", function () {
         const descripcionModelo = escapeHtml(d.descripcion_modelo || "Modelo AI listo para campanas de moda, redes y lookbooks.");
         const fecha = escapeHtml(d.fecha || "-");
         const publico = Number(d.perfil_publico) === 1 ? "Publico" : "Privado";
+        const rawDisplayImage = (principalOutfit && principalOutfit.image_url) ? principalOutfit.image_url : d.image_url;
+        const displayImage = escapeHtml(rawDisplayImage || "");
+        const displayName = escapeHtml((principalOutfit && principalOutfit.nombre_outfit) ? principalOutfit.nombre_outfit : (d.nombre_modelo || "Modelo AI"));
+        const noCacheUrl = `${displayImage}?t=${Date.now()}`;
 
         const outfitLimit = getOutfitLimit();
         const outfitWarning = escapeHtml(getOutfitWarning());
+        const initialOutfitCount = principalOutfit && principalOutfit.image_url ? 1 : 0;
+        const canSaveOutfit = initialOutfitCount < outfitLimit;
 
         const nuevoItem = `
-            <div class="benditoai-historial-item" data-id="${d.id}" data-outfit-count="0" data-outfit-limit="${outfitLimit}" data-outfit-warning="${outfitWarning}">
+            <div class="benditoai-historial-item" data-id="${d.id}" data-outfit-count="${initialOutfitCount}" data-outfit-limit="${outfitLimit}" data-outfit-warning="${outfitWarning}" data-principal-outfit-id="${escapeHtml(principalOutfit?.id || "")}" data-principal-outfit-image="${escapeHtml(principalOutfit?.image_url || d.image_url)}">
                 <p class="benditoai-historial-name">${nombreModelo}</p>
                 <div class="benditoai-img-wrap">
-                    <img src="${noCacheUrl}" alt="${nombreModelo}" class="benditoai-historial-img" />
+                    <img src="${noCacheUrl}" alt="${displayName}" class="benditoai-historial-img" />
                     <button
                         type="button"
                         class="benditoai-save-outfit-btn"
                         data-modelo-id="${d.id}"
-                        aria-disabled="false"
+                        ${canSaveOutfit ? "" : "disabled"}
+                        aria-disabled="${canSaveOutfit ? "false" : "true"}"
                     >
-                        <i class="fas fa-bookmark" aria-hidden="true"></i>
+                        <i class="far fa-bookmark" aria-hidden="true"></i>
                         <span>Guardar outfit</span>
                     </button>
                     <div class="benditoai-inline-edit" hidden>
@@ -754,7 +841,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             </a>
                         </div>
                         <div class="hoverselect">
-                            <button class="benditoai-edit-modelo-btn benditoai-icon-btn" data-id="${d.id}" data-image="${d.image_url}" aria-label="Editar modelo">
+                            <button class="benditoai-edit-modelo-btn benditoai-icon-btn" data-id="${d.id}" data-image="${displayImage}" aria-label="Editar modelo">
                                 <img src="${iconEdit}" class="benditoai-btn-icon" alt="" aria-hidden="true" />
                             </button>
                         </div>
@@ -768,12 +855,15 @@ document.addEventListener("DOMContentLoaded", function () {
                         type="button"
                         class="benditoai-use-campaign-btn"
                         data-modelo-id="${d.id}"
-                        data-modelo-nombre="${nombreModelo}"
-                        data-modelo-image="${d.image_url}"
+                        data-modelo-nombre="${displayName}"
+                        data-modelo-image="${displayImage}"
+                        data-outfit-id="${escapeHtml(principalOutfit?.id || "")}"
+                        data-outfit-tag="principal"
+                        data-source="principal_outfit"
                     >
                         Usar para campana
                     </button>
-                    ${renderSavedOutfitsRailMarkup()}
+                    ${renderSavedOutfitsRailMarkup(d)}
                 </div>
                 <div class="benditoai-desktop-model-panel">
                     <div class="benditoai-desktop-model-head">
@@ -783,7 +873,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 type="button"
                                 class="benditoai-panel-title-edit benditoai-edit-modelo-btn"
                                 data-id="${d.id}"
-                                data-image="${d.image_url}"
+                                data-image="${displayImage}"
                                 aria-label="Editar modelo"
                             >
                                 <i class="fas fa-pen" aria-hidden="true"></i>
@@ -792,6 +882,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <div class="benditoai-desktop-model-badges">
                             <span class="benditoai-model-badge benditoai-model-badge--status"><i class="fas fa-lock" aria-hidden="true"></i>${Number(d.perfil_publico) === 1 ? "Activo" : "Privado"}</span>
                             <span class="benditoai-model-badge"><i class="fas fa-tag" aria-hidden="true"></i>${estilo}</span>
+                            <span class="benditoai-model-badge benditoai-model-badge--outfit-state" data-active-outfit-badge><i class="fas fa-shirt" aria-hidden="true"></i><span data-active-outfit-label>Principal</span></span>
                             <span class="benditoai-model-badge"><i class="far fa-check-circle" aria-hidden="true"></i>Listo para campana</span>
                         </div>
                         <div class="benditoai-desktop-model-divider"></div>
@@ -813,15 +904,18 @@ document.addEventListener("DOMContentLoaded", function () {
                                 type="button"
                                 class="benditoai-use-campaign-btn benditoai-use-campaign-btn--panel cards-skills-panel-cta"
                                 data-modelo-id="${d.id}"
-                                data-modelo-nombre="${nombreModelo}"
-                                data-modelo-image="${d.image_url}"
+                                data-modelo-nombre="${displayName}"
+                                data-modelo-image="${displayImage}"
+                                data-outfit-id="${escapeHtml(principalOutfit?.id || "")}"
+                                data-outfit-tag="principal"
+                                data-source="principal_outfit"
                             >
                                 Lanzar campana <span aria-hidden="true">&rarr;</span>
                             </button>
                         </div>
                         <h4 class="benditoai-desktop-manage-title">Gestiona tu modelo</h4>
                         <div class="benditoai-desktop-model-secondary">
-                            <button class="benditoai-edit-modelo-btn benditoai-desktop-tool-card" data-id="${d.id}" data-image="${d.image_url}">
+                            <button class="benditoai-edit-modelo-btn benditoai-desktop-tool-card" data-id="${d.id}" data-image="${displayImage}">
                                 <span class="benditoai-desktop-tool-title"><i class="fas fa-pen" aria-hidden="true"></i><span>Editar modelo</span></span>
                                 <span class="benditoai-desktop-tool-desc">Cambia la apariencia, ropa, accesorios o detalles del modelo.</span>
                                 <span class="benditoai-desktop-tool-arrow" aria-hidden="true">&rarr;</span>
@@ -850,8 +944,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                 </div>
                 <div class="benditoai-edit-decision" hidden>
-                    <button type="button" class="benditoai-edit-apply-btn">Conservar</button>
-                    <button type="button" class="benditoai-edit-discard-btn">Deshacer</button>
+                    <button type="button" class="benditoai-edit-add-btn">Agregar</button>
+                    <button type="button" class="benditoai-edit-replace-btn">Reemplazar</button>
                 </div>
                 <button class="benditoai-toggle-info">Ver detalles</button>
                 <div class="benditoai-historial-info" style="display:none;">
@@ -909,10 +1003,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 insertHistorialItem(d);
 
                 try {
+                    const principalOutfit = d.principal_outfit || null;
+                    const selectedImage = (principalOutfit && principalOutfit.image_url) ? principalOutfit.image_url : d.image_url;
                     localStorage.setItem("benditoai_selected_model", JSON.stringify({
                         id: d.id,
                         name: d.nombre_modelo,
-                        image_url: d.image_url,
+                        image_url: selectedImage || "",
                     }));
                 } catch (storageError) {
                     // Ignore storage errors.

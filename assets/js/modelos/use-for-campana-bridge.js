@@ -18,6 +18,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (payload.outfit_id) {
             url.searchParams.set("outfit_id", String(payload.outfit_id));
         }
+        if (payload.outfit_tag) {
+            url.searchParams.set("outfit_tag", String(payload.outfit_tag));
+        }
         url.searchParams.set("source", String(payload.source || "historial"));
         return url.toString();
     };
@@ -36,9 +39,10 @@ document.addEventListener("DOMContentLoaded", () => {
             id: String(id),
             nombre: String(nombre || "Modelo AI"),
             outfit_id: String(button.dataset.outfitId || ""),
+            outfit_tag: String(button.dataset.outfitTag || ""),
             outfit_name: String(button.dataset.outfitName || ""),
             image_url: String(imageUrl),
-            source: String(button.dataset.source || "modelos_historial"),
+            source: String(button.dataset.source || (button.dataset.outfitTag === "principal" ? "principal_outfit" : "modelos_historial")),
             created_at: new Date().toISOString(),
         };
     };

@@ -30,12 +30,210 @@ document.addEventListener("DOMContentLoaded", function () {
     const getInlineSelectedStyleIdInput = (item) => item?.querySelector(".benditoai-inline-edit-selected-style-id");
     const getInlineSelectedStyleBlock = (item) => item?.querySelector(".benditoai-inline-edit-style");
     const getInlineSelectedStyleValue = (item) => item?.querySelector(".benditoai-inline-edit-style-value");
+    const promptDebugger = document.querySelector("[data-prompt-debugger]");
+    const promptDebuggerToggle = promptDebugger?.querySelector("[data-prompt-debugger-toggle]");
+    const promptDebuggerMinimize = promptDebugger?.querySelector("[data-prompt-debugger-minimize]");
+    const promptDebuggerOutput = promptDebugger?.querySelector("[data-prompt-debug-output]");
+    const promptDebuggerModel = promptDebugger?.querySelector("[data-prompt-debug-model]");
+    const promptDebuggerOutfit = promptDebugger?.querySelector("[data-prompt-debug-outfit]");
+    const promptDebuggerMode = promptDebugger?.querySelector("[data-prompt-debug-mode]");
 
     const getDecision = (item) => item?.querySelector(".benditoai-edit-decision");
-    const getDecisionApply = (item) => item?.querySelector(".benditoai-edit-apply-btn");
-    const getDecisionDiscard = (item) => item?.querySelector(".benditoai-edit-discard-btn");
+    const getDecisionAdd = (item) => item?.querySelector(".benditoai-edit-add-btn");
+    const getDecisionReplace = (item) => item?.querySelector(".benditoai-edit-replace-btn");
     const getAllEditButtons = (item) => item ? Array.from(item.querySelectorAll(".benditoai-edit-modelo-btn")) : [];
     const getPanelCampaignButtons = (item) => item ? Array.from(item.querySelectorAll(".benditoai-use-campaign-btn--panel")) : [];
+    let activeDebugItem = null;
+    const escapeDebuggerHtml = (value) => String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    const formatDebuggerText = (value) => escapeDebuggerHtml(value).replace(/\n/g, "<br>");
+    const formatFinalWithDynamicHighlights = (finalText, dynamicParts = []) => {
+        let escapedFinal = escapeDebuggerHtml(finalText || "");
+        const uniqueParts = Array.from(new Set(
+            (dynamicParts || [])
+                .map((part) => String(part || "").trim())
+                .filter((part) => part !== "")
+        )).sort((a, b) => b.length - a.length);
+
+        uniqueParts.forEach((part) => {
+            const escapedPart = escapeDebuggerHtml(part);
+            if (!escapedPart) return;
+            escapedFinal = escapedFinal.split(escapedPart).join(
+                `<span class="benditoai-prompt-dynamic-inline">${escapedPart}</span>`
+            );
+        });
+
+        return escapedFinal.replace(/\n/g, "<br>");
+    };
+
+    const isVisibleHistoryItem = (item) => {
+        if (!item) return false;
+        if (item.hidden) return false;
+        if (item.getAttribute("aria-hidden") === "true") return false;
+        if (item.style.display === "none") return false;
+        return document.body.contains(item);
+    };
+
+    const getActiveDebugItem = (fallback = null) => {
+        if (fallback && isVisibleHistoryItem(fallback)) return fallback;
+        if (isVisibleHistoryItem(activeDebugItem)) return activeDebugItem;
+        return document.querySelector(".benditoai-historial-item.is-editing") ||
+            document.querySelector(".benditoai-historial-item:not([hidden])");
+    };
+
+    const getActiveStyleData = (item) => {
+        const selectedStyle = getInlineSelectedStyleInput(item)?.value?.trim() || "";
+        const selectedStyleId = getInlineSelectedStyleIdInput(item)?.value?.trim() || "";
+        const activeOption = item?.querySelector(".benditoai-style-option.is-active");
+        return {
+            label: selectedStyle || activeOption?.dataset.styleLabel || "",
+            id: selectedStyleId || activeOption?.dataset.styleId || "",
+            hint: activeOption?.dataset.stylePrompt || "",
+        };
+    };
+
+    const getDebugRequest = (item) => {
+        const manualText = getInlineText(item)?.value?.trim() || "";
+        const file = getInlineFile(item);
+        const hasReference = Boolean(file && file.files && file.files[0]);
+        const style = getActiveStyleData(item);
+        let request = manualText;
+        let mode = "Texto manual";
+
+        if (!request && hasReference) {
+            request = "Cambia exactamente la prenda de la imagen adjunta por la del modelo, sin cambiar su rostro ni su pose. Ajusta la prenda perfectamente, de forma fiel, realista y natural.";
+            mode = style.label ? "Prenda + estilo" : "Prenda adjunta";
+        } else if (!request && style.label) {
+            request = `Viste al modelo con ropa aleatoriamente al estilo ${style.label}, manteniendo el rostro del modelo fiel y su pose.`;
+            mode = "Estilo automatico";
+        } else if (request && hasReference && style.label) {
+            mode = "Texto + prenda + estilo";
+        } else if (request && hasReference) {
+            mode = "Texto + prenda";
+        } else if (request && style.label) {
+            mode = "Texto + estilo";
+        } else if (!request) {
+            mode = "Esperando datos";
+        }
+
+        return { request, mode, hasReference, style };
+    };
+
+    const buildPromptPreview = (item) => {
+        if (!item) {
+            return {
+                model: "Modelo: sin editor",
+                outfit: "Outfit: principal",
+                mode: "Modo: esperando",
+                base: "Abre el editor para ver la plantilla base usada en este flujo.",
+                dynamic: "Escribe texto, sube prenda o selecciona estilo para ver este bloque dinamico.",
+                prompt: "Abre el editor, escribe, selecciona un estilo o sube una prenda para ver aqui el prompt en tiempo real.",
+            };
+        }
+
+        const modelName = item.querySelector(".benditoai-historial-name")?.textContent?.trim() ||
+            item.dataset.baseModeloName ||
+            "Modelo AI";
+        const outfitName = item.dataset.selectedOutfitName ||
+            item.dataset.baseModeloName ||
+            "Principal";
+        const outfitTag = item.dataset.selectedOutfitTag || "principal";
+        const debug = getDebugRequest(item);
+        const styleHint = debug.style.hint || (debug.style.label ? `Estilo preferido seleccionado por el usuario: ${debug.style.label}. Manten esta direccion de estilo respetando la solicitud exacta de cambio de prenda.` : "");
+        const contextRules = styleHint ? `Pista de referencia: ${styleHint}\n` : "";
+        const dynamicLines = [];
+        dynamicLines.push(`Solicitud de cambio del usuario:\n${debug.request || "(vacio)"}`);
+        dynamicLines.push(`Estilo seleccionado (label): ${debug.style.label || "(sin estilo seleccionado)"}`);
+        dynamicLines.push(`Estilo seleccionado (id): ${debug.style.id || "(sin id de estilo)"}`);
+        dynamicLines.push(`Prenda de referencia adjunta: ${debug.hasReference ? "SI" : "NO"}`);
+        if (styleHint) {
+            dynamicLines.push(`Pista de estilo:\n${styleHint}`);
+        }
+        const dynamicBlock = dynamicLines.join("\n\n");
+
+        const baseGeneralHeader = "Edita esta imagen.\n\nMisma persona, rostro, cuerpo, pose, fondo, iluminacion y camara.";
+        const basePreciseRules = "Edicion puntual: cambia SOLO la prenda objetivo.\nNo alteres otras prendas, identidad ni escena.\nSi son zapatos, reemplaza solo calzado y conserva pantalon.\nResultado natural, fotorrealista, 4K.";
+        const baseRestyleRules = "Reestiliza SOLO el outfit (ropa/accesorios/calzado) segun el estilo.\nLook coherente, natural y comercial.\nNo cambies identidad ni escena.\nCalidad fotorrealista, 4K.";
+        const baseGarmentStyleRules = "La prenda de referencia tiene prioridad.\nEl estilo solo armoniza el resto del look.\nMantener identidad y escena sin cambios.\nCalidad fotorrealista, 4K.";
+
+        let baseBlock = "";
+        let prompt = "";
+        let referenceDynamicLine = "";
+
+        if (!debug.request) {
+            baseBlock = "Aun no hay flujo activo.";
+            prompt = "Todavia no hay prompt para enviar.\n\nAgrega texto, sube una prenda o selecciona un estilo para ver el prompt armado.";
+        } else if (!debug.hasReference && debug.style.label && debug.mode === "Estilo automatico") {
+            baseBlock = `${baseGeneralHeader}\n\nNo se adjunto imagen de prenda de referencia.\nCrea vestuario nuevo segun el estilo.\n\n${baseRestyleRules}`;
+            prompt = `Edita esta imagen.\n\nMisma persona, rostro, cuerpo, pose, fondo, iluminacion y camara.\n\nSolicitud:\n${debug.request}\n\nNo se adjunto referencia. Crea vestuario nuevo segun el estilo.\n${contextRules}\nReestiliza SOLO el outfit con resultado coherente, natural y comercial.\nNo generes otra persona ni redisenes la escena.\nCalidad fotorrealista, 4K.`;
+        } else if (debug.hasReference && debug.style.label) {
+            referenceDynamicLine = "Se adjunta PRENDA DE REFERENCIA: aplicala fielmente (tipo, material, color y detalles clave).";
+            baseBlock = `${baseGeneralHeader}\n\nSe adjunta PRENDA DE REFERENCIA: aplicala fielmente.\n\n${baseGarmentStyleRules}`;
+            prompt = `Edita esta imagen.\n\nMisma persona, rostro, cuerpo, pose, fondo, iluminacion y camara.\n\nSolicitud:\n${debug.request}\n\nSe adjunta PRENDA DE REFERENCIA: aplicala fielmente (tipo, material, color y detalles clave).\n${contextRules}\nLa prenda de referencia tiene prioridad; el estilo solo armoniza el resto del look.\nNo cambies identidad ni escena.\nCalidad fotorrealista, 4K.`;
+        } else {
+            const referenceRules = debug.hasReference
+                ? "Se adjunta PRENDA DE REFERENCIA: reemplaza SOLO la prenda solicitada y manten el resto intacto."
+                : "Sin referencia: aplica solo la solicitud del usuario en la prenda objetivo.";
+            if (debug.hasReference) {
+                referenceDynamicLine = "Se adjunta PRENDA DE REFERENCIA: reemplaza SOLO la prenda solicitada y manten el resto intacto.";
+            }
+            baseBlock = `${baseGeneralHeader}\n\n${referenceRules}\n\n${basePreciseRules}`;
+            prompt = `Edita esta imagen.\n\nMisma persona, rostro, cuerpo, pose, fondo, iluminacion y camara.\n\nSolicitud:\n${debug.request}\n\n${referenceRules}\n${contextRules}Edicion puntual: cambia SOLO la prenda objetivo; no alteres otras prendas ni identidad.\nSi son zapatos, reemplaza solo calzado y conserva pantalon.\nSin redisenar escena. Resultado natural, fotorrealista, 4K.`;
+        }
+
+        return {
+            model: `Modelo: ${modelName}`,
+            outfit: `Outfit: ${outfitTag === "principal" ? "Principal" : outfitName}`,
+            mode: `Modo: ${debug.mode}`,
+            base: baseBlock,
+            dynamic: dynamicBlock,
+            prompt,
+            dynamic_for_final: [
+                debug.request || "",
+                referenceDynamicLine,
+                styleHint ? `Pista de referencia: ${styleHint}` : "",
+            ],
+        };
+    };
+
+    const updatePromptDebugger = (item = null) => {
+        if (!promptDebugger || !promptDebuggerOutput) return;
+        const activeItem = getActiveDebugItem(item);
+        if (activeItem) activeDebugItem = activeItem;
+        const preview = buildPromptPreview(activeItem);
+        if (promptDebuggerModel) promptDebuggerModel.textContent = preview.model;
+        if (promptDebuggerOutfit) promptDebuggerOutfit.textContent = preview.outfit;
+        if (promptDebuggerMode) promptDebuggerMode.textContent = preview.mode;
+        promptDebuggerOutput.innerHTML = [
+            `<div class="benditoai-prompt-unified">`,
+            `<div class="benditoai-prompt-unified-part is-base">`,
+            `<span class="benditoai-prompt-unified-tag">BASE</span>`,
+            `<div class="benditoai-prompt-unified-text">${formatDebuggerText(preview.base)}</div>`,
+            `</div>`,
+            `<div class="benditoai-prompt-unified-part is-dynamic">`,
+            `<span class="benditoai-prompt-unified-tag">DINAMICO</span>`,
+            `<div class="benditoai-prompt-unified-text">${formatDebuggerText(preview.dynamic)}</div>`,
+            `</div>`,
+            `<div class="benditoai-prompt-unified-part is-final">`,
+            `<span class="benditoai-prompt-unified-tag">FINAL</span>`,
+            `<div class="benditoai-prompt-unified-text">${formatFinalWithDynamicHighlights(preview.prompt, preview.dynamic_for_final || [])}</div>`,
+            `</div>`,
+            `</div>`,
+        ].join("");
+    };
+
+    const schedulePromptDebuggerUpdate = (item = null) => {
+        window.requestAnimationFrame(() => updatePromptDebugger(item));
+    };
+
+    const setPromptDebuggerOpen = (isOpen) => {
+        if (!promptDebugger || !promptDebuggerToggle) return;
+        promptDebugger.classList.toggle("is-collapsed", !isOpen);
+        promptDebuggerToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        if (isOpen) schedulePromptDebuggerUpdate();
+    };
 
     const setEditButtonsActiveState = (item, isActive) => {
         getAllEditButtons(item).forEach((button) => {
@@ -67,6 +265,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const showEditor = (item) => {
         const edit = getInlineEdit(item);
         if (!edit) return;
+        activeDebugItem = item;
         item.classList.add("is-editing");
         setEditButtonsActiveState(item, true);
         setCampaignButtonsEditingState(item, true);
@@ -75,6 +274,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (text) {
             window.setTimeout(() => text.focus(), 40);
         }
+        schedulePromptDebuggerUpdate(item);
     };
 
     const hideEditor = (item) => {
@@ -104,6 +304,7 @@ document.addEventListener("DOMContentLoaded", function () {
             thumb.setAttribute("aria-pressed", "false");
         });
         syncRefTriggerPreview(item, null, "");
+        schedulePromptDebuggerUpdate(item);
     };
 
     const syncRefTriggerPreview = (item, imageUrl, labelText) => {
@@ -139,7 +340,7 @@ document.addEventListener("DOMContentLoaded", function () {
         triggerText.textContent = labelText || "Referencia lista";
     };
 
-    const setSelectedStyle = (item, styleLabel, styleId, styleImage) => {
+    const setSelectedStyle = (item, styleLabel, styleId) => {
         const selectedStyleInput = getInlineSelectedStyleInput(item);
         const selectedStyleIdInput = getInlineSelectedStyleIdInput(item);
         const selectedStyleBlock = getInlineSelectedStyleBlock(item);
@@ -159,13 +360,13 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!normalizedStyle) {
             selectedStyleValue.textContent = "";
             selectedStyleBlock.hidden = true;
-            syncRefTriggerPreview(item, "", "");
+            schedulePromptDebuggerUpdate(item);
             return;
         }
 
         selectedStyleValue.textContent = normalizedStyle;
         selectedStyleBlock.hidden = false;
-        syncRefTriggerPreview(item, styleImage || "", `Estilo: ${normalizedStyle}`);
+        schedulePromptDebuggerUpdate(item);
     };
 
     const showDecision = (item) => {
@@ -180,6 +381,24 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!decision) return;
         decision.hidden = true;
         item.classList.remove("is-awaiting-decision");
+    };
+
+    const syncDecisionButtons = (item, stats = null) => {
+        const addBtn = getDecisionAdd(item);
+        const replaceBtn = getDecisionReplace(item);
+        const canAdd = Boolean(stats?.can_add ?? true);
+        const warning = stats?.warning || "No tienes mas espacios disponibles para agregar outfits.";
+
+        if (addBtn) {
+            addBtn.disabled = !canAdd;
+            addBtn.setAttribute("aria-disabled", canAdd ? "false" : "true");
+            addBtn.title = canAdd ? "" : warning;
+        }
+
+        if (replaceBtn) {
+            replaceBtn.disabled = false;
+            replaceBtn.setAttribute("aria-disabled", "false");
+        }
     };
 
     const setLoading = (item, isLoading) => {
@@ -198,12 +417,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const updateImageInCard = (item, imageUrl) => {
         const img = getCardImage(item);
         const editBtns = item ? Array.from(item.querySelectorAll(".benditoai-edit-modelo-btn")) : [];
-        const downloadBtns = item ? Array.from(item.querySelectorAll(".benditoai-btn--download")) : [];
+        const downloadBtns = item ? Array.from(item.querySelectorAll("a[download]")) : [];
         const campaignUseBtns = item ? Array.from(item.querySelectorAll(".benditoai-use-campaign-btn")) : [];
         if (!img || !imageUrl) return;
 
         const noCache = `${imageUrl}?t=${Date.now()}`;
         img.src = noCache;
+        item.dataset.liveModeloImage = imageUrl;
+        if (item.dataset.selectedOutfitId) {
+            item.dataset.selectedOutfitImage = imageUrl;
+        }
         editBtns.forEach((button) => {
             button.dataset.image = imageUrl;
         });
@@ -258,15 +481,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!editBtn || !text) return;
 
-        const texto = text.value.trim();
-        if (!texto) {
-            alert("Escribe que deseas cambiar.");
-            return;
-        }
-
         const modeloId = editBtn.dataset.id || "";
         const currentImageUrl = editBtn.dataset.image || "";
         const selectedOutfitId = item.dataset.selectedOutfitId || "";
+        const selectedStyleInput = getInlineSelectedStyleInput(item);
+        const selectedStyle = selectedStyleInput?.value?.trim() || "";
+        const selectedStyleIdInput = getInlineSelectedStyleIdInput(item);
+        const selectedStyleId = selectedStyleIdInput?.value?.trim() || "";
+        let texto = text.value.trim();
+        const hasReferenceGarment = Boolean(file && file.files && file.files[0]);
+        const isAutoGarmentPrompt = !texto && hasReferenceGarment;
+        const isAutoStylePrompt = !texto && !hasReferenceGarment && selectedStyle;
+
+        if (isAutoGarmentPrompt) {
+            texto = "Cambia exactamente la prenda de la imagen adjunta por la del modelo, sin cambiar su rostro ni su pose. Ajusta la prenda perfectamente, de forma fiel, realista y natural.";
+        } else if (isAutoStylePrompt) {
+            texto = `Viste al modelo con ropa aleatoriamente al estilo ${selectedStyle}, manteniendo el rostro del modelo fiel y su pose.`;
+        }
+
+        if (!texto) {
+            alert("Escribe que deseas cambiar, sube una prenda o selecciona un estilo.");
+            return;
+        }
 
         const formData = new FormData();
         formData.append("action", selectedOutfitId ? "benditoai_preview_edit_modelo_outfit" : "benditoai_preview_edit_modelo");
@@ -276,14 +512,16 @@ document.addEventListener("DOMContentLoaded", function () {
             formData.append("modelo_id", modeloId);
         }
         formData.append("texto", texto);
-        if (file && file.files && file.files[0]) {
+        if (isAutoStylePrompt) {
+            formData.append("style_only_prompt", "1");
+        }
+        if (isAutoGarmentPrompt) {
+            formData.append("garment_only_prompt", "1");
+        }
+        if (hasReferenceGarment) {
             formData.append("prenda_referencia", file.files[0]);
         }
 
-        const selectedStyleInput = getInlineSelectedStyleInput(item);
-        const selectedStyle = selectedStyleInput?.value?.trim() || "";
-        const selectedStyleIdInput = getInlineSelectedStyleIdInput(item);
-        const selectedStyleId = selectedStyleIdInput?.value?.trim() || "";
         if (selectedStyle) {
             formData.append("selected_style", selectedStyle);
         }
@@ -326,6 +564,7 @@ document.addEventListener("DOMContentLoaded", function () {
             updateImageInCard(item, previewUrl);
             hideEditor(item);
             showDecision(item);
+            syncDecisionButtons(item, data?.data?.stats || null);
             setLoading(item, false);
             item.classList.remove("is-edit-submitted");
         } catch (error) {
@@ -342,10 +581,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const modeloId = editBtn.dataset.id || "";
         const selectedOutfitId = item.dataset.selectedOutfitId || "";
-        const applyBtn = getDecisionApply(item);
-        const discardBtn = getDecisionDiscard(item);
-        if (applyBtn) applyBtn.disabled = true;
-        if (discardBtn) discardBtn.disabled = true;
+        const addBtn = getDecisionAdd(item);
+        const replaceBtn = getDecisionReplace(item);
+        if (addBtn) addBtn.disabled = true;
+        if (replaceBtn) replaceBtn.disabled = true;
 
         try {
             const body = new URLSearchParams();
@@ -367,43 +606,68 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (!data.success) {
                 alert(data?.data?.message || "No se pudo confirmar la edicion");
-                if (applyBtn) applyBtn.disabled = false;
-                if (discardBtn) discardBtn.disabled = false;
+                syncDecisionButtons(item, data?.data?.stats || null);
                 return;
             }
 
-            if (decision === "discard" && state.originalUrl) {
-                updateImageInCard(item, state.originalUrl);
+            const finalImage = data?.data?.image_url || state.previewUrl;
+            if (finalImage) {
+                updateImageInCard(item, finalImage);
             }
 
-            if (decision === "apply") {
-                state.originalUrl = state.previewUrl;
-                if (selectedOutfitId) {
-                    item.dataset.selectedOutfitImage = data?.data?.image_url || state.previewUrl;
-                    document.dispatchEvent(new CustomEvent("benditoai:outfit-updated", {
-                        detail: {
-                            outfit_id: selectedOutfitId,
-                            image_url: data?.data?.image_url || state.previewUrl,
-                        },
-                    }));
-                }
+            const outfitItem = data?.data?.outfit || null;
+            if (outfitItem && outfitItem.id) {
+                document.dispatchEvent(new CustomEvent("benditoai:outfit-committed", {
+                    detail: {
+                        decision,
+                        modelo_id: modeloId,
+                        outfit: outfitItem,
+                        stats: data?.data?.stats || null,
+                        active_outfit_id: data?.data?.active_outfit_id || outfitItem.id,
+                        active_outfit_tag: data?.data?.active_outfit_tag || outfitItem.outfit_tag || "outfit",
+                    },
+                }));
+            } else if (selectedOutfitId && finalImage) {
+                document.dispatchEvent(new CustomEvent("benditoai:outfit-updated", {
+                    detail: {
+                        outfit_id: selectedOutfitId,
+                        image_url: finalImage,
+                    },
+                }));
+            }
+
+            if ((data?.data?.active_outfit_tag || "") === "principal") {
+                item.dataset.baseModeloImage = finalImage;
+                item.dataset.baseModeloName = data?.data?.outfit?.nombre_outfit || item.dataset.baseModeloName || "";
             }
 
             state.previewUrl = "";
             state.previewToken = "";
             state.pendingDecision = false;
+            state.originalUrl = finalImage || state.originalUrl;
 
             hideDecision(item);
-            if (applyBtn) applyBtn.disabled = false;
-            if (discardBtn) discardBtn.disabled = false;
+            syncDecisionButtons(item, data?.data?.stats || null);
         } catch (error) {
             alert("Error inesperado");
-            if (applyBtn) applyBtn.disabled = false;
-            if (discardBtn) discardBtn.disabled = false;
+            syncDecisionButtons(item, null);
         }
     };
 
     document.addEventListener("click", function (e) {
+        const debugToggle = e.target.closest("[data-prompt-debugger-toggle]");
+        if (debugToggle) {
+            const isOpen = promptDebugger?.classList.contains("is-collapsed");
+            setPromptDebuggerOpen(Boolean(isOpen));
+            return;
+        }
+
+        const debugMinimize = e.target.closest("[data-prompt-debugger-minimize]");
+        if (debugMinimize) {
+            setPromptDebuggerOpen(false);
+            return;
+        }
+
         const editTrigger = e.target.closest(".benditoai-edit-modelo-btn");
         if (editTrigger) {
             const item = editTrigger.closest(".benditoai-historial-item");
@@ -419,6 +683,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (cancelInline) {
             const item = cancelInline.closest(".benditoai-historial-item");
             hideEditor(item);
+            schedulePromptDebuggerUpdate(item);
             return;
         }
 
@@ -444,16 +709,33 @@ document.addEventListener("DOMContentLoaded", function () {
                 thumb.setAttribute("aria-pressed", "false");
             });
             if (isActive) {
-                setSelectedStyle(item, "", "", "");
+                setSelectedStyle(item, "", "");
             } else {
                 styleOption.classList.add("is-active");
                 styleOption.setAttribute("aria-pressed", "true");
                 const styleLabel = styleOption.dataset.styleLabel || "Estilo";
                 const styleId = styleOption.dataset.styleId || "";
-                const styleImage = styleOption.dataset.styleReference || "";
-                setSelectedStyle(item, styleLabel, styleId, styleImage);
+                setSelectedStyle(item, styleLabel, styleId);
             }
+            schedulePromptDebuggerUpdate(item);
             return;
+        }
+
+        const outfitCard = e.target.closest(".benditoai-saved-outfit-card");
+        if (outfitCard) {
+            const item = outfitCard.closest(".benditoai-historial-item");
+            if (item) {
+                activeDebugItem = item;
+                window.setTimeout(() => updatePromptDebugger(item), 80);
+            }
+        }
+
+        const historyNav = e.target.closest("[data-history-index], [data-history-page='prev'], [data-history-page='next']");
+        if (historyNav) {
+            window.setTimeout(() => {
+                activeDebugItem = null;
+                updatePromptDebugger();
+            }, 80);
         }
 
         const submitInline = e.target.closest(".benditoai-inline-edit-submit");
@@ -463,17 +745,17 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        const applyBtn = e.target.closest(".benditoai-edit-apply-btn");
-        if (applyBtn) {
-            const item = applyBtn.closest(".benditoai-historial-item");
-            sendDecision(item, "apply");
+        const addBtn = e.target.closest(".benditoai-edit-add-btn");
+        if (addBtn) {
+            const item = addBtn.closest(".benditoai-historial-item");
+            sendDecision(item, "add");
             return;
         }
 
-        const discardBtn = e.target.closest(".benditoai-edit-discard-btn");
-        if (discardBtn) {
-            const item = discardBtn.closest(".benditoai-historial-item");
-            sendDecision(item, "discard");
+        const replaceBtn = e.target.closest(".benditoai-edit-replace-btn");
+        if (replaceBtn) {
+            const item = replaceBtn.closest(".benditoai-historial-item");
+            sendDecision(item, "replace");
             return;
         }
 
@@ -493,10 +775,21 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    document.addEventListener("input", function (e) {
+        const text = e.target.closest(".benditoai-inline-edit-text");
+        if (!text) return;
+        const item = text.closest(".benditoai-historial-item");
+        if (item) {
+            activeDebugItem = item;
+            schedulePromptDebuggerUpdate(item);
+        }
+    });
+
     document.addEventListener("change", function (e) {
         const input = e.target.closest(".benditoai-inline-edit-ref-file");
         if (!input) return;
         const item = input.closest(".benditoai-historial-item");
+        if (item) activeDebugItem = item;
         const name = getInlineFileName(item);
         if (!name) return;
         const file = input.files && input.files[0];
@@ -514,5 +807,21 @@ document.addEventListener("DOMContentLoaded", function () {
             syncRefTriggerPreview(item, "", "");
         }
         name.textContent = file ? file.name : "";
+        schedulePromptDebuggerUpdate(item);
     });
+
+    document.addEventListener("benditoai:outfit-committed", (event) => {
+        const modeloId = String(event?.detail?.modelo_id || "");
+        const item = modeloId
+            ? Array.from(document.querySelectorAll(".benditoai-historial-item"))
+                .find((candidate) => String(candidate.dataset.id || "") === modeloId)
+            : activeDebugItem;
+        schedulePromptDebuggerUpdate(item);
+    });
+
+    document.addEventListener("benditoai:outfit-updated", () => {
+        schedulePromptDebuggerUpdate(activeDebugItem);
+    });
+
+    schedulePromptDebuggerUpdate();
 });

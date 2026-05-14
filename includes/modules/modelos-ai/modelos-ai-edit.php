@@ -178,16 +178,28 @@ function benditoai_modelo_get_selected_style_context() {
     return $selected_style !== '' ? array('label' => $selected_style, 'hint' => '') : null;
 }
 
-function benditoai_modelo_build_edit_prompt($texto, $has_reference, $reference_context = '') {
-    $reference_rules = $has_reference
-        ? "A second image is attached as REFERENCE GARMENT.\nUse that exact reference garment to replace ONLY the garment requested.\nCopy the reference garment faithfully: type, structure, material, color and key details.\nDo NOT transfer reference attributes to any other garment."
-        : "No reference garment image is attached.\nApply only the user text instruction to the requested garment.";
-
+function benditoai_modelo_build_edit_prompt($texto, $has_reference, $reference_context = '', $is_full_outfit_restyle = false) {
     $context_rules = $reference_context !== ''
-        ? "Reference hint: {$reference_context}\n"
+        ? "Pista de referencia: {$reference_context}\n"
         : '';
 
-    return "Edit this image.\n\nKEEP EXACT SAME PERSON.\nKEEP same face, body, identity, proportions.\nKEEP same pose, background, lighting, framing, and camera angle.\n\nLOCK all clothing and elements in the image.\n\nUser change request:\n$texto\n\n$reference_rules\n$context_rules\nStrict editing rules:\n- Do NOT change any other clothing items\n- Do NOT remove, replace, or restyle any existing garments outside the requested change\n- Do NOT modify colors, textures, or fit of other clothes\n- Do NOT change hairstyle, expression, or skin tone\n- Do NOT alter body shape or proportions\n- Do NOT reinterpret the outfit\n\nThe change must be isolated ONLY to the requested garment.\n\nIf the request refers to shoes:\n- Replace ONLY the footwear\n- Keep pants exactly the same (no length change, no overlap issues)\n- Ensure natural contact with the ground\n- Match perspective and lighting perfectly\n\nPreserve full realism:\n- Maintain shadows, lighting direction, and reflections\n- Match textures and materials accurately\n- Keep the edit seamless and natural\n\nDo not generate a new image from scratch.\nDo not redesign the scene.\nOnly perform a precise in-place edit.\n\nHigh quality, photorealistic, 4K.";
+    if ($is_full_outfit_restyle) {
+        $reference_rules = $has_reference
+            ? "Se adjunta PRENDA DE REFERENCIA. Usala cuando encaje con el estilo seleccionado."
+            : "No se adjunto referencia. Crea vestuario nuevo segun el estilo.";
+
+        return "Edita esta imagen.\n\nMisma persona, rostro, cuerpo, pose, fondo, iluminacion y camara.\n\nSolicitud:\n$texto\n\n$reference_rules\n$context_rules\nReestiliza SOLO el outfit con resultado coherente, natural y comercial.\nNo generes otra persona ni redisenes la escena.\nCalidad fotorrealista, 4K.";
+    }
+
+    if ($has_reference && $reference_context !== '') {
+        return "Edita esta imagen.\n\nMisma persona, rostro, cuerpo, pose, fondo, iluminacion y camara.\n\nSolicitud:\n$texto\n\nSe adjunta PRENDA DE REFERENCIA: aplicala fielmente (tipo, material, color y detalles clave).\n$context_rules\nLa prenda de referencia tiene prioridad; el estilo solo armoniza el resto del look.\nNo cambies identidad ni escena.\nCalidad fotorrealista, 4K.";
+    }
+
+    $reference_rules = $has_reference
+        ? "Se adjunta PRENDA DE REFERENCIA: reemplaza SOLO la prenda solicitada y manten el resto intacto."
+        : "Sin referencia: aplica solo la solicitud del usuario en la prenda objetivo.";
+
+    return "Edita esta imagen.\n\nMisma persona, rostro, cuerpo, pose, fondo, iluminacion y camara.\n\nSolicitud:\n$texto\n\n$reference_rules\n$context_rules\nEdicion puntual: cambia SOLO la prenda objetivo; no alteres otras prendas ni identidad.\nSi son zapatos, reemplaza solo calzado y conserva pantalon.\nSin redisenar escena. Resultado natural, fotorrealista, 4K.";
 }
 
 function benditoai_preview_edit_modelo() {
@@ -198,6 +210,19 @@ function benditoai_preview_edit_modelo() {
     $user_id = get_current_user_id();
     $modelo_id = isset($_POST['modelo_id']) ? (int) $_POST['modelo_id'] : 0;
     $texto = isset($_POST['texto']) ? sanitize_textarea_field(wp_unslash($_POST['texto'])) : '';
+    $selected_style_context = benditoai_modelo_get_selected_style_context();
+    $has_reference_upload = !empty($_FILES['prenda_referencia']['tmp_name']);
+    $is_style_only_prompt = !empty($_POST['style_only_prompt']) && is_array($selected_style_context) && !$has_reference_upload;
+    if ($texto === '' && $has_reference_upload) {
+        $texto = 'Cambia exactamente la prenda de la imagen adjunta por la del modelo, sin cambiar su rostro ni su pose. Ajusta la prenda perfectamente, de forma fiel, realista y natural.';
+        $is_style_only_prompt = false;
+    } elseif ($texto === '' && is_array($selected_style_context)) {
+        $style_label = trim((string) ($selected_style_context['label'] ?? ''));
+        if ($style_label !== '') {
+            $texto = 'Viste al modelo con ropa aleatoriamente al estilo ' . $style_label . ', manteniendo el rostro del modelo fiel y su pose.';
+            $is_style_only_prompt = true;
+        }
+    }
 
     if ($modelo_id <= 0) {
         wp_send_json_error(array('message' => 'Modelo invalido'));
@@ -211,7 +236,17 @@ function benditoai_preview_edit_modelo() {
         wp_send_json_error(array('message' => 'Modelo no valido'));
     }
 
-    $base_image_url = isset($modelo->image_url) ? (string) $modelo->image_url : '';
+    $principal = function_exists('benditoai_modelo_outfit_get_principal')
+        ? benditoai_modelo_outfit_get_principal($modelo_id, $user_id, $modelo)
+        : null;
+
+    $base_image_url = '';
+    if ($principal && !empty($principal->image_url)) {
+        $base_image_url = (string) $principal->image_url;
+    } elseif (!empty($modelo->image_url)) {
+        $base_image_url = (string) $modelo->image_url;
+    }
+
     if ($base_image_url === '') {
         wp_send_json_error(array('message' => 'Modelo sin imagen'));
     }
@@ -226,8 +261,6 @@ function benditoai_preview_edit_modelo() {
         wp_send_json_error(array('message' => $reference_image->get_error_message()));
     }
 
-    $selected_style_context = benditoai_modelo_get_selected_style_context();
-
     $extra_images = array();
     $reference_context = '';
 
@@ -241,12 +274,12 @@ function benditoai_preview_edit_modelo() {
         if ($style_hint !== '') {
             $reference_context = $style_hint;
         } elseif ($style_label !== '') {
-            $reference_context = 'Preferred style selected by user: ' . $style_label . '. Keep this style direction while respecting the exact garment change request.';
+            $reference_context = 'Estilo preferido seleccionado por el usuario: ' . $style_label . '. Manten esta direccion de estilo respetando la solicitud exacta de cambio de prenda.';
         }
     }
 
     $has_reference = !empty($extra_images);
-    $prompt = benditoai_modelo_build_edit_prompt($texto, $has_reference, $reference_context);
+    $prompt = benditoai_modelo_build_edit_prompt($texto, $has_reference, $reference_context, $is_style_only_prompt);
 
     require_once BENDIDOAI_PLUGIN_PATH . 'includes/services/gemini/gemini-api.php';
     $response = benditoai_call_gemini($main_base64, $prompt, $extra_images);
@@ -292,6 +325,10 @@ function benditoai_preview_edit_modelo() {
         'preview_url' => $preview_url,
         'preview_token' => $preview_token,
         'base_image_url' => $base_image_url,
+        'principal_outfit_id' => (int) ($principal->id ?? 0),
+        'stats' => function_exists('benditoai_modelo_outfit_stats')
+            ? benditoai_modelo_outfit_stats($modelo_id, $user_id)
+            : null,
     ));
 }
 
@@ -308,6 +345,9 @@ function benditoai_confirm_edit_modelo() {
     if ($modelo_id <= 0 || $preview_token === '') {
         wp_send_json_error(array('message' => 'Solicitud invalida'));
     }
+    if (!in_array($decision, array('add', 'replace'), true)) {
+        wp_send_json_error(array('message' => 'Decision invalida'));
+    }
 
     $modelo = benditoai_modelo_get_owned_row($modelo_id, $user_id);
     if (!$modelo) {
@@ -320,25 +360,77 @@ function benditoai_confirm_edit_modelo() {
         wp_send_json_error(array('message' => 'La previsualizacion expiro. Intenta de nuevo.'));
     }
 
-    if ($decision === 'apply') {
+    if (!function_exists('benditoai_modelo_outfit_get_principal') || !function_exists('benditoai_modelo_outfit_create_secondary_from_image')) {
+        wp_send_json_error(array('message' => 'Modulo de outfits no disponible'));
+    }
+
+    $principal = benditoai_modelo_outfit_get_principal($modelo_id, $user_id, $modelo);
+    if (!$principal) {
+        wp_send_json_error(array('message' => 'No se encontro outfit principal'));
+    }
+
+    $preview_url = (string) ($preview_data['preview_url'] ?? '');
+    $preview_prompt = isset($preview_data['prompt']) ? (string) $preview_data['prompt'] : '';
+    $active_outfit = null;
+
+    if ($decision === 'add') {
+        $added = benditoai_modelo_outfit_create_secondary_from_image(
+            $modelo_id,
+            $user_id,
+            $preview_url,
+            $preview_prompt
+        );
+
+        if (is_wp_error($added)) {
+            wp_send_json_error(array(
+                'message' => $added->get_error_message(),
+                'stats' => benditoai_modelo_outfit_stats($modelo_id, $user_id),
+            ));
+        }
+
+        if (!$added) {
+            wp_send_json_error(array('message' => 'No se pudo agregar el nuevo outfit'));
+        }
+
+        $active_outfit = $added;
+    } else {
         global $wpdb;
-        $table = $wpdb->prefix . 'benditoai_modelos_ai';
-        $wpdb->update(
-            $table,
+        $updated = $wpdb->update(
+            benditoai_modelo_outfits_table(),
             array(
-                'image_url' => (string) $preview_data['preview_url'],
-                'prompt' => isset($preview_data['prompt']) ? (string) $preview_data['prompt'] : '',
+                'image_url' => $preview_url,
+                'prompt' => $preview_prompt,
+                'updated_at' => current_time('mysql'),
             ),
             array(
-                'id' => $modelo_id,
+                'id' => (int) $principal->id,
                 'user_id' => $user_id,
-            )
+            ),
+            array('%s', '%s', '%s'),
+            array('%d', '%d')
         );
+
+        if ($updated === false) {
+            wp_send_json_error(array('message' => 'No se pudo reemplazar el outfit principal'));
+        }
+
+        $active_outfit = benditoai_modelo_outfit_get_owned_outfit((int) $principal->id, $user_id);
     }
 
     delete_transient($transient_key);
 
+    benditoai_modelo_outfit_reindex($modelo_id, $user_id);
+    $stats = benditoai_modelo_outfit_stats($modelo_id, $user_id);
+    $item = $active_outfit ? benditoai_modelo_outfit_response_item($active_outfit) : null;
+
     wp_send_json_success(array(
         'decision' => $decision,
+        'image_url' => isset($item['image_url']) ? (string) $item['image_url'] : $preview_url,
+        'outfit' => $item,
+        'active_outfit_id' => $item ? (int) $item['id'] : 0,
+        'active_outfit_tag' => $item ? (string) $item['outfit_tag'] : 'principal',
+        'can_add' => (bool) $stats['can_add'],
+        'limit_reached' => (bool) $stats['limit_reached'],
+        'stats' => $stats,
     ));
 }

@@ -5,7 +5,7 @@ document.addEventListener("click", async function(e){
     if(!btn) return;
 
     const card = btn.closest(".benditoai-historial-item");
-    if(card?.dataset.selectedOutfitId && typeof window.benditoaiDeleteSelectedOutfit === "function"){
+    if(card?.dataset.selectedOutfitId && card?.dataset.selectedOutfitTag !== "principal" && typeof window.benditoaiDeleteSelectedOutfit === "function"){
         e.preventDefault();
         e.stopPropagation();
         await window.benditoaiDeleteSelectedOutfit(card, btn);

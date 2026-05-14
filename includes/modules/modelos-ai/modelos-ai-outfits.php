@@ -30,7 +30,32 @@ function benditoai_modelo_outfit_limit($user_id) {
 }
 
 function benditoai_modelo_outfit_warning() {
-    return 'Has alcanzado el límite de outfits para este modelo.';
+    return 'Has alcanzado el limite de outfits para este modelo. Actualiza tu plan para guardar mas.';
+}
+
+function benditoai_modelo_outfit_ensure_schema() {
+    static $done = false;
+    if ($done) {
+        return;
+    }
+
+    global $wpdb;
+    $table = benditoai_modelo_outfits_table();
+    $columns = $wpdb->get_col("SHOW COLUMNS FROM `$table`");
+    if (!is_array($columns)) {
+        $done = true;
+        return;
+    }
+
+    if (!in_array('outfit_tag', $columns, true)) {
+        $wpdb->query("ALTER TABLE `$table` ADD COLUMN `outfit_tag` VARCHAR(20) NOT NULL DEFAULT 'outfit' AFTER `nombre_outfit`");
+    }
+
+    if (!in_array('sort_order', $columns, true)) {
+        $wpdb->query("ALTER TABLE `$table` ADD COLUMN `sort_order` INT NOT NULL DEFAULT 1000 AFTER `outfit_tag`");
+    }
+
+    $done = true;
 }
 
 function benditoai_modelo_outfit_get_owned_model($modelo_id, $user_id) {
@@ -45,6 +70,8 @@ function benditoai_modelo_outfit_get_owned_model($modelo_id, $user_id) {
 }
 
 function benditoai_modelo_outfit_get_owned_outfit($outfit_id, $user_id) {
+    benditoai_modelo_outfit_ensure_schema();
+
     global $wpdb;
     $table = benditoai_modelo_outfits_table();
 
@@ -55,7 +82,159 @@ function benditoai_modelo_outfit_get_owned_outfit($outfit_id, $user_id) {
     ));
 }
 
+function benditoai_modelo_outfit_default_name($modelo, $number = 1) {
+    $model_name = trim((string) ($modelo->nombre_modelo ?? 'Modelo AI'));
+    if ($model_name === '') {
+        $model_name = 'Modelo AI';
+    }
+    return sprintf('%s Outfit(%d)', $model_name, max(1, (int) $number));
+}
+
+function benditoai_modelo_outfit_insert_principal($modelo, $user_id) {
+    if (!$modelo || empty($modelo->image_url)) {
+        return null;
+    }
+
+    benditoai_modelo_outfit_ensure_schema();
+
+    global $wpdb;
+    $table = benditoai_modelo_outfits_table();
+    $now = current_time('mysql');
+    $created = !empty($modelo->created_at) ? (string) $modelo->created_at : $now;
+
+    $wpdb->insert(
+        $table,
+        array(
+            'user_id' => (int) $user_id,
+            'modelo_id' => (int) $modelo->id,
+            'nombre_outfit' => benditoai_modelo_outfit_default_name($modelo, 1),
+            'outfit_tag' => 'principal',
+            'sort_order' => 1,
+            'image_url' => (string) $modelo->image_url,
+            'prompt' => isset($modelo->prompt) ? (string) $modelo->prompt : '',
+            'created_at' => $created,
+            'updated_at' => $now,
+        ),
+        array('%d', '%d', '%s', '%s', '%d', '%s', '%s', '%s', '%s')
+    );
+
+    if (empty($wpdb->insert_id)) {
+        return null;
+    }
+
+    return benditoai_modelo_outfit_get_owned_outfit((int) $wpdb->insert_id, $user_id);
+}
+
+function benditoai_modelo_outfit_get_principal($modelo_id, $user_id, $modelo = null) {
+    benditoai_modelo_outfit_ensure_schema();
+
+    global $wpdb;
+    $table = benditoai_modelo_outfits_table();
+
+    $principal = $wpdb->get_row($wpdb->prepare(
+        "SELECT * FROM $table WHERE modelo_id = %d AND user_id = %d AND outfit_tag = 'principal' ORDER BY sort_order ASC, id ASC LIMIT 1",
+        $modelo_id,
+        $user_id
+    ));
+
+    if (!$principal) {
+        if (!$modelo) {
+            $modelo = benditoai_modelo_outfit_get_owned_model($modelo_id, $user_id);
+        }
+        if (!$modelo) {
+            return null;
+        }
+
+        $match = null;
+        if (!empty($modelo->image_url)) {
+            $match = $wpdb->get_row($wpdb->prepare(
+                "SELECT * FROM $table WHERE modelo_id = %d AND user_id = %d AND image_url = %s ORDER BY created_at ASC, id ASC LIMIT 1",
+                $modelo_id,
+                $user_id,
+                (string) $modelo->image_url
+            ));
+        }
+
+        if ($match) {
+            $wpdb->update(
+                $table,
+                array(
+                    'outfit_tag' => 'principal',
+                    'sort_order' => 1,
+                    'updated_at' => current_time('mysql'),
+                ),
+                array('id' => (int) $match->id, 'user_id' => (int) $user_id),
+                array('%s', '%d', '%s'),
+                array('%d', '%d')
+            );
+            $principal = benditoai_modelo_outfit_get_owned_outfit((int) $match->id, $user_id);
+        } else {
+            $principal = benditoai_modelo_outfit_insert_principal($modelo, $user_id);
+        }
+    }
+
+    if (!$principal) {
+        return null;
+    }
+
+    $wpdb->query($wpdb->prepare(
+        "UPDATE $table SET outfit_tag = 'outfit', updated_at = %s WHERE modelo_id = %d AND user_id = %d AND outfit_tag = 'principal' AND id <> %d",
+        current_time('mysql'),
+        $modelo_id,
+        $user_id,
+        (int) $principal->id
+    ));
+
+    $wpdb->update(
+        $table,
+        array('sort_order' => 1, 'outfit_tag' => 'principal'),
+        array('id' => (int) $principal->id, 'user_id' => (int) $user_id),
+        array('%d', '%s'),
+        array('%d', '%d')
+    );
+
+    return benditoai_modelo_outfit_get_owned_outfit((int) $principal->id, $user_id);
+}
+
+function benditoai_modelo_outfit_reindex($modelo_id, $user_id, $principal_id = 0) {
+    benditoai_modelo_outfit_ensure_schema();
+
+    global $wpdb;
+    $table = benditoai_modelo_outfits_table();
+    $principal_id = (int) $principal_id;
+
+    if ($principal_id <= 0) {
+        $principal = benditoai_modelo_outfit_get_principal($modelo_id, $user_id);
+        $principal_id = (int) ($principal->id ?? 0);
+    }
+
+    if ($principal_id <= 0) {
+        return;
+    }
+
+    $secondary = $wpdb->get_results($wpdb->prepare(
+        "SELECT id FROM $table WHERE modelo_id = %d AND user_id = %d AND id <> %d ORDER BY created_at ASC, id ASC",
+        $modelo_id,
+        $user_id,
+        $principal_id
+    ));
+
+    $order = 2;
+    foreach ((array) $secondary as $row) {
+        $wpdb->update(
+            $table,
+            array('sort_order' => $order, 'outfit_tag' => 'outfit'),
+            array('id' => (int) $row->id, 'user_id' => (int) $user_id),
+            array('%d', '%s'),
+            array('%d', '%d')
+        );
+        $order++;
+    }
+}
+
 function benditoai_modelo_outfit_count($modelo_id, $user_id) {
+    benditoai_modelo_outfit_ensure_schema();
+
     global $wpdb;
     $table = benditoai_modelo_outfits_table();
 
@@ -67,22 +246,29 @@ function benditoai_modelo_outfit_count($modelo_id, $user_id) {
 }
 
 function benditoai_modelo_outfit_stats($modelo_id, $user_id) {
+    benditoai_modelo_outfit_get_principal($modelo_id, $user_id);
     $count = benditoai_modelo_outfit_count($modelo_id, $user_id);
     $limit = benditoai_modelo_outfit_limit($user_id);
+    $can_add = $count < $limit;
 
     return array(
         'count' => $count,
         'limit' => $limit,
-        'can_save' => $count < $limit,
-        'warning' => $count >= $limit ? benditoai_modelo_outfit_warning() : '',
+        'can_add' => $can_add,
+        'limit_reached' => !$can_add,
+        'warning' => !$can_add ? benditoai_modelo_outfit_warning() : '',
     );
 }
 
 function benditoai_modelo_outfit_response_item($outfit) {
+    $tag = isset($outfit->outfit_tag) ? (string) $outfit->outfit_tag : 'outfit';
     return array(
         'id' => (int) $outfit->id,
         'modelo_id' => (int) $outfit->modelo_id,
         'nombre_outfit' => (string) $outfit->nombre_outfit,
+        'outfit_tag' => $tag,
+        'is_principal' => $tag === 'principal',
+        'sort_order' => (int) ($outfit->sort_order ?? 0),
         'image_url' => (string) $outfit->image_url,
         'created_at' => (string) ($outfit->created_at ?? ''),
         'updated_at' => (string) ($outfit->updated_at ?? ''),
@@ -90,6 +276,8 @@ function benditoai_modelo_outfit_response_item($outfit) {
 }
 
 function benditoai_modelos_ai_get_saved_outfits_grouped($user_id, $modelo_ids = array()) {
+    benditoai_modelo_outfit_ensure_schema();
+
     global $wpdb;
     $table = benditoai_modelo_outfits_table();
     $modelo_ids = array_values(array_filter(array_map('intval', (array) $modelo_ids)));
@@ -98,9 +286,14 @@ function benditoai_modelos_ai_get_saved_outfits_grouped($user_id, $modelo_ids = 
         return array();
     }
 
+    foreach ($modelo_ids as $modelo_id) {
+        benditoai_modelo_outfit_get_principal($modelo_id, $user_id);
+        benditoai_modelo_outfit_reindex($modelo_id, $user_id);
+    }
+
     $placeholders = implode(',', array_fill(0, count($modelo_ids), '%d'));
     $params = array_merge(array($user_id), $modelo_ids);
-    $query = "SELECT * FROM $table WHERE user_id = %d AND modelo_id IN ($placeholders) ORDER BY created_at DESC, id DESC";
+    $query = "SELECT * FROM $table WHERE user_id = %d AND modelo_id IN ($placeholders) ORDER BY modelo_id ASC, CASE WHEN outfit_tag = 'principal' THEN 0 ELSE 1 END ASC, sort_order ASC, created_at ASC, id ASC";
     array_unshift($params, $query);
     $sql = call_user_func_array(array($wpdb, 'prepare'), $params);
 
@@ -118,6 +311,74 @@ function benditoai_modelos_ai_get_saved_outfits_grouped($user_id, $modelo_ids = 
     return $grouped;
 }
 
+function benditoai_modelo_outfit_create_secondary_from_image($modelo_id, $user_id, $image_url, $prompt = '') {
+    $modelo = benditoai_modelo_outfit_get_owned_model($modelo_id, $user_id);
+    if (!$modelo || !$image_url) {
+        return null;
+    }
+
+    $stats = benditoai_modelo_outfit_stats($modelo_id, $user_id);
+    if (!$stats['can_add']) {
+        return new WP_Error('limit_reached', benditoai_modelo_outfit_warning());
+    }
+
+    global $wpdb;
+    $table = benditoai_modelo_outfits_table();
+    $now = current_time('mysql');
+    $next_number = max(1, (int) $stats['count'] + 1);
+
+    $inserted = $wpdb->insert(
+        $table,
+        array(
+            'user_id' => $user_id,
+            'modelo_id' => $modelo_id,
+            'nombre_outfit' => benditoai_modelo_outfit_default_name($modelo, $next_number),
+            'outfit_tag' => 'outfit',
+            'sort_order' => $next_number,
+            'image_url' => (string) $image_url,
+            'prompt' => (string) $prompt,
+            'created_at' => $now,
+            'updated_at' => $now,
+        ),
+        array('%d', '%d', '%s', '%s', '%d', '%s', '%s', '%s', '%s')
+    );
+
+    if (!$inserted) {
+        return null;
+    }
+
+    $outfit = benditoai_modelo_outfit_get_owned_outfit((int) $wpdb->insert_id, $user_id);
+    benditoai_modelo_outfit_reindex($modelo_id, $user_id);
+    return $outfit;
+}
+
+function benditoai_modelo_outfit_backfill_principals() {
+    benditoai_modelo_outfit_ensure_schema();
+
+    global $wpdb;
+    $modelos_table = $wpdb->prefix . 'benditoai_modelos_ai';
+    $outfits_table = benditoai_modelo_outfits_table();
+
+    $rows = $wpdb->get_results(
+        "SELECT id, user_id FROM $modelos_table"
+    );
+
+    foreach ((array) $rows as $row) {
+        $modelo_id = (int) ($row->id ?? 0);
+        $user_id = (int) ($row->user_id ?? 0);
+        if ($modelo_id <= 0 || $user_id <= 0) {
+            continue;
+        }
+
+        benditoai_modelo_outfit_get_principal($modelo_id, $user_id);
+        benditoai_modelo_outfit_reindex($modelo_id, $user_id);
+    }
+
+    // Best effort: set missing tags/orders for legacy rows.
+    $wpdb->query("UPDATE $outfits_table SET outfit_tag = 'outfit' WHERE outfit_tag IS NULL OR outfit_tag = ''");
+    $wpdb->query("UPDATE $outfits_table SET sort_order = 1000 WHERE sort_order IS NULL OR sort_order <= 0");
+}
+
 function benditoai_save_modelo_outfit() {
     if (!is_user_logged_in()) {
         wp_send_json_error(array('message' => 'No autorizado'));
@@ -131,46 +392,31 @@ function benditoai_save_modelo_outfit() {
     }
 
     $modelo = benditoai_modelo_outfit_get_owned_model($modelo_id, $user_id);
-    if (!$modelo || empty($modelo->image_url)) {
+    if (!$modelo) {
         wp_send_json_error(array('message' => 'Modelo no valido'));
     }
 
-    $stats = benditoai_modelo_outfit_stats($modelo_id, $user_id);
-    if (!$stats['can_save']) {
+    $principal = benditoai_modelo_outfit_get_principal($modelo_id, $user_id, $modelo);
+    if (!$principal || empty($principal->image_url)) {
+        wp_send_json_error(array('message' => 'No se encontro outfit principal para guardar'));
+    }
+
+    $outfit = benditoai_modelo_outfit_create_secondary_from_image(
+        $modelo_id,
+        $user_id,
+        (string) $principal->image_url,
+        (string) ($principal->prompt ?? '')
+    );
+
+    if (is_wp_error($outfit)) {
         wp_send_json_error(array(
-            'message' => benditoai_modelo_outfit_warning(),
-            'stats' => $stats,
+            'message' => $outfit->get_error_message(),
+            'stats' => benditoai_modelo_outfit_stats($modelo_id, $user_id),
         ));
     }
 
-    global $wpdb;
-    $table = benditoai_modelo_outfits_table();
-    $next_number = $stats['count'] + 1;
-    $model_name = trim((string) ($modelo->nombre_modelo ?? 'Modelo AI'));
-    $name = sprintf('%s Outfit(%d)', $model_name !== '' ? $model_name : 'Modelo AI', $next_number);
-    $now = current_time('mysql');
-
-    $inserted = $wpdb->insert(
-        $table,
-        array(
-            'user_id' => $user_id,
-            'modelo_id' => $modelo_id,
-            'nombre_outfit' => $name,
-            'image_url' => (string) $modelo->image_url,
-            'prompt' => isset($modelo->prompt) ? (string) $modelo->prompt : '',
-            'created_at' => $now,
-            'updated_at' => $now,
-        ),
-        array('%d', '%d', '%s', '%s', '%s', '%s', '%s')
-    );
-
-    if (!$inserted) {
-        wp_send_json_error(array('message' => 'No se pudo guardar el outfit'));
-    }
-
-    $outfit = benditoai_modelo_outfit_get_owned_outfit((int) $wpdb->insert_id, $user_id);
     if (!$outfit) {
-        wp_send_json_error(array('message' => 'No se pudo cargar el outfit guardado'));
+        wp_send_json_error(array('message' => 'No se pudo guardar el outfit'));
     }
 
     wp_send_json_success(array(
@@ -196,6 +442,10 @@ function benditoai_delete_modelo_outfit() {
         wp_send_json_error(array('message' => 'Outfit no valido'));
     }
 
+    if ((string) ($outfit->outfit_tag ?? '') === 'principal') {
+        wp_send_json_error(array('message' => 'El outfit principal no se puede eliminar. Solo se puede reemplazar.'));
+    }
+
     global $wpdb;
     $deleted = $wpdb->delete(
         benditoai_modelo_outfits_table(),
@@ -209,6 +459,8 @@ function benditoai_delete_modelo_outfit() {
     if (!$deleted) {
         wp_send_json_error(array('message' => 'No se pudo eliminar el outfit'));
     }
+
+    benditoai_modelo_outfit_reindex((int) $outfit->modelo_id, $user_id);
 
     wp_send_json_success(array(
         'stats' => benditoai_modelo_outfit_stats((int) $outfit->modelo_id, $user_id),
@@ -269,6 +521,19 @@ function benditoai_preview_edit_modelo_outfit() {
     $user_id = get_current_user_id();
     $outfit_id = isset($_POST['outfit_id']) ? (int) $_POST['outfit_id'] : 0;
     $texto = isset($_POST['texto']) ? sanitize_textarea_field(wp_unslash($_POST['texto'])) : '';
+    $selected_style_context = benditoai_modelo_get_selected_style_context();
+    $has_reference_upload = !empty($_FILES['prenda_referencia']['tmp_name']);
+    $is_style_only_prompt = !empty($_POST['style_only_prompt']) && is_array($selected_style_context) && !$has_reference_upload;
+    if ($texto === '' && $has_reference_upload) {
+        $texto = 'Cambia exactamente la prenda de la imagen adjunta por la del modelo, sin cambiar su rostro ni su pose. Ajusta la prenda perfectamente, de forma fiel, realista y natural.';
+        $is_style_only_prompt = false;
+    } elseif ($texto === '' && is_array($selected_style_context)) {
+        $style_label = trim((string) ($selected_style_context['label'] ?? ''));
+        if ($style_label !== '') {
+            $texto = 'Viste al modelo con ropa aleatoriamente al estilo ' . $style_label . ', manteniendo el rostro del modelo fiel y su pose.';
+            $is_style_only_prompt = true;
+        }
+    }
 
     if ($outfit_id <= 0) {
         wp_send_json_error(array('message' => 'Outfit invalido'));
@@ -292,7 +557,6 @@ function benditoai_preview_edit_modelo_outfit() {
         wp_send_json_error(array('message' => $reference_image->get_error_message()));
     }
 
-    $selected_style_context = benditoai_modelo_get_selected_style_context();
     $extra_images = array();
     $reference_context = '';
 
@@ -306,11 +570,11 @@ function benditoai_preview_edit_modelo_outfit() {
         if ($style_hint !== '') {
             $reference_context = $style_hint;
         } elseif ($style_label !== '') {
-            $reference_context = 'Preferred style selected by user: ' . $style_label . '. Keep this style direction while respecting the exact garment change request.';
+            $reference_context = 'Estilo preferido seleccionado por el usuario: ' . $style_label . '. Manten esta direccion de estilo respetando la solicitud exacta de cambio de prenda.';
         }
     }
 
-    $prompt = benditoai_modelo_build_edit_prompt($texto, !empty($extra_images), $reference_context);
+    $prompt = benditoai_modelo_build_edit_prompt($texto, !empty($extra_images), $reference_context, $is_style_only_prompt);
 
     require_once BENDIDOAI_PLUGIN_PATH . 'includes/services/gemini/gemini-api.php';
     $response = benditoai_call_gemini($main_base64, $prompt, $extra_images);
@@ -354,6 +618,7 @@ function benditoai_preview_edit_modelo_outfit() {
         'preview_url' => $preview_url,
         'preview_token' => $preview_token,
         'base_image_url' => (string) $outfit->image_url,
+        'stats' => benditoai_modelo_outfit_stats((int) $outfit->modelo_id, $user_id),
     ));
 }
 
@@ -371,6 +636,10 @@ function benditoai_confirm_edit_modelo_outfit() {
         wp_send_json_error(array('message' => 'Solicitud invalida'));
     }
 
+    if (!in_array($decision, array('add', 'replace'), true)) {
+        wp_send_json_error(array('message' => 'Decision invalida'));
+    }
+
     $outfit = benditoai_modelo_outfit_get_owned_outfit($outfit_id, $user_id);
     if (!$outfit) {
         wp_send_json_error(array('message' => 'Outfit no valido'));
@@ -382,13 +651,32 @@ function benditoai_confirm_edit_modelo_outfit() {
         wp_send_json_error(array('message' => 'La previsualizacion expiro. Intenta de nuevo.'));
     }
 
-    if ($decision === 'apply') {
+    $modelo_id = (int) $outfit->modelo_id;
+    $preview_url = (string) $preview_data['preview_url'];
+    $prompt = isset($preview_data['prompt']) ? (string) $preview_data['prompt'] : '';
+    $active_outfit = null;
+
+    if ($decision === 'add') {
+        $added = benditoai_modelo_outfit_create_secondary_from_image($modelo_id, $user_id, $preview_url, $prompt);
+        if (is_wp_error($added)) {
+            wp_send_json_error(array(
+                'message' => $added->get_error_message(),
+                'stats' => benditoai_modelo_outfit_stats($modelo_id, $user_id),
+            ));
+        }
+
+        if (!$added) {
+            wp_send_json_error(array('message' => 'No se pudo agregar el nuevo outfit'));
+        }
+
+        $active_outfit = $added;
+    } else {
         global $wpdb;
-        $wpdb->update(
+        $updated = $wpdb->update(
             benditoai_modelo_outfits_table(),
             array(
-                'image_url' => (string) $preview_data['preview_url'],
-                'prompt' => isset($preview_data['prompt']) ? (string) $preview_data['prompt'] : '',
+                'image_url' => $preview_url,
+                'prompt' => $prompt,
                 'updated_at' => current_time('mysql'),
             ),
             array(
@@ -398,12 +686,28 @@ function benditoai_confirm_edit_modelo_outfit() {
             array('%s', '%s', '%s'),
             array('%d', '%d')
         );
+
+        if ($updated === false) {
+            wp_send_json_error(array('message' => 'No se pudo reemplazar el outfit'));
+        }
+
+        $active_outfit = benditoai_modelo_outfit_get_owned_outfit($outfit_id, $user_id);
     }
 
     delete_transient($transient_key);
+    benditoai_modelo_outfit_reindex($modelo_id, $user_id);
+
+    $stats = benditoai_modelo_outfit_stats($modelo_id, $user_id);
+    $item = $active_outfit ? benditoai_modelo_outfit_response_item($active_outfit) : null;
 
     wp_send_json_success(array(
         'decision' => $decision,
-        'image_url' => $decision === 'apply' ? (string) $preview_data['preview_url'] : (string) $outfit->image_url,
+        'image_url' => isset($item['image_url']) ? (string) $item['image_url'] : $preview_url,
+        'outfit' => $item,
+        'active_outfit_id' => $item ? (int) $item['id'] : 0,
+        'active_outfit_tag' => $item ? (string) $item['outfit_tag'] : 'outfit',
+        'can_add' => (bool) $stats['can_add'],
+        'limit_reached' => (bool) $stats['limit_reached'],
+        'stats' => $stats,
     ));
 }

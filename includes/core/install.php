@@ -132,13 +132,16 @@ function benditoai_create_modelos_ai_outfits_table() {
         user_id BIGINT UNSIGNED NOT NULL,
         modelo_id BIGINT UNSIGNED NOT NULL,
         nombre_outfit VARCHAR(100) NOT NULL,
+        outfit_tag VARCHAR(20) NOT NULL DEFAULT 'outfit',
+        sort_order INT NOT NULL DEFAULT 1000,
         image_url TEXT,
         prompt TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (id),
         KEY user_modelo (user_id, modelo_id),
-        KEY modelo_id (modelo_id)
+        KEY modelo_id (modelo_id),
+        KEY outfit_tag (outfit_tag)
     ) $charset_collate;";
 
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -148,7 +151,7 @@ function benditoai_create_modelos_ai_outfits_table() {
 }
 
 function benditoai_maybe_upgrade_database() {
-    $db_version = '20260512_outfits';
+    $db_version = '20260513_outfits_principal';
     $current_version = get_option('benditoai_db_version', '');
 
     if ($current_version === $db_version) {
@@ -159,6 +162,10 @@ function benditoai_maybe_upgrade_database() {
     benditoai_create_campanas_ai_table();
     benditoai_create_modelos_ai_table();
     benditoai_create_modelos_ai_outfits_table();
+
+    if (function_exists('benditoai_modelo_outfit_backfill_principals')) {
+        benditoai_modelo_outfit_backfill_principals();
+    }
 
     update_option('benditoai_db_version', $db_version);
 }

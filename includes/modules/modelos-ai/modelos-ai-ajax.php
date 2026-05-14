@@ -91,126 +91,126 @@ function benditoai_modelos_ai_extract_image_base64($body) {
 
 function benditoai_modelos_ai_build_prompt_rasgos($data) {
     return "
-Ultra realistic human avatar.
+Avatar humano ultra realista.
 
-Single person only.
+Una sola persona.
 
-CREATIVE MODE
-Generated from profile traits.
+MODO CREATIVO
+Generado desde rasgos del perfil.
 
-MODEL SUMMARY
+RESUMEN DEL MODELO
 {$data['descripcion_modelo']}
 
-PROFILE
-Gender: {$data['genero']}
-Age: {$data['edad']}
-Body type: {$data['cuerpo']}
-Ethnicity: {$data['etnia']}
-Nationality: {$data['nacionalidad']}
-Style: {$data['estilo']}
+PERFIL
+Genero: {$data['genero']}
+Edad: {$data['edad']}
+Tipo de cuerpo: {$data['cuerpo']}
+Etnia: {$data['etnia']}
+Nacionalidad: {$data['nacionalidad']}
+Estilo: {$data['estilo']}
 
-FACIAL AND PERSONAL TRAITS
+RASGOS FACIALES Y PERSONALES
 {$data['rasgos_caracteristicas']}
 
-OUTFIT DESCRIPTION
-Upper clothing: {$data['prenda_superior']}
-Lower clothing: {$data['prenda_inferior']}
-Shoes: {$data['zapatos']}
-Accessories: {$data['accesorios']}
+DESCRIPCION DEL OUTFIT
+Prenda superior: {$data['prenda_superior']}
+Prenda inferior: {$data['prenda_inferior']}
+Calzado: {$data['zapatos']}
+Accesorios: {$data['accesorios']}
 
-EXTRA REQUIREMENTS
+REQUISITOS EXTRA
 {$data['campo_adicional']}
 
 POSE
-full body standing pose
-person centered
-head to feet visible
+pose de pie de cuerpo completo
+persona centrada
+de cabeza a pies visible
 
-ENVIRONMENT
-clean studio background
-soft studio lighting
-white background
+ENTORNO
+fondo de estudio limpio
+iluminacion de estudio suave
+fondo blanco
 
-IMPORTANT RULES
-only ONE person
-no group
-no multiple people
-no text
-no logos
-no objects
-no furniture
+REGLAS IMPORTANTES
+solo UNA persona
+sin grupo
+sin multiples personas
+sin texto
+sin logos
+sin objetos
+sin muebles
 
-portrait composition
-high detail
-photorealistic
-4k quality
+composicion tipo retrato
+alto detalle
+fotorrealista
+calidad 4k
 
-CRITICAL
-vertical image (9:16 aspect ratio)
-full body centered
-no cropping
-subject fully visible head to feet
+CRITICO
+imagen vertical (relacion 9:16)
+cuerpo completo centrado
+sin recortes
+sujeto completamente visible de cabeza a pies
 ";
 }
 
 function benditoai_modelos_ai_build_prompt_referencia($data, $has_reference = true) {
     $reference_instruction = $has_reference
-        ? "Use the uploaded image as the main visual reference.\nPreserve identity cues from reference: face structure, skin tone and natural proportions."
-        : "No reference image was uploaded.\nBuild the avatar from text fields while preserving realism and full body composition.";
+        ? "Usa la imagen subida como referencia visual principal.\nConserva senales de identidad de la referencia: estructura facial, tono de piel y proporciones naturales."
+        : "No se subio imagen de referencia.\nConstruye el avatar desde los campos de texto manteniendo realismo y composicion de cuerpo completo.";
 
     return "
-Ultra realistic human avatar.
+Avatar humano ultra realista.
 
-Single person only.
+Una sola persona.
 
-CREATIVE MODE
+MODO CREATIVO
 {$reference_instruction}
-Do not copy watermarks, text or logos.
+No copies marcas de agua, texto ni logos.
 
-MODEL SUMMARY
+RESUMEN DEL MODELO
 {$data['descripcion_modelo']}
 
-OPTIONAL STYLE HINT
+PISTA OPCIONAL DE ESTILO
 {$data['estilo']}
 
-OPTIONAL OUTFIT HINTS
-Upper clothing: {$data['prenda_superior']}
-Lower clothing: {$data['prenda_inferior']}
-Shoes: {$data['zapatos']}
-Accessories: {$data['accesorios']}
+PISTAS OPCIONALES DE OUTFIT
+Prenda superior: {$data['prenda_superior']}
+Prenda inferior: {$data['prenda_inferior']}
+Calzado: {$data['zapatos']}
+Accesorios: {$data['accesorios']}
 
-EXTRA REQUIREMENTS
+REQUISITOS EXTRA
 {$data['campo_adicional']}
 
 POSE
-full body standing pose
-person centered
-head to feet visible
+pose de pie de cuerpo completo
+persona centrada
+de cabeza a pies visible
 
-ENVIRONMENT
-clean studio background
-soft studio lighting
-white background
+ENTORNO
+fondo de estudio limpio
+iluminacion de estudio suave
+fondo blanco
 
-IMPORTANT RULES
-only ONE person
-no group
-no multiple people
-no text
-no logos
-no objects
-no furniture
+REGLAS IMPORTANTES
+solo UNA persona
+sin grupo
+sin multiples personas
+sin texto
+sin logos
+sin objetos
+sin muebles
 
-portrait composition
-high detail
-photorealistic
-4k quality
+composicion tipo retrato
+alto detalle
+fotorrealista
+calidad 4k
 
-CRITICAL
-vertical image (9:16 aspect ratio)
-full body centered
-no cropping
-subject fully visible head to feet
+CRITICO
+imagen vertical (relacion 9:16)
+cuerpo completo centrado
+sin recortes
+sujeto completamente visible de cabeza a pies
 ";
 }
 
@@ -620,6 +620,11 @@ function benditoai_generar_modelo_ai() {
 
     $modelo_id = (int) $wpdb->insert_id;
 
+    $principal_outfit = null;
+    if (function_exists('benditoai_modelo_outfit_get_principal')) {
+        $principal_outfit = benditoai_modelo_outfit_get_principal($modelo_id, $user_id);
+    }
+
     benditoai_use_token(1);
     $tokens_restantes = benditoai_get_user_tokens($user_id);
 
@@ -645,6 +650,9 @@ function benditoai_generar_modelo_ai() {
         'accesorios' => $accesorios,
         'perfil_publico' => $perfil_publico,
         'fecha' => date('d/m/Y H:i', strtotime($created_at)),
+        'principal_outfit' => $principal_outfit && function_exists('benditoai_modelo_outfit_response_item')
+            ? benditoai_modelo_outfit_response_item($principal_outfit)
+            : null,
     ));
 }
 
