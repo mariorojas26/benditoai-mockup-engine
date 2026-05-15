@@ -426,7 +426,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const rasgosMiniHintBadge = form.querySelector("[data-rasgos-mini-hint-badge]");
     const rasgosMiniHintTitle = form.querySelector("[data-rasgos-mini-hint-title]");
     const rasgosMiniHintCopy = form.querySelector("[data-rasgos-mini-hint-copy]");
-    const rasgosChoiceTargets = Array.from(form.querySelectorAll("[data-choice-target]"));
+    const peinadoGroup = form.querySelector("[data-choice-group='peinado']");
+    const peinadoSelect = document.getElementById("benditoai_peinado");
+    const peinadoTilesContainer = peinadoGroup?.querySelector("[data-hair-tiles]");
+    const peinadoModeInputs = Array.from(form.querySelectorAll("input[name='benditoai_peinado_mode']"));
     const rasgosFieldNames = ["genero", "cuerpo", "etnia", "peinado", "color_ojos", "color_pelo", "color_cejas", "nacionalidad"];
     const rasgosMiniStepFields = {
         1: ["genero", "cuerpo"],
@@ -445,6 +448,15 @@ document.addEventListener("DOMContentLoaded", function () {
     };
     if (rasgosAvatarBaseUrl) {
         root.style.setProperty("--rasgos-avatar-base-url", rasgosAvatarBaseUrl);
+    }
+
+    let peinadoModeOptions = {};
+    if (peinadoGroup?.dataset.hairOptions) {
+        try {
+            peinadoModeOptions = JSON.parse(peinadoGroup.dataset.hairOptions);
+        } catch (error) {
+            peinadoModeOptions = {};
+        }
     }
 
     let currentStep = 1;
@@ -607,7 +619,61 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const getFieldByName = (fieldName) => form.querySelector(`[name="${fieldName}"]`);
 
+    const getPeinadoMode = () => peinadoModeInputs.find((input) => input.checked)?.value || "male";
+
+    const setPeinadoMode = (mode) => {
+        const safeMode = mode === "female" ? "female" : "male";
+        peinadoModeInputs.forEach((input) => {
+            input.checked = input.value === safeMode;
+        });
+        return safeMode;
+    };
+
+    const getPeinadoModeOptions = (mode) => {
+        if (!mode || !peinadoModeOptions || !peinadoModeOptions[mode]) return [];
+        const options = peinadoModeOptions[mode].options;
+        return Array.isArray(options) ? options : [];
+    };
+
+    const buildPeinadoTileMarkup = (option) => {
+        const value = escapeHtml(option?.value || "");
+        const label = escapeHtml(option?.label || option?.value || "");
+        const thumbUrl = escapeHtml(option?.thumb_url || "");
+        const thumbStyle = thumbUrl ? ` style="--baiw-choice-image: url('${thumbUrl}');"` : "";
+
+        return `
+            <button type="button" class="baiw-choice-tile baiw-choice-tile--image" data-choice-target="peinado" data-choice-value="${value}" aria-pressed="false"${thumbStyle}>
+                <span class="baiw-choice-tile__thumb" aria-hidden="true"></span>
+                <span class="baiw-choice-tile__copy">
+                    <strong>${label}</strong>
+                </span>
+            </button>
+        `;
+    };
+
+    const hydratePeinadoByMode = (mode, { keepSelection = false } = {}) => {
+        if (!peinadoSelect || !peinadoTilesContainer) return;
+        const safeMode = setPeinadoMode(mode);
+        const options = getPeinadoModeOptions(safeMode);
+        const previousValue = keepSelection ? String(peinadoSelect.value || "") : "";
+        const nextValue = options.some((option) => String(option?.value || "") === previousValue) ? previousValue : "";
+
+        peinadoSelect.innerHTML = "<option value=\"\" selected>Selecciona peinado</option>";
+        options.forEach((option) => {
+            const opt = document.createElement("option");
+            opt.value = String(option?.value || "");
+            opt.textContent = String(option?.label || option?.value || "");
+            peinadoSelect.appendChild(opt);
+        });
+
+        peinadoSelect.value = nextValue;
+        peinadoTilesContainer.innerHTML = options.map(buildPeinadoTileMarkup).join("");
+        peinadoTilesContainer.scrollLeft = 0;
+        refreshRasgosChoiceTiles();
+    };
+
     const refreshRasgosChoiceTiles = () => {
+        const rasgosChoiceTargets = Array.from(form.querySelectorAll("[data-choice-target]"));
         rasgosChoiceTargets.forEach((tile) => {
             const targetName = tile.dataset.choiceTarget || "";
             const targetField = getFieldByName(targetName);
@@ -711,6 +777,7 @@ document.addEventListener("DOMContentLoaded", function () {
         rasgosAutoAdvanceLockedManual = false;
         resetRasgosTouchState();
         clearMiniAdvanceTimer();
+        hydratePeinadoByMode("male", { keepSelection: false });
         syncRasgosMiniUi();
     };
 
@@ -1470,6 +1537,14 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+    peinadoModeInputs.forEach((input) => {
+        input.addEventListener("change", () => {
+            if (!input.checked) return;
+            hydratePeinadoByMode(input.value, { keepSelection: false });
+            peinadoSelect?.dispatchEvent(new Event("change", { bubbles: true }));
+        });
+    });
+
     [edadRange, alturaRange, pesoRange].forEach((range) => {
         range?.addEventListener("input", () => {
             syncRangos();
@@ -1582,6 +1657,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    hydratePeinadoByMode(getPeinadoMode(), { keepSelection: true });
     syncVisibilityToggle();
     syncModePanels();
     initChoicesSelects();
