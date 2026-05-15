@@ -90,6 +90,21 @@ function benditoai_modelos_ai_extract_image_base64($body) {
 }
 
 function benditoai_modelos_ai_build_prompt_rasgos($data) {
+    $perfil_lines = array(
+        'Genero: ' . ($data['genero'] ?? ''),
+        'Edad: ' . ($data['edad'] ?? ''),
+        'Tipo de cuerpo: ' . ($data['cuerpo'] ?? ''),
+        'Etnia: ' . ($data['etnia'] ?? ''),
+        'Nacionalidad: ' . ($data['nacionalidad'] ?? ''),
+    );
+
+    $estilo = trim((string) ($data['estilo'] ?? ''));
+    if ($estilo !== '') {
+        $perfil_lines[] = 'Estilo: ' . $estilo;
+    }
+
+    $perfil = implode("\n", $perfil_lines);
+
     return "
 Avatar humano ultra realista.
 
@@ -102,12 +117,7 @@ RESUMEN DEL MODELO
 {$data['descripcion_modelo']}
 
 PERFIL
-Genero: {$data['genero']}
-Edad: {$data['edad']}
-Tipo de cuerpo: {$data['cuerpo']}
-Etnia: {$data['etnia']}
-Nacionalidad: {$data['nacionalidad']}
-Estilo: {$data['estilo']}
+{$perfil}
 
 RASGOS FACIALES Y PERSONALES
 {$data['rasgos_caracteristicas']}
@@ -314,6 +324,7 @@ function benditoai_modelos_ai_ensure_optional_columns($table_name) {
         'perfil_publico' => "TINYINT(1) NOT NULL DEFAULT 0",
         'descripcion_modelo' => "TEXT",
         'nacionalidad' => "VARCHAR(80) DEFAULT ''",
+        'color_cejas' => "VARCHAR(50) DEFAULT ''",
         'rasgos_caracteristicas' => "TEXT",
         'campo_adicional' => "TEXT",
     );
@@ -485,6 +496,7 @@ function benditoai_generar_modelo_ai() {
     $color_ojos = benditoai_modelos_ai_text_field('color_ojos');
     $peinado = benditoai_modelos_ai_text_field('peinado');
     $color_pelo = benditoai_modelos_ai_text_field('color_pelo');
+    $color_cejas = benditoai_modelos_ai_text_field('color_cejas');
 
     $detalle_hoyuelos = benditoai_modelos_ai_bool_field('detalle_hoyuelos');
     $detalle_barba = benditoai_modelos_ai_bool_field('detalle_barba');
@@ -494,6 +506,7 @@ function benditoai_generar_modelo_ai() {
         'Eye color' => $color_ojos,
         'Hairstyle' => $peinado,
         'Hair color' => $color_pelo,
+        'Eyebrow color' => $color_cejas,
     );
 
     $rasgos_flags = array();
@@ -524,6 +537,7 @@ function benditoai_generar_modelo_ai() {
         'etnia' => $etnia,
         'estilo' => $estilo,
         'nacionalidad' => $nacionalidad,
+        'color_cejas' => $color_cejas,
         'rasgos_caracteristicas' => $rasgos_compuestos,
         'prenda_superior' => $prenda_superior,
         'prenda_inferior' => $prenda_inferior,
@@ -594,6 +608,7 @@ function benditoai_generar_modelo_ai() {
         'perfil_publico' => $perfil_publico,
         'descripcion_modelo' => $descripcion_modelo,
         'nacionalidad' => $nacionalidad,
+        'color_cejas' => $color_cejas,
         'rasgos_caracteristicas' => $rasgos_compuestos,
         'campo_adicional' => $campo_adicional,
     );
@@ -644,6 +659,11 @@ function benditoai_generar_modelo_ai() {
         'estilo' => $estilo,
         'descripcion_modelo' => $descripcion_modelo,
         'nacionalidad' => $nacionalidad,
+        'color_ojos' => $color_ojos,
+        'peinado' => $peinado,
+        'color_pelo' => $color_pelo,
+        'color_cejas' => $color_cejas,
+        'rasgos_caracteristicas' => $rasgos_compuestos,
         'prenda_superior' => $prenda_superior,
         'prenda_inferior' => $prenda_inferior,
         'zapatos' => $zapatos,

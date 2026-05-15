@@ -104,6 +104,7 @@ function benditoai_create_modelos_ai_table() {
         accesorios TEXT,
         modo_creacion VARCHAR(30) NOT NULL DEFAULT 'rasgos',
         nacionalidad VARCHAR(80) DEFAULT '',
+        color_cejas VARCHAR(50) DEFAULT '',
         rasgos_caracteristicas TEXT,
         campo_adicional TEXT,
         prompt TEXT,
@@ -151,7 +152,7 @@ function benditoai_create_modelos_ai_outfits_table() {
 }
 
 function benditoai_maybe_upgrade_database() {
-    $db_version = '20260513_outfits_principal';
+    $db_version = '20260514_rasgos_miniwizard';
     $current_version = get_option('benditoai_db_version', '');
 
     if ($current_version === $db_version) {

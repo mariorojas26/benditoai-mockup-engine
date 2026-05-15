@@ -512,6 +512,7 @@ function benditoai_modelos_ai_historial_shortcode() {
                                 <p><span>Complexion</span><strong><?php echo esc_html(!empty($item->cuerpo) ? $item->cuerpo : 'Personalizable'); ?></strong></p>
                                 <p><span>Edad aparente</span><strong><?php echo esc_html(!empty($item->edad) ? $item->edad : 'Variable'); ?></strong></p>
                                 <p><span>Origen</span><strong><?php echo esc_html(!empty($item->nacionalidad) ? $item->nacionalidad : (!empty($item->etnia) ? $item->etnia : 'Global')); ?></strong></p>
+                                <p><span>Cejas</span><strong><?php echo esc_html(!empty($item->color_cejas) ? $item->color_cejas : 'Variable'); ?></strong></p>
                             </div>
 
                             <div class="benditoai-desktop-model-box">
@@ -536,6 +537,9 @@ function benditoai_modelos_ai_historial_shortcode() {
                         <p><strong>Edad:</strong> <?php echo esc_html($item->edad); ?></p>
                         <p><strong>Estilo:</strong> <?php echo esc_html($item->estilo); ?></p>
                         <p><strong>Visibilidad:</strong> <?php echo esc_html($visibilidad_label); ?></p>
+                        <p><strong>Ojos:</strong> <?php echo esc_html(!empty($item->color_ojos) ? $item->color_ojos : '-'); ?></p>
+                        <p><strong>Pelo:</strong> <?php echo esc_html(!empty($item->color_pelo) ? $item->color_pelo : '-'); ?></p>
+                        <p><strong>Cejas:</strong> <?php echo esc_html(!empty($item->color_cejas) ? $item->color_cejas : '-'); ?></p>
 
                         <p>
                             <strong>Creado:</strong>

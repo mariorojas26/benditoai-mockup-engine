@@ -375,6 +375,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const nextBtn = document.getElementById("benditoai-modelo-next");
     const submitBtn = document.getElementById("benditoai-modelo-submit");
     const createAnotherBtn = document.getElementById("benditoai-modelo-create-another");
+    const rasgosConfirmModal = document.getElementById("benditoai-rasgos-confirm");
+    const rasgosConfirmCopy = document.getElementById("benditoai-rasgos-confirm-copy");
+    const rasgosConfirmOk = form.querySelector("[data-rasgos-confirm-ok]");
+    const rasgosConfirmCancelButtons = Array.from(form.querySelectorAll("[data-rasgos-confirm-cancel]"));
 
     const inlineError = document.getElementById("benditoai-modelo-inline-error");
 
@@ -414,10 +418,54 @@ document.addEventListener("DOMContentLoaded", function () {
     const alturaValue = document.getElementById("benditoai_altura_value");
     const pesoRange = document.getElementById("benditoai_peso");
     const pesoValue = document.getElementById("benditoai_peso_value");
+    const rasgosAvatarBaseUrl = root.dataset.rasgosAvatarBaseUrl || "";
+    const rasgosMiniWizard = form.querySelector("[data-rasgos-miniwizard]");
+    const rasgosMiniSteps = Array.from(form.querySelectorAll("[data-rasgos-mini-step]"));
+    const rasgosMiniIndicators = Array.from(form.querySelectorAll("[data-rasgos-mini-step-indicator]"));
+    const rasgosMiniHint = form.querySelector("[data-rasgos-mini-hint]");
+    const rasgosMiniHintBadge = form.querySelector("[data-rasgos-mini-hint-badge]");
+    const rasgosMiniHintTitle = form.querySelector("[data-rasgos-mini-hint-title]");
+    const rasgosMiniHintCopy = form.querySelector("[data-rasgos-mini-hint-copy]");
+    const rasgosChoiceTargets = Array.from(form.querySelectorAll("[data-choice-target]"));
+    const rasgosFieldNames = ["genero", "cuerpo", "etnia", "peinado", "color_ojos", "color_pelo", "color_cejas", "nacionalidad"];
+    const rasgosMiniStepFields = {
+        1: ["genero", "cuerpo"],
+        2: ["etnia", "peinado", "nacionalidad"],
+        3: ["color_ojos", "color_pelo", "color_cejas"],
+    };
+    const rasgosFieldIdMap = {
+        genero: "benditoai_genero",
+        cuerpo: "benditoai_cuerpo",
+        etnia: "benditoai_etnia",
+        peinado: "benditoai_peinado",
+        color_ojos: "benditoai_color_ojos",
+        color_pelo: "benditoai_color_pelo",
+        color_cejas: "benditoai_color_cejas",
+        nacionalidad: "benditoai_nacionalidad",
+    };
+    if (rasgosAvatarBaseUrl) {
+        root.style.setProperty("--rasgos-avatar-base-url", rasgosAvatarBaseUrl);
+    }
 
     let currentStep = 1;
+    let currentMiniStep = 1;
     let isSubmitting = false;
     let lastSuccess = null;
+    let rasgosAutoAdvanceEnabled = true;
+    let rasgosAutoAdvanceLockedManual = false;
+    let miniAdvanceTimer = null;
+    let rasgosConfirmResolver = null;
+    let miniStepTouched = { 1: false, 2: false, 3: false };
+    let miniFieldTouched = {
+        genero: false,
+        cuerpo: false,
+        etnia: false,
+        peinado: false,
+        color_ojos: false,
+        color_pelo: false,
+        color_cejas: false,
+        nacionalidad: false,
+    };
     const totalSteps = steps.length;
     const desktopQuery = window.matchMedia("(min-width: 901px)");
     const isDesktop = () => desktopQuery.matches;
@@ -532,6 +580,208 @@ document.addEventListener("DOMContentLoaded", function () {
 
     };
 
+    const isRasgosMiniwizardActive = () => currentStep === 2 && getActiveMode() === "rasgos";
+
+    const clearMiniAdvanceTimer = () => {
+        if (miniAdvanceTimer) {
+            window.clearTimeout(miniAdvanceTimer);
+            miniAdvanceTimer = null;
+        }
+    };
+
+    const resetRasgosTouchState = () => {
+        miniStepTouched = { 1: false, 2: false, 3: false };
+        miniFieldTouched = {
+            genero: false,
+            cuerpo: false,
+            etnia: false,
+            peinado: false,
+            color_ojos: false,
+            color_pelo: false,
+            color_cejas: false,
+            nacionalidad: false,
+        };
+    };
+
+    const getMiniStep = (stepNumber) => form.querySelector(`[data-rasgos-mini-step="${stepNumber}"]`);
+
+    const getFieldByName = (fieldName) => form.querySelector(`[name="${fieldName}"]`);
+
+    const refreshRasgosChoiceTiles = () => {
+        rasgosChoiceTargets.forEach((tile) => {
+            const targetName = tile.dataset.choiceTarget || "";
+            const targetField = getFieldByName(targetName);
+            const targetValue = String(targetField?.value || "");
+            const tileValue = String(tile.dataset.choiceValue || "");
+            const isSelected = targetValue !== "" && targetValue === tileValue;
+            tile.classList.toggle("is-selected", isSelected);
+            tile.setAttribute("aria-pressed", isSelected ? "true" : "false");
+        });
+    };
+
+    const syncRasgosMiniHint = () => {
+        if (!rasgosMiniHint) return;
+
+        const isManual = !rasgosAutoAdvanceEnabled;
+        rasgosMiniHint.classList.toggle("is-manual", isManual);
+        if (rasgosMiniHintBadge) rasgosMiniHintBadge.textContent = isManual ? "OFF" : "ON";
+        if (rasgosMiniHintTitle) {
+            rasgosMiniHintTitle.textContent = isManual
+                ? "Desactivado"
+                : "Auto activo";
+        }
+        if (rasgosMiniHintCopy) {
+            rasgosMiniHintCopy.textContent = isManual
+                ? "Pulsa Siguiente para continuar."
+                : "Avanza solo al completar.";
+        }
+    };
+
+    const confirmDisableRasgosAutoAdvance = () => {
+        if (!rasgosAutoAdvanceEnabled) return true;
+
+        if (!rasgosConfirmModal) {
+            return window.confirm("Si te devuelves, se desactivara el avance automatico y tendras que usar Siguiente en cada pantalla. ¿Continuar?");
+        }
+
+        if (rasgosConfirmCopy) {
+            rasgosConfirmCopy.textContent = "Si te devuelves, el paso quedara manual y tendras que usar Siguiente en cada pantalla.";
+        }
+
+        return new Promise((resolve) => {
+            rasgosConfirmResolver = resolve;
+            rasgosConfirmModal.hidden = false;
+            rasgosConfirmModal.setAttribute("aria-hidden", "false");
+            window.requestAnimationFrame(() => {
+                rasgosConfirmOk?.focus();
+            });
+        });
+    };
+
+    const closeRasgosConfirm = (confirmed = false) => {
+        if (!rasgosConfirmModal) return;
+        rasgosConfirmModal.hidden = true;
+        rasgosConfirmModal.setAttribute("aria-hidden", "true");
+        if (confirmed && rasgosAutoAdvanceEnabled) {
+            rasgosAutoAdvanceEnabled = false;
+            rasgosAutoAdvanceLockedManual = true;
+            clearMiniAdvanceTimer();
+            syncRasgosMiniHint();
+        }
+        if (rasgosConfirmResolver) {
+            const resolve = rasgosConfirmResolver;
+            rasgosConfirmResolver = null;
+            resolve(confirmed);
+        }
+    };
+
+    const syncRasgosMiniUi = () => {
+        if (!rasgosMiniWizard) return;
+
+        const active = isRasgosMiniwizardActive();
+        root.classList.toggle("is-rasgos-miniwizard", active);
+        rasgosMiniWizard.hidden = !active;
+
+        rasgosMiniSteps.forEach((step) => {
+            const stepNumber = Number(step.dataset.rasgosMiniStep || "1");
+            const isActive = active && stepNumber === currentMiniStep;
+            step.hidden = !isActive;
+            step.classList.toggle("is-active", isActive);
+            step.setAttribute("aria-hidden", isActive ? "false" : "true");
+        });
+
+        rasgosMiniIndicators.forEach((indicator) => {
+            const indicatorStep = Number(indicator.dataset.rasgosMiniStepIndicator || "1");
+            indicator.classList.toggle("is-active", active && indicatorStep === currentMiniStep);
+            indicator.classList.toggle("is-complete", active && indicatorStep < currentMiniStep);
+            if (active && indicatorStep === currentMiniStep) {
+                indicator.setAttribute("aria-current", "step");
+            } else {
+                indicator.removeAttribute("aria-current");
+            }
+        });
+
+        refreshRasgosChoiceTiles();
+        syncRasgosMiniHint();
+    };
+
+    const resetRasgosMiniwizard = () => {
+        currentMiniStep = 1;
+        rasgosAutoAdvanceEnabled = true;
+        rasgosAutoAdvanceLockedManual = false;
+        resetRasgosTouchState();
+        clearMiniAdvanceTimer();
+        syncRasgosMiniUi();
+    };
+
+    const goToRasgosMiniStep = (targetStep) => {
+        const nextStep = Math.max(1, Math.min(3, targetStep));
+        currentMiniStep = nextStep;
+        clearMiniAdvanceTimer();
+        updateStepUi();
+        if (nextStep === 3) {
+            scheduleRasgosAutoAdvance();
+        }
+        window.setTimeout(scrollWizardTopIfNeeded, 100);
+    };
+
+    const isRasgosMiniStepComplete = (stepNumber) => {
+        const step = getMiniStep(stepNumber);
+        if (!step) return true;
+
+        const fields = Array.from(step.querySelectorAll("input, select, textarea")).filter((field) => {
+            if (field.disabled || field.type === "hidden") return false;
+            return field.required;
+        });
+
+        return fields.every((field) => String(field.value || "").trim() !== "");
+    };
+
+    const isRasgosMiniStepTouched = (stepNumber) => {
+        const fields = rasgosMiniStepFields[stepNumber] || [];
+        if (!fields.length) return false;
+        return fields.every((fieldName) => Boolean(miniFieldTouched[fieldName]));
+    };
+
+    const scheduleRasgosAutoAdvance = () => {
+        if (!isRasgosMiniwizardActive()) return;
+        if (!rasgosAutoAdvanceEnabled) return;
+        clearMiniAdvanceTimer();
+
+        miniAdvanceTimer = window.setTimeout(() => {
+            if (!isRasgosMiniwizardActive()) return;
+            if (!miniStepTouched[currentMiniStep]) return;
+            if (!isRasgosMiniStepTouched(currentMiniStep)) return;
+            if (!isRasgosMiniStepComplete(currentMiniStep)) return;
+
+            if (currentMiniStep < 3) {
+                goToRasgosMiniStep(currentMiniStep + 1);
+                return;
+            }
+
+            goToStep(3);
+        }, 650);
+    };
+
+    const handleRasgosFieldActivity = (fieldName = "") => {
+        if (!isRasgosMiniwizardActive()) return;
+        if (fieldName && Object.prototype.hasOwnProperty.call(miniFieldTouched, fieldName)) {
+            miniFieldTouched[fieldName] = true;
+        }
+        miniStepTouched[currentMiniStep] = true;
+        syncRasgosMiniUi();
+        if (!rasgosAutoAdvanceEnabled) return;
+        scheduleRasgosAutoAdvance();
+    };
+
+    const setRasgosChoiceValue = (targetName, targetValue) => {
+        const field = getFieldByName(targetName);
+        if (!field || field.disabled) return;
+
+        field.value = targetValue;
+        field.dispatchEvent(new Event("change", { bubbles: true }));
+    };
+
     const syncModePanels = () => {
         const mode = getActiveMode();
         const modePanels = Array.from(form.querySelectorAll("[data-mode-panel]"));
@@ -554,6 +804,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (stepThree) {
             stepThree.setAttribute("data-active-mode", mode || "none");
+        }
+
+        if (mode !== "rasgos") {
+            resetRasgosMiniwizard();
+        } else if (currentStep !== 2) {
+            currentMiniStep = 1;
+            resetRasgosTouchState();
+            clearMiniAdvanceTimer();
+            syncRasgosMiniUi();
+        } else {
+            syncRasgosMiniUi();
         }
 
         initChoicesSelects();
@@ -632,17 +893,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (prevBtn) {
             prevBtn.style.display = "inline-flex";
-            prevBtn.textContent = currentStep === 1 ? "Cancelar" : "Anterior";
+            const isMiniwizard = currentStep === 2 && getActiveMode() === "rasgos";
+            prevBtn.textContent = currentStep === 1 ? "Cancelar" : (isMiniwizard ? "Volver" : "Anterior");
             prevBtn.classList.toggle("is-cancel", currentStep === 1);
         }
         if (nextBtn) {
             const hasMode = getActiveMode() !== "";
-            const shouldShow = currentStep !== totalSteps && (currentStep !== 1 || hasMode);
+            const isRasgosManualMode = currentStep === 2 && getActiveMode() === "rasgos" && !rasgosAutoAdvanceEnabled;
+            const shouldShow = currentStep !== totalSteps
+                && (currentStep !== 1 || hasMode)
+                && (currentStep !== 2 || getActiveMode() !== "rasgos" || isRasgosManualMode);
             nextBtn.style.display = shouldShow ? "inline-flex" : "none";
         }
         if (submitBtn) submitBtn.style.display = currentStep === totalSteps ? "inline-flex" : "none";
 
         root.classList.toggle("is-step-compact", currentStep > 1);
+        syncRasgosMiniUi();
 
         clearInlineError();
     };
@@ -652,6 +918,26 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!step) return true;
 
         const activeMode = getActiveMode();
+        if (stepNumber === 2 && activeMode === "rasgos") {
+            const miniStep = getMiniStep(currentMiniStep);
+            if (!miniStep) return true;
+
+            const fields = Array.from(miniStep.querySelectorAll("input, select, textarea"));
+            for (const field of fields) {
+                if (field.disabled || field.type === "hidden") continue;
+                if (!field.required) continue;
+
+                if (!String(field.value || "").trim()) {
+                    const label = miniStep.querySelector(`label[for='${field.id}']`)?.textContent || "Este campo";
+                    showInlineError(`${label} es obligatorio.`);
+                    field.focus();
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         if (stepNumber === 1 && !activeMode) {
             showInlineError("Selecciona un tipo de creacion para continuar.");
             return false;
@@ -688,7 +974,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const goToStep = (targetStep) => {
         const step = Math.max(1, Math.min(totalSteps, targetStep));
+        const previousStep = currentStep;
         currentStep = step;
+        if (currentStep === 2 && getActiveMode() === "rasgos" && previousStep !== 3) {
+            currentMiniStep = 1;
+            resetRasgosTouchState();
+            clearMiniAdvanceTimer();
+        } else if (currentStep === 2 && getActiveMode() === "rasgos" && previousStep === 3) {
+            clearMiniAdvanceTimer();
+            if (!rasgosAutoAdvanceLockedManual) {
+                rasgosAutoAdvanceEnabled = true;
+                scheduleRasgosAutoAdvance();
+            } else {
+                rasgosAutoAdvanceEnabled = false;
+            }
+        }
         updateStepUi();
         syncModePanels();
         window.setTimeout(scrollWizardTopIfNeeded, 120);
@@ -795,6 +1095,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const estilo = escapeHtml(d.estilo || d.modo_label || "-");
         const modo = escapeHtml(d.modo_label || "-");
         const nacionalidad = escapeHtml(d.nacionalidad || "-");
+        const colorOjos = escapeHtml(d.color_ojos || "-");
+        const peinado = escapeHtml(d.peinado || "-");
+        const colorPelo = escapeHtml(d.color_pelo || "-");
+        const colorCejas = escapeHtml(d.color_cejas || "-");
         const nombreModelo = escapeHtml(d.nombre_modelo || "Modelo AI");
         const descripcionModelo = escapeHtml(d.descripcion_modelo || "Modelo AI listo para campanas de moda, redes y lookbooks.");
         const fecha = escapeHtml(d.fecha || "-");
@@ -976,6 +1280,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     <p><strong>Edad:</strong> ${edad}</p>
                     <p><strong>Estilo:</strong> ${estilo}</p>
                     <p><strong>Nacionalidad:</strong> ${nacionalidad}</p>
+                    <p><strong>Ojos:</strong> ${colorOjos}</p>
+                    <p><strong>Pelo:</strong> ${colorPelo}</p>
+                    <p><strong>Cejas:</strong> ${colorCejas}</p>
                     <p><strong>Visibilidad:</strong> ${publico}</p>
                     <p><strong>Creado:</strong> ${fecha}</p>
                 </div>
@@ -1052,6 +1359,11 @@ document.addEventListener("DOMContentLoaded", function () {
         form.reset();
         lastSuccess = null;
         currentStep = 1;
+        currentMiniStep = 1;
+        rasgosAutoAdvanceEnabled = true;
+        rasgosAutoAdvanceLockedManual = false;
+        resetRasgosTouchState();
+        clearMiniAdvanceTimer();
 
         if (referenceSmart) referenceSmart.classList.remove("is-has-file");
         if (referenceFileText) {
@@ -1071,14 +1383,45 @@ document.addEventListener("DOMContentLoaded", function () {
         updateStepUi();
         clearInlineError();
         showConfigStage();
-        resetResult();
-        window.scrollTo({ top: root.offsetTop - 30, behavior: "smooth" });
-    };
+    resetResult();
+    window.scrollTo({ top: root.offsetTop - 30, behavior: "smooth" });
+};
 
-    prevBtn?.addEventListener("click", () => {
+    rasgosConfirmOk?.addEventListener("click", () => {
+        closeRasgosConfirm(true);
+    });
+
+    rasgosConfirmCancelButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            closeRasgosConfirm(false);
+        });
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        if (!rasgosConfirmModal || rasgosConfirmModal.hidden) return;
+        closeRasgosConfirm(false);
+    });
+
+    prevBtn?.addEventListener("click", async () => {
         if (isSubmitting) return;
         if (currentStep === 1) {
             window.location.href = cancelUrl;
+            return;
+        }
+        if (currentStep === 3 && getActiveMode() === "rasgos") {
+            if (!(await confirmDisableRasgosAutoAdvance())) return;
+            goToStep(2);
+            return;
+        }
+        if (currentStep === 2 && getActiveMode() === "rasgos") {
+            if (currentMiniStep > 1) {
+                if (!(await confirmDisableRasgosAutoAdvance())) return;
+                goToRasgosMiniStep(currentMiniStep - 1);
+                return;
+            }
+            if (!(await confirmDisableRasgosAutoAdvance())) return;
+            goToStep(1);
             return;
         }
         goToStep(currentStep - 1);
@@ -1087,6 +1430,14 @@ document.addEventListener("DOMContentLoaded", function () {
     nextBtn?.addEventListener("click", () => {
         if (isSubmitting) return;
         if (!validateStep(currentStep)) return;
+        if (currentStep === 2 && getActiveMode() === "rasgos") {
+            if (currentMiniStep < 3) {
+                goToRasgosMiniStep(currentMiniStep + 1);
+                return;
+            }
+            goToStep(3);
+            return;
+        }
         goToStep(currentStep + 1);
     });
 
@@ -1094,6 +1445,20 @@ document.addEventListener("DOMContentLoaded", function () {
         event.preventDefault();
         if (isSubmitting) return;
         if (!validateStep(currentStep)) return;
+        if (currentStep < totalSteps) {
+            if (currentStep === 2 && getActiveMode() === "rasgos") {
+                if (currentMiniStep < 3) {
+                    goToRasgosMiniStep(currentMiniStep + 1);
+                    return;
+                }
+                goToStep(3);
+                return;
+            }
+
+            goToStep(currentStep + 1);
+            return;
+        }
+
         submitRequest();
     });
 
@@ -1106,7 +1471,27 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     [edadRange, alturaRange, pesoRange].forEach((range) => {
-        range?.addEventListener("input", syncRangos);
+        range?.addEventListener("input", () => {
+            syncRangos();
+            handleRasgosFieldActivity();
+        });
+    });
+
+    rasgosFieldNames.forEach((fieldName) => {
+        const field = document.getElementById(rasgosFieldIdMap[fieldName] || "");
+        if (!field) return;
+
+        field.addEventListener(field.tagName === "INPUT" ? "input" : "change", () => {
+            syncRasgosMiniUi();
+            handleRasgosFieldActivity(fieldName);
+        });
+    });
+
+    form.addEventListener("click", (event) => {
+        const choice = event.target.closest("[data-choice-target]");
+        if (!choice || !isRasgosMiniwizardActive()) return;
+        event.preventDefault();
+        setRasgosChoiceValue(choice.dataset.choiceTarget || "", choice.dataset.choiceValue || "");
     });
 
     publicToggle?.addEventListener("change", syncVisibilityToggle);
@@ -1206,3 +1591,5 @@ document.addEventListener("DOMContentLoaded", function () {
     resetResult();
     showConfigStage();
 });
+
+
