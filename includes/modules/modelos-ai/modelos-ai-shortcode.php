@@ -14,16 +14,16 @@ function benditoai_modelos_ai_shortcode() {
     $rasgos_avatar_base_url = trailingslashit(BENDIDOAI_PLUGIN_URL . 'assets/images/rasgosAvatar/');
 
     $rasgos_gender_options = array(
-        array('value' => 'male', 'label' => 'Hombre', 'meta' => 'Base masculina', 'icon' => 'fas fa-mars'),
-        array('value' => 'female', 'label' => 'Mujer', 'meta' => 'Base femenina', 'icon' => 'fas fa-venus'),
-        array('value' => 'non-binary', 'label' => 'No binario', 'meta' => 'Base flexible', 'icon' => 'fas fa-genderless'),
+        array('value' => 'male', 'label' => 'Hombre', 'meta' => 'Base masculina', 'thumb' => 'hombre.jpg'),
+        array('value' => 'female', 'label' => 'Mujer', 'meta' => 'Base femenina', 'thumb' => 'mujer.jpg'),
+        array('value' => 'non-binary', 'label' => 'No binario', 'meta' => 'Base flexible', 'thumb' => 'no-binario.jpg'),
     );
 
     $rasgos_body_options = array(
-        array('value' => 'athletic', 'label' => 'Atlético', 'meta' => 'Definición deportiva', 'icon' => 'fas fa-person'),
-        array('value' => 'slim', 'label' => 'Delgado', 'meta' => 'Silencio visual limpio', 'icon' => 'fas fa-person'),
-        array('value' => 'average', 'label' => 'Promedio', 'meta' => 'Proporción equilibrada', 'icon' => 'fas fa-person'),
-        array('value' => 'plus size', 'label' => 'Plus size', 'meta' => 'Volumen realista', 'icon' => 'fas fa-person'),
+        array('value' => 'athletic', 'label' => 'Atlético', 'meta' => 'Definición deportiva', 'thumb' => 'atletico.jpg'),
+        array('value' => 'slim', 'label' => 'Delgado', 'meta' => 'Silencio visual limpio', 'thumb' => 'delgado.jpg'),
+        array('value' => 'average', 'label' => 'Promedio', 'meta' => 'Proporción equilibrada', 'thumb' => 'promedio.jpg'),
+        array('value' => 'plus size', 'label' => 'Plus size', 'meta' => 'Volumen realista', 'thumb' => 'gordo.jpg'),
     );
 
     $rasgos_ethnicity_options = array(
