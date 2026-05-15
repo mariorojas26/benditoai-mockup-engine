@@ -1444,12 +1444,12 @@ function benditoai_modelos_ai_shortcode() {
     border: 1px solid rgba(124, 92, 201, 0.34);
     border-radius: 16px;
     background: linear-gradient(180deg, rgba(22, 11, 46, 0.92), rgba(13, 7, 29, 0.95));
-    padding: 12px;
-    height: 196px;
+    padding: 10px;
+    height: auto;
     cursor: pointer;
     color: #f5efff;
     display: grid;
-    grid-template-rows: 92px minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
     gap: 10px;
     transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease, background 0.18s ease;
     text-align: left;
@@ -1473,13 +1473,23 @@ function benditoai_modelos_ai_shortcode() {
 .benditoai-modelos-wizard .baiw-choice-tile__thumb {
     position: relative;
     width: 100%;
-    height: 92px;
+    /* default: square for icon-only tiles */
+    aspect-ratio: 1 / 1;
+    height: auto;
     border-radius: 14px;
     border: 1px solid rgba(236, 232, 255, 0.12);
     background:
         radial-gradient(circle at 50% 35%, rgba(188, 146, 255, 0.18), transparent 56%),
         linear-gradient(180deg, rgba(58, 32, 106, 0.9), rgba(21, 11, 43, 0.98));
     overflow: hidden;
+    display: block;
+}
+
+/* Override: tiles that have images should use the previous rectangular thumbnail */
+.benditoai-modelos-wizard .baiw-choice-group[data-choice-group="etnia"] .baiw-choice-tile--image .baiw-choice-tile__thumb {
+    /* etnia thumbnails use the same square style as other icon-less tiles */
+    aspect-ratio: 1 / 1;
+    height: auto;
 }
 
 .benditoai-modelos-wizard .baiw-choice-tile__thumb::before {
