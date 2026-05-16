@@ -30,7 +30,7 @@ function benditoai_modelos_ai_shortcode() {
             'value' => 'non-binary',
             'label' => 'No binario',
             'meta' => 'Base flexible',
-            'icon_svg' => '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="10" r="4.5"></circle><path d="M12 5.5V2.5"></path><path d="M10.3 4.2L12 2.5L13.7 4.2"></path><path d="M12 14.5V21"></path><path d="M9 18h6"></path></svg>',
+            'icon_svg' => '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="15" r="3.75" /><path d="M12 12v-6" /><path d="M12 2.5v2" /><path d="M9.5 4.5h5" /><path d="M10.2 3l3.6 3" /><path d="M10.2 6l3.6-3" /></svg>',
         ),
     );
 
@@ -42,11 +42,11 @@ function benditoai_modelos_ai_shortcode() {
     );
 
     $rasgos_ethnicity_options = array(
-        array('value' => 'latin', 'label' => 'Latino', 'thumb' => 'etnia/latino.png'),
-        array('value' => 'european', 'label' => 'Europeo', 'thumb' => 'etnia/europeo.png'),
-        array('value' => 'asian', 'label' => 'Asiático', 'thumb' => 'etnia/asiatico.png'),
-        array('value' => 'african', 'label' => 'Africano', 'thumb' => 'etnia/africano.png'),
-        array('value' => 'other', 'label' => 'Otro', 'thumb' => 'etnia/otro.png'),
+        array('value' => 'latin', 'label' => 'Latino', 'thumb' => '../etnia/latino.jpg'),
+        array('value' => 'european', 'label' => 'Europeo', 'thumb' => '../etnia/europeo.jpg'),
+        array('value' => 'asian', 'label' => 'Asiático', 'thumb' => '../etnia/asiatico.jpg'),
+        array('value' => 'african', 'label' => 'Africano', 'thumb' => '../etnia/africano.jpg'),
+        array('value' => 'other', 'label' => 'Otro', 'thumb' => '../etnia/otro.jpg'),
     );
 
     $rasgos_hair_image_base_url = trailingslashit(BENDIDOAI_PLUGIN_URL . 'assets/images/peinados/');
@@ -1537,6 +1537,18 @@ function benditoai_modelos_ai_shortcode() {
     display: grid;
     gap: 3px;
     align-content: start;
+}
+
+/* Special layout for Género group: slightly shorter tiles to align with Constitución */
+.benditoai-modelos-wizard .baiw-choice-group[data-choice-group="genero"] .baiw-choice-tile {
+    padding: 8px;
+    gap: 6px;
+    grid-template-rows: auto minmax(0, 1fr);
+}
+.benditoai-modelos-wizard .baiw-choice-group[data-choice-group="genero"] .baiw-choice-tile__thumb {
+    aspect-ratio: 1 / 1;
+    height: 116px;
+    border-radius: 12px;
 }
 
 .benditoai-modelos-wizard .baiw-choice-tile__copy strong {
