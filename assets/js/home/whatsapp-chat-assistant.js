@@ -72,7 +72,13 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => { panel.hidden = true; }, 140);
     };
 
-    fab.addEventListener("click", openPanel);
+    fab.addEventListener("click", () => {
+        if (root.classList.contains("is-open")) {
+            closePanel();
+        } else {
+            openPanel();
+        }
+    });
     close.addEventListener("click", closePanel);
 
     document.addEventListener("mousemove", (event) => {

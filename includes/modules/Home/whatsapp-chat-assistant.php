@@ -11,7 +11,7 @@ function benditoai_home_chat_render_widget() {
     ?>
     <div class="benditoai-wa-chat" data-benditoai-wa-chat>
         <button type="button" class="benditoai-wa-chat__fab" data-wa-fab aria-label="Abrir chat inteligente">
-            <i class="fab fa-whatsapp" aria-hidden="true"></i>
+            <img src="https://tottoco.vteximg.com.br/arquivos/whatsapp-verde-icon-redimension50.svg" alt="WhatsApp" class="benditoai-wa-chat__fab-icon">
         </button>
 
         <section class="benditoai-wa-chat__panel" data-wa-panel hidden aria-live="polite">

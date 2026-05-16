@@ -6792,76 +6792,141 @@ body.benditoai-modal-open {
 }
 
 .benditoai-wa-chat__fab {
-    width: 58px;
-    height: 58px;
-    border: none;
+    width: 56px;
+    height: 56px;
+    border: none !important;
     border-radius: 50%;
-    background: #25d366;
-    color: #fff;
-    font-size: 30px;
+    background: transparent !important;
     cursor: pointer;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28), 0 8px 24px rgba(0, 0, 0, 0.36) !important;
+    transition: all 0.24s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 0 !important;
+    outline: none !important;
+}
+
+.benditoai-wa-chat__fab:hover,
+.benditoai-wa-chat__fab:focus,
+.benditoai-wa-chat__fab:active {
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28), 0 8px 24px rgba(0, 0, 0, 0.36) !important;
+}
+
+.benditoai-wa-chat__fab-icon {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+    display: block;
+    transition: transform 0.24s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.benditoai-wa-chat__fab:hover .benditoai-wa-chat__fab-icon {
+    transform: scale(1.12);
+}
+
+.benditoai-wa-chat__fab:active .benditoai-wa-chat__fab-icon {
+    transform: scale(0.96);
 }
 
 .benditoai-wa-chat.is-near .benditoai-wa-chat__fab {
-    animation: benditoai-wa-shake .45s linear infinite;
-}
-
-@keyframes benditoai-wa-shake {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-2px) rotate(-3deg); }
-    50% { transform: translateX(2px) rotate(3deg); }
-    75% { transform: translateX(-2px) rotate(-2deg); }
-    100% { transform: translateX(0); }
+    /* Vibración deshabilitada */
 }
 
 .benditoai-wa-chat__panel {
     position: absolute;
     right: 0;
-    bottom: 74px;
+    bottom: 68px;
     width: min(360px, calc(100vw - 28px));
+    max-height: 500px;
     background: #0f0b1f;
     border: 1px solid rgba(124, 58, 255, 0.35);
-    border-radius: 12px;
+    border-radius: 14px;
     overflow: hidden;
-    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 1px rgba(124, 58, 255, 0.2);
+    opacity: 0;
+    transform: translateY(12px) scale(0.94);
+    pointer-events: none;
+    transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.benditoai-wa-chat.is-open .benditoai-wa-chat__panel {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
 }
 
 .benditoai-wa-chat__head {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 12px;
-    background: #1a1330;
+    padding: 8px 12px;
+    background: linear-gradient(90deg, #1a1330 0%, #1e0f3a 100%);
     color: #fff;
+    border-bottom: 1px solid rgba(124, 58, 255, 0.15);
+}
+
+.benditoai-wa-chat__head strong {
+    font-size: 0.85rem;
+    font-weight: 600;
 }
 
 .benditoai-wa-chat__close {
     border: none;
     background: transparent;
-    color: #fff;
+    color: rgba(255, 255, 255, 0.8);
     cursor: pointer;
     font-size: 18px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.benditoai-wa-chat__close:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
 }
 
 .benditoai-wa-chat__messages {
-    max-height: 320px;
+    max-height: 380px;
     overflow-y: auto;
-    padding: 12px;
+    padding: 14px;
     display: grid;
-    gap: 8px;
+    gap: 10px;
+    background: rgba(15, 11, 31, 0.6);
 }
 
 .benditoai-wa-chat__msg {
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 8px 10px;
-    font-size: 0.9rem;
-    line-height: 1.35;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    animation: benditoai-wa-msg-enter 0.3s ease;
+}
+
+@keyframes benditoai-wa-msg-enter {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .benditoai-wa-chat__msg.is-bot {
-    background: #231a45;
+    background: rgba(35, 26, 69, 0.8);
     color: #efe8ff;
+    justify-self: start;
 }
 
 .benditoai-wa-chat__msg.is-user {
@@ -6869,11 +6934,13 @@ body.benditoai-modal-open {
     color: #0a1010;
     justify-self: end;
     max-width: 85%;
+    font-weight: 500;
 }
 
 .benditoai-wa-chat__msg.is-structured {
-    background: #1a1433;
+    background: rgba(26, 20, 51, 0.9);
     border: 1px solid rgba(124, 58, 255, 0.35);
+    justify-self: start;
 }
 
 .benditoai-wa-chat__plans-title {
@@ -6963,6 +7030,7 @@ body.benditoai-modal-open {
     display: grid;
     grid-template-columns: 1fr auto;
     gap: 8px;
+    background: rgba(15, 11, 31, 0.8);
 }
 
 .benditoai-wa-chat__form input {
@@ -6970,18 +7038,43 @@ body.benditoai-modal-open {
     border: 1px solid rgba(124, 58, 255, 0.25);
     background: #130d28;
     color: #fff;
-    border-radius: 9px;
-    padding: 8px 10px;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.benditoai-wa-chat__form input:focus {
+    outline: none;
+    border-color: rgba(124, 58, 255, 0.5);
+    background: #1a0f35;
+    box-shadow: 0 0 0 2px rgba(124, 58, 255, 0.1);
+}
+
+.benditoai-wa-chat__form input::placeholder {
+    color: rgba(220, 209, 250, 0.5);
 }
 
 .benditoai-wa-chat__form button {
     border: none;
-    border-radius: 9px;
-    padding: 8px 12px;
+    border-radius: 8px;
+    padding: 10px 14px;
     background: #25d366;
     color: #09110c;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.85rem;
+}
+
+.benditoai-wa-chat__form button:hover {
+    background: #20b355;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);
+}
+
+.benditoai-wa-chat__form button:active {
+    transform: translateY(0);
 }
 .benditoai-modelos-ai-shell,
 .benditoai-modelos-ai-shell *,
@@ -7278,4 +7371,7 @@ body.benditoai-modal-open {
 }
 .baiw-title-main-1{
     color:#fff;
+}
+.input[type=email]:focus, input[type=password]:focus, input[type=search]:focus, input[type=tel]:focus, input[type=text]:focus, input[type=url]:focus, textarea:focus{
+    color:#dfdfdf;
 }
