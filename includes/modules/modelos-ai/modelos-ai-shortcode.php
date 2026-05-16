@@ -310,6 +310,7 @@ function benditoai_modelos_ai_shortcode() {
                             <i class="fas fa-info-circle" aria-hidden="true"></i>
                             <span>Más adelante podrás cambiar la ropa de tu modelo, pero su rostro permanecerá igual.</span>
                         </div>
+                        <span class="baiw-lgbt-badge">somos lgbt friendly</span>
                     </div>
                 </section>
 
@@ -2540,24 +2541,6 @@ function benditoai_modelos_ai_shortcode() {
     letter-spacing: 0;
 }
 
-.benditoai-modelos-wizard .baiw-header h2::before {
-    content: "";
-    display: inline-block;
-    width: 18px;
-    height: 18px;
-    margin-right: 10px;
-    border-radius: 6px;
-    border: 2px solid var(--baiw-primary);
-    background:
-        linear-gradient(var(--baiw-primary), var(--baiw-primary)) 50% -5px / 2px 9px no-repeat,
-        linear-gradient(var(--baiw-primary), var(--baiw-primary)) -5px 50% / 9px 2px no-repeat,
-        linear-gradient(var(--baiw-primary), var(--baiw-primary)) calc(100% + 5px) 50% / 9px 2px no-repeat,
-        radial-gradient(circle at 35% 45%, var(--baiw-primary) 0 2px, transparent 2.5px),
-        radial-gradient(circle at 65% 45%, var(--baiw-primary) 0 2px, transparent 2.5px),
-        rgba(124, 58, 255, 0.12);
-    vertical-align: -1px;
-}
-
 .benditoai-modelos-wizard .baiw-header p {
     max-width: 620px;
     color: rgba(236, 232, 255, 0.9);
@@ -3203,6 +3186,32 @@ function benditoai_modelos_ai_shortcode() {
 .benditoai-modelos-wizard .baiw-info-note i {
     color: #9db7ff;
     font-size: 1.08rem;
+}
+
+.benditoai-modelos-wizard .baiw-lgbt-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 10px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.7rem;
+    font-weight: 300;
+    text-transform: none;
+    opacity: 0.8;
+}
+
+.benditoai-modelos-wizard .baiw-lgbt-badge::before {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 8px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, #e40303 0%, #ff8c00 20%, #ffed00 40%, #008026 60%, #004dff 80%, #750787 100%);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 .benditoai-modelos-wizard .baiw-nav {
