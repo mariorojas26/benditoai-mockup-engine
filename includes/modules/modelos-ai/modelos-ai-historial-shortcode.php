@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!function_exists('benditoai_modelos_ai_get_outfit_catalog')) {
     function benditoai_modelos_ai_get_outfit_catalog() {
        $catalog = array(
@@ -111,7 +111,7 @@ function benditoai_modelos_ai_historial_shortcode() {
         : 1;
     $outfit_limit_warning = function_exists('benditoai_modelo_outfit_warning')
         ? benditoai_modelo_outfit_warning()
-        : 'Has alcanzado el límite de outfits para este modelo.';
+        : 'Has alcanzado el lÃ­mite de outfits para este modelo.';
 
     $plan_data = function_exists('benditoai_get_user_plan_data')
         ? benditoai_get_user_plan_data($user_id)
@@ -303,20 +303,18 @@ function benditoai_modelos_ai_historial_shortcode() {
                                     <textarea
                                         id="benditoai-inline-edit-text-<?php echo esc_attr($item->id); ?>"
                                         class="benditoai-inline-edit-text"
-                                        placeholder="Ej: cambia solo la chaqueta por una bomber negra."
+                                        placeholder="Ej: cambia los tenis por unas botas de "
                                     ></textarea>
 
                                     <div class="benditoai-inline-edit-style" hidden>
                                         <span class="benditoai-inline-edit-style-label">Estilo</span>
                                         <span class="benditoai-inline-edit-style-value"></span>
+                                        <button type="button" class="benditoai-inline-edit-style-remove" aria-label="Quitar estilo seleccionado" hidden>x</button>
                                     </div>
                                     <input type="hidden" class="benditoai-inline-edit-selected-style" value="">
                                     <input type="hidden" class="benditoai-inline-edit-selected-style-id" value="">
 
                                     <div class="benditoai-inline-edit-ref-block">
-                                        <p class="benditoai-inline-edit-ref-help">
-                                           Opcional: sube una foto de tu prenda para vestir al modelo con ella.
-                                        </p>
                                         <input
                                             type="file"
                                             class="benditoai-inline-edit-ref-file"
@@ -328,7 +326,7 @@ function benditoai_modelos_ai_historial_shortcode() {
                                             <span class="benditoai-inline-edit-ref-trigger-preview" hidden>
                                                 <img src="" alt="" class="benditoai-inline-edit-ref-trigger-preview-img" />
                                              </span>
-                                            <span class="benditoai-inline-edit-ref-trigger-text">Una prenda de vestir (opcional)</span>
+                                            <span class="benditoai-inline-edit-ref-trigger-text">Opcional: sube una foto de tu prenda para vestir al modelo con ella.</span>
                                         </button>
                                         <p class="benditoai-inline-edit-ref-name"></p>
                                     </div>
@@ -387,12 +385,13 @@ function benditoai_modelos_ai_historial_shortcode() {
                                 data-outfit-tag="principal"
                                 data-source="principal_outfit"
                             >
-                                Usar para campaña
+                                Usar para campaÃ±a
                             </button>
                         </div>
                     <?php endif; ?>
 
                     <div class="benditoai-desktop-model-panel">
+                        <button type="button" class="benditoai-desktop-edit-curtain" aria-label="Cerrar editor"></button>
                         <div class="benditoai-desktop-model-head">
                             <div class="benditoai-desktop-model-head-row">
                                 <h3><?php echo esc_html($item->nombre_modelo); ?></h3>

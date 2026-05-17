@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+﻿document.addEventListener("DOMContentLoaded", function () {
     const historyWrapper = document.querySelector(".benditoai-wrapper-historia-modelos");
     const getOutfitCatalog = () => {
         if (!historyWrapper) return [];
@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     const getOutfitWarning = () => {
-        return historyWrapper?.dataset.outfitWarning || "Has alcanzado el límite de outfits para este modelo.";
+        return historyWrapper?.dataset.outfitWarning || "Has alcanzado el lÃ­mite de outfits para este modelo.";
     };
 
     const renderSavedOutfitsRailMarkup = (modelData = null) => {
@@ -205,9 +205,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const limit = getModelLimit();
             const canAdd = canAddModel(count);
             const remaining = Math.max(0, limit - count);
-            const addLabel = canAdd ? "Añadir modelo" : "Máximo alcanzado";
+            const addLabel = canAdd ? "AÃ±adir modelo" : "MÃ¡ximo alcanzado";
             const addTitle = canAdd
-                ? `Puedes crear ${remaining} modelo${remaining === 1 ? "" : "s"} más`
+                ? `Puedes crear ${remaining} modelo${remaining === 1 ? "" : "s"} mÃ¡s`
                 : getModelWarning();
             const modelThumbs = items.map((item, index) => {
                 const src = getItemImage(item);
@@ -1202,20 +1202,18 @@ document.addEventListener("DOMContentLoaded", function () {
                             <div class="benditoai-inline-edit-style" hidden>
                                 <span class="benditoai-inline-edit-style-label">Estilo</span>
                                 <span class="benditoai-inline-edit-style-value"></span>
+                                <button type="button" class="benditoai-inline-edit-style-remove" aria-label="Quitar estilo seleccionado" hidden>x</button>
                             </div>
                             <input type="hidden" class="benditoai-inline-edit-selected-style" value="">
                             <input type="hidden" class="benditoai-inline-edit-selected-style-id" value="">
                             <div class="benditoai-inline-edit-ref-block">
-                                <p class="benditoai-inline-edit-ref-help">
-                                    Opcional: sube una imagen de prenda para usarla como referencia. El estilo seleccionado se aplicara por separado.
-                                </p>
                                 <input type="file" class="benditoai-inline-edit-ref-file" accept="image/png,image/jpeg,image/webp" hidden>
                                 <button type="button" class="benditoai-inline-edit-ref-trigger">
                                     <i class="fas fa-plus" aria-hidden="true"></i>
                                     <span class="benditoai-inline-edit-ref-trigger-preview" hidden>
                                         <img src="" alt="" class="benditoai-inline-edit-ref-trigger-preview-img" />
                                     </span>
-                                    <span class="benditoai-inline-edit-ref-trigger-text">Una prenda de vestir (opcional)</span>
+                                    <span class="benditoai-inline-edit-ref-trigger-text">Opcional: sube una foto de tu prenda para vestir al modelo con ella.</span>
                                 </button>
                                 <p class="benditoai-inline-edit-ref-name"></p>
                             </div>
@@ -1259,6 +1257,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     ${renderSavedOutfitsRailMarkup(d)}
                 </div>
                 <div class="benditoai-desktop-model-panel">
+                    <button type="button" class="benditoai-desktop-edit-curtain" aria-label="Cerrar editor"></button>
                     <div class="benditoai-desktop-model-head">
                         <div class="benditoai-desktop-model-head-row">
                             <h3>${nombreModelo}</h3>
@@ -1667,5 +1666,6 @@ document.addEventListener("DOMContentLoaded", function () {
     resetResult();
     showConfigStage();
 });
+
 
 

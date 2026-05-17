@@ -30,6 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const getInlineSelectedStyleIdInput = (item) => item?.querySelector(".benditoai-inline-edit-selected-style-id");
     const getInlineSelectedStyleBlock = (item) => item?.querySelector(".benditoai-inline-edit-style");
     const getInlineSelectedStyleValue = (item) => item?.querySelector(".benditoai-inline-edit-style-value");
+    const getInlineSelectedStyleRemove = (item) => item?.querySelector(".benditoai-inline-edit-style-remove");
     const promptDebugger = document.querySelector("[data-prompt-debugger]");
     const promptDebuggerToggle = promptDebugger?.querySelector("[data-prompt-debugger-toggle]");
     const promptDebuggerMinimize = promptDebugger?.querySelector("[data-prompt-debugger-minimize]");
@@ -318,7 +319,7 @@ document.addEventListener("DOMContentLoaded", function () {
             previewWrap.classList.remove("is-ready");
             previewImg.hidden = true;
             previewImg.src = "";
-            triggerText.textContent = "Una prenda de vestir (opcional)";
+            triggerText.textContent = "Opcional: sube una foto de tu prenda para vestir al modelo con ella.";
             return;
         }
 
@@ -334,7 +335,7 @@ document.addEventListener("DOMContentLoaded", function () {
             previewWrap.classList.remove("is-ready");
             previewImg.hidden = true;
             previewImg.src = "";
-            triggerText.textContent = "Una prenda de vestir (opcional)";
+            triggerText.textContent = "Opcional: sube una foto de tu prenda para vestir al modelo con ella.";
         };
         previewImg.src = imageUrl;
         triggerText.textContent = labelText || "Referencia lista";
@@ -345,6 +346,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const selectedStyleIdInput = getInlineSelectedStyleIdInput(item);
         const selectedStyleBlock = getInlineSelectedStyleBlock(item);
         const selectedStyleValue = getInlineSelectedStyleValue(item);
+        const selectedStyleRemove = getInlineSelectedStyleRemove(item);
         const normalizedStyle = String(styleLabel || "").trim();
         const normalizedId = String(styleId || "").trim();
 
@@ -360,13 +362,23 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!normalizedStyle) {
             selectedStyleValue.textContent = "";
             selectedStyleBlock.hidden = true;
+            if (selectedStyleRemove) selectedStyleRemove.hidden = true;
             schedulePromptDebuggerUpdate(item);
             return;
         }
 
         selectedStyleValue.textContent = normalizedStyle;
         selectedStyleBlock.hidden = false;
+        if (selectedStyleRemove) selectedStyleRemove.hidden = false;
         schedulePromptDebuggerUpdate(item);
+    };
+
+    const clearSelectedStyle = (item) => {
+        getStyleOptions(item).forEach((thumb) => {
+            thumb.classList.remove("is-active");
+            thumb.setAttribute("aria-pressed", "false");
+        });
+        setSelectedStyle(item, "", "");
     };
 
     const showDecision = (item) => {
@@ -679,6 +691,16 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+        const desktopCurtain = e.target.closest(".benditoai-desktop-edit-curtain");
+        if (desktopCurtain) {
+            const item = desktopCurtain.closest(".benditoai-historial-item");
+            if (item?.classList.contains("is-editing")) {
+                hideEditor(item);
+                schedulePromptDebuggerUpdate(item);
+            }
+            return;
+        }
+
         const cancelInline = e.target.closest(".benditoai-inline-edit-cancel");
         if (cancelInline) {
             const item = cancelInline.closest(".benditoai-historial-item");
@@ -692,6 +714,14 @@ document.addEventListener("DOMContentLoaded", function () {
             const item = refTrigger.closest(".benditoai-historial-item");
             const refInput = getInlineFile(item);
             refInput?.click();
+            return;
+        }
+
+        const removeStyle = e.target.closest(".benditoai-inline-edit-style-remove");
+        if (removeStyle) {
+            const item = removeStyle.closest(".benditoai-historial-item");
+            clearSelectedStyle(item);
+            schedulePromptDebuggerUpdate(item);
             return;
         }
 
@@ -709,7 +739,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 thumb.setAttribute("aria-pressed", "false");
             });
             if (isActive) {
-                setSelectedStyle(item, "", "");
+                clearSelectedStyle(item);
             } else {
                 styleOption.classList.add("is-active");
                 styleOption.setAttribute("aria-pressed", "true");

@@ -1,0 +1,7 @@
+interface:
+  display_name: "BenditoAI Project"
+  short_description: "Mapa compacto del plugin BenditoAI"
+  default_prompt: "Use $benditoai-project to orient changes in the BenditoAI WordPress plugin before reading source files."
+
+policy:
+  allow_implicit_invocation: true

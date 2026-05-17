@@ -4262,7 +4262,8 @@ body.benditoai-modal-open {
 .benditoai-wrapper-historia-modelos .benditoai-inline-edit-style {
     margin-top: 8px;
     margin-bottom: 8px;
-    padding: 6px 10px;
+    position: relative;
+    padding: 8px 28px 8px 10px;
     border-radius: 9px;
     border: 1px solid rgba(124, 58, 255, 0.3);
     background: rgba(124, 58, 255, 0.1);
@@ -4286,29 +4287,59 @@ body.benditoai-modal-open {
     word-break: break-word;
 }
 
+.benditoai-wrapper-historia-modelos .benditoai-inline-edit-style-remove {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    width: 18px;
+    height: 18px;
+    border: 1px solid rgba(236, 232, 255, 0.24);
+    border-radius: 999px;
+    background: rgba(10, 5, 23, 0.98);
+    color: rgba(236, 232, 255, 0.86);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-size: 0.78rem;
+    font-weight: 800;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-inline-edit-style-remove[hidden] {
+    display: none !important;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-inline-edit-style-remove:hover,
+.benditoai-wrapper-historia-modelos .benditoai-inline-edit-style-remove:focus-visible {
+    border-color: rgba(124, 58, 255, 0.72);
+    background: rgba(34, 17, 67, 0.98);
+    color: #ffffff;
+    outline: none;
+}
+
 .benditoai-wrapper-historia-modelos .benditoai-inline-edit-ref-help {
-    margin: 0 0 6px;
-    color: rgba(236, 232, 255, 0.82);
-    font-size: 0.7rem;
-    line-height: 1.35;
+    display: none;
 }
 
 .benditoai-wrapper-historia-modelos .benditoai-inline-edit-ref-trigger {
     width: 100%;
-    min-height: 34px;
+    min-height: 56px;
     border: 1px solid rgba(124, 58, 255, 0.35);
     border-radius: 10px;
-    background: transparent;
-    color: #c4b5fd;
+    background: rgba(124, 58, 255, 0.08);
+    color: rgba(236, 232, 255, 0.92);
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-size: 0.74rem;
-    font-weight: 600;
+    justify-content: flex-start;
+    gap: 10px;
+    font-size: 0.78rem;
+    font-weight: 700;
     cursor: pointer;
-    padding: 6px 8px;
+    padding: 10px 12px;
     text-align: left;
+    line-height: 1.25;
 }
 
 .benditoai-wrapper-historia-modelos .benditoai-inline-edit-ref-trigger:hover {
@@ -4357,6 +4388,8 @@ body.benditoai-modal-open {
     display: inline-block;
     color: inherit;
     line-height: 1.2;
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 
 .benditoai-wrapper-historia-modelos .benditoai-inline-edit-submit-block {
@@ -6169,7 +6202,7 @@ body.benditoai-modal-open {
     left: 14px;
     right: 14px;
     bottom: 126px;
-    z-index: 5;
+    z-index: 7;
     margin: 0;
     border: 1px solid rgba(196, 181, 253, 0.24);
     border-radius: 12px;
@@ -6191,11 +6224,19 @@ body.benditoai-modal-open {
 }
 
 .benditoai-wrapper-historia-modelos .benditoai-saved-outfits-panel.is-open {
-    max-height: 238px;
+    max-height: 272px;
     opacity: 1;
     pointer-events: auto;
     transform: translateY(0);
     visibility: visible;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-historial-item.is-outfits-open {
+    overflow: visible;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-historial-item.is-outfits-open .benditoai-img-wrap {
+    overflow: visible;
 }
 
 .benditoai-wrapper-historia-modelos .benditoai-saved-outfits-panel-head {
@@ -6345,6 +6386,33 @@ body.benditoai-modal-open {
 
 .benditoai-wrapper-historia-modelos .benditoai-desktop-model-panel {
     overflow: visible;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-historial-item.is-editing .benditoai-desktop-model-panel {
+    position: relative;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-desktop-edit-curtain {
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    border-radius: inherit;
+    border: 0;
+    background: rgba(4, 2, 12, 0.72);
+    backdrop-filter: blur(2px);
+    cursor: pointer;
+    display: none;
+    padding: 0;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-historial-item.is-editing .benditoai-desktop-edit-curtain {
+    display: block;
+}
+
+.benditoai-wrapper-historia-modelos .benditoai-historial-item.is-editing .benditoai-panel-title-edit,
+.benditoai-wrapper-historia-modelos .benditoai-historial-item.is-editing .benditoai-edit-modelo-btn.benditoai-desktop-tool-card {
+    position: relative;
+    z-index: 7;
 }
 
 .benditoai-wrapper-historia-modelos .benditoai-historial-img {
