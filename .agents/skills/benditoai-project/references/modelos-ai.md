@@ -45,6 +45,7 @@
 - Saved outfits backend: `modelos-ai-outfits.php`.
 - Saved outfits frontend: `assets/js/modelos/saved-outfits.js`.
 - Edit model/outfit frontend: `assets/js/modelos/edit-modelo.js`.
+- Model edit UI is a fixed dark two-column modal driven by `.benditoai-inline-edit`: current model preview on the left and editor controls on the right. Markup exists in the history shortcode and in dynamic JS cards, while submit/preview/style/file logic remains in `edit-modelo.js`.
 - Campaign bridge: `assets/js/modelos/use-for-campana-bridge.js`.
 - Bridge stores `benditoai_campaign_model_ref` and `benditoai_selected_model` in `localStorage`, including `modelo_id`, `image_url`, `outfit_id`, `outfit_tag`, and source.
 

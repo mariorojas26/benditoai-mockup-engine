@@ -1197,29 +1197,51 @@
                     </button>
                     <div class="benditoai-inline-edit" hidden>
                         <div class="benditoai-inline-edit-surface">
-                            <label class="benditoai-inline-edit-label">Que deseas cambiar</label>
-                            <textarea class="benditoai-inline-edit-text" placeholder="Ej: cambia solo la chaqueta por una bomber negra."></textarea>
+                            <div class="benditoai-inline-edit-preview">
+                                <img class="benditoai-inline-edit-model-preview" src="${displayImage}" alt="${displayName}">
+                            </div>
+                            <div class="benditoai-inline-edit-head">
+                                <span class="benditoai-inline-edit-head-icon" aria-hidden="true"><i class="fas fa-magic"></i></span>
+                                <div class="benditoai-inline-edit-head-copy">
+                                    <label class="benditoai-inline-edit-label">&iquest;Que deseas cambiar?</label>
+                                    <p>Describe claramente el cambio que quieres realizar.</p>
+                                </div>
+                                <button type="button" class="benditoai-inline-edit-close" aria-label="Cerrar editor">x</button>
+                            </div>
+                            <div class="benditoai-inline-edit-text-wrap">
+                                <textarea class="benditoai-inline-edit-text" maxlength="200" placeholder="Ej: cambia los tenis por unas botas de color negro"></textarea>
+                                <span class="benditoai-inline-edit-count" data-inline-edit-count>0/200</span>
+                            </div>
                             <div class="benditoai-inline-edit-style" hidden>
                                 <span class="benditoai-inline-edit-style-label">Estilo</span>
-                                <span class="benditoai-inline-edit-style-value"></span>
+                                <span class="benditoai-inline-edit-style-chip">
+                                    <i class="fas fa-music" aria-hidden="true"></i>
+                                    <span class="benditoai-inline-edit-style-value"></span>
+                                </span>
                                 <button type="button" class="benditoai-inline-edit-style-remove" aria-label="Quitar estilo seleccionado" hidden>x</button>
                             </div>
                             <input type="hidden" class="benditoai-inline-edit-selected-style" value="">
                             <input type="hidden" class="benditoai-inline-edit-selected-style-id" value="">
                             <div class="benditoai-inline-edit-ref-block">
+                                <div class="benditoai-inline-edit-ref-title">
+                                    <strong>Foto de referencia <span>(opcional)</span></strong>
+                                    <p>Sube una foto de la prenda o estilo que deseas aplicar.</p>
+                                </div>
                                 <input type="file" class="benditoai-inline-edit-ref-file" accept="image/png,image/jpeg,image/webp" hidden>
                                 <button type="button" class="benditoai-inline-edit-ref-trigger">
-                                    <i class="fas fa-plus" aria-hidden="true"></i>
+                                    <i class="fas fa-cloud-upload-alt" aria-hidden="true"></i>
                                     <span class="benditoai-inline-edit-ref-trigger-preview" hidden>
                                         <img src="" alt="" class="benditoai-inline-edit-ref-trigger-preview-img" />
                                     </span>
-                                    <span class="benditoai-inline-edit-ref-trigger-text">Opcional: sube una foto de tu prenda para vestir al modelo con ella.</span>
+                                    <span class="benditoai-inline-edit-ref-trigger-text">Arrastra y suelta tu imagen aqui o haz clic para seleccionar</span>
+                                    <span class="benditoai-inline-edit-ref-action">Seleccionar archivo</span>
                                 </button>
                                 <p class="benditoai-inline-edit-ref-name"></p>
+                                <p class="benditoai-inline-edit-ref-tip"><i class="far fa-lightbulb" aria-hidden="true"></i> La imagen debe mostrar claramente la prenda o estilo que quieres aplicar.</p>
                             </div>
                             <div class="benditoai-inline-edit-submit-block">
                                 <div class="benditoai-inline-edit-actions">
-                                    <button type="button" class="benditoai-inline-edit-submit">Enviar</button>
+                                    <button type="button" class="benditoai-inline-edit-submit">Enviar cambio</button>
                                     <button type="button" class="benditoai-inline-edit-cancel">Volver</button>
                                 </div>
                             </div>
