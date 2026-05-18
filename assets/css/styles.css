@@ -4564,7 +4564,7 @@ body.benditoai-modal-open {
 }
 
 body.benditoai-inline-edit-open {
-    overflow: hidden;
+    overflow: hidden; 
 }
 
 .benditoai-wrapper-historia-modelos .benditoai-inline-edit-model-preview {

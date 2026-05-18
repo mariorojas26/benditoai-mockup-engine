@@ -130,8 +130,3 @@ Si quieres ampliar o modificar el plugin, estos son los puntos clave:
 - Autor: BendidoTrazo
 - Licencia: GPL2
 
----
-
-## 💡 Sugerencia
-
-Para que GitHub muestre correctamente el README, añade una imagen destacada del plugin en la parte superior y actualiza los enlaces a la documentación interna si agregas más contenido.
