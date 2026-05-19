@@ -25,6 +25,7 @@ Validate input and external response first. Only discount tokens after a valid r
 - Runtime helpers: `includes/modules/plans/plans-functions.php`.
 - Default plan: `includes/modules/plans/plans-init.php`.
 - Update endpoint: `wp_ajax_benditoai_update_user_plan`.
+- Pricing UI shortcode: `[benditoai_plan_cards]` from `includes/modules/plans/plans-shortcode.php`.
 - Model creation uses plan data to enforce `max_modelos`.
 - Saved outfits use plan/outfit limit data in model history UI and backend validation.
 

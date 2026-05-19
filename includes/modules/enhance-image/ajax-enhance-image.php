@@ -10,6 +10,7 @@ function benditoai_enhance_image() {
     if (!is_user_logged_in()) {
         wp_send_json_error("No autorizado");
     }
+    $user_id = get_current_user_id();
 
     if (!isset($_FILES['imagen'])) {
         wp_send_json_error("No se recibió imagen.");
@@ -82,6 +83,9 @@ High quality, clean, sharp, and professional result. Photorealistic, high detail
     $output_path = $upload_dir['path'] . '/' . $output_filename;
 
     file_put_contents($output_path, $image_data);
+    if (function_exists('benditoai_apply_free_plan_watermark')) {
+        benditoai_apply_free_plan_watermark($output_path, $user_id);
+    }
 
     $url = $upload_dir['url'] . '/' . $output_filename;
 

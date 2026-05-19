@@ -12,7 +12,7 @@ function benditoai_get_plans(){
         'starter' => [
             'name' => 'Starter',
             'tokens' => 200,
-            'max_modelos' => 3,
+            'max_modelos' => 1,
             'max_outfits' => 1
         ],
 

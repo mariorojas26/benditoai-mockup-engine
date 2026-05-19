@@ -224,7 +224,7 @@ sujeto completamente visible de cabeza a pies
 ";
 }
 
-function benditoai_modelos_ai_normalize_output($image_base64) {
+function benditoai_modelos_ai_normalize_output($image_base64, $user_id = 0) {
     $image = base64_decode($image_base64);
 
     if (!$image) {
@@ -288,6 +288,10 @@ function benditoai_modelos_ai_normalize_output($image_base64) {
         imagedestroy($src);
         imagedestroy($dst);
         return new WP_Error('save_error', 'No se pudo guardar la imagen generada');
+    }
+
+    if (function_exists('benditoai_apply_free_plan_watermark')) {
+        benditoai_apply_free_plan_watermark($path, (int) $user_id);
     }
 
     imagedestroy($src);
@@ -576,7 +580,7 @@ function benditoai_generar_modelo_ai() {
         wp_send_json_error(array('message' => 'La IA no devolvio imagen'));
     }
 
-    $normalized = benditoai_modelos_ai_normalize_output($image_base64);
+    $normalized = benditoai_modelos_ai_normalize_output($image_base64, $user_id);
     if (is_wp_error($normalized)) {
         wp_send_json_error(array('message' => $normalized->get_error_message()));
     }

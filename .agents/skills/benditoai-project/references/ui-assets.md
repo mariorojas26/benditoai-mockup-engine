@@ -34,3 +34,10 @@
 - If selected/hover/focus colors look inconsistent, search for repeated selectors in both `assets/css/styles.css` and shortcode inline style blocks.
 - If an image tile appears blank, verify generated URL, file extension, URL encoding, and CSS variable `--baiw-choice-image`.
 - If a button does not show, inspect JS `style.display` logic before changing CSS.
+
+## Mandatory Look And Feel Guide
+
+- Source of truth: `assets/docs/guia-look-and-feel-card-skills.md`.
+- For any new shortcode/component/refactor UI, read and apply this guide before coding.
+- If a request asks for a different style, explicitly confirm that it is an intentional exception.
+

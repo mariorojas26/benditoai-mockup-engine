@@ -948,7 +948,7 @@ function benditoai_modelos_ai_shortcode() {
     background: #140c2f;
     color: #e7defe;
     font-size: 0.76rem;
-    font-weight: 500;
+    font-weight: 300;
     line-height: 1.35;
     box-shadow: 0 10px 24px rgba(4, 2, 13, 0.45);
     opacity: 0;

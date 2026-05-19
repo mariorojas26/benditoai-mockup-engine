@@ -1,4 +1,51 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
+    const clampWizardTooltipsToViewport = () => {
+        const tips = document.querySelectorAll(".benditoai-modelos-wizard .baiw-tip");
+        if (!tips.length) return;
+
+        const viewportPadding = 10;
+        const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
+        if (!viewportWidth) return;
+
+        tips.forEach((tip) => {
+            const bubble = tip.querySelector(".baiw-tip-bubble");
+            if (!bubble) return;
+
+            bubble.style.setProperty("--baiw-tip-shift-x", "0px");
+
+            const rect = bubble.getBoundingClientRect();
+            let shiftX = 0;
+
+            if (rect.left < viewportPadding) {
+                shiftX = viewportPadding - rect.left;
+            } else if (rect.right > viewportWidth - viewportPadding) {
+                shiftX = (viewportWidth - viewportPadding) - rect.right;
+            }
+
+            bubble.style.setProperty("--baiw-tip-shift-x", `${Math.round(shiftX)}px`);
+        });
+    };
+
+    const bindWizardTooltipClamp = () => {
+        const wizardRoot = document.querySelector(".benditoai-modelos-wizard");
+        if (!wizardRoot) return;
+
+        const recalc = () => window.requestAnimationFrame(clampWizardTooltipsToViewport);
+
+        wizardRoot.addEventListener("mouseenter", (event) => {
+            if (event.target.closest(".baiw-tip")) recalc();
+        }, true);
+
+        wizardRoot.addEventListener("focusin", (event) => {
+            if (event.target.closest(".baiw-tip")) recalc();
+        });
+
+        window.addEventListener("resize", recalc, { passive: true });
+        window.addEventListener("orientationchange", recalc, { passive: true });
+        recalc();
+    };
+
+    bindWizardTooltipClamp();
     const historyWrapper = document.querySelector(".benditoai-wrapper-historia-modelos");
     const getOutfitCatalog = () => {
         if (!historyWrapper) return [];
@@ -69,7 +116,7 @@
     };
 
     const getOutfitWarning = () => {
-        return historyWrapper?.dataset.outfitWarning || "Has alcanzado el lÃ­mite de outfits para este modelo.";
+        return historyWrapper?.dataset.outfitWarning || "Has alcanzado el límite de outfits para este modelo.";
     };
 
     const renderSavedOutfitsRailMarkup = (modelData = null) => {
@@ -205,9 +252,9 @@
             const limit = getModelLimit();
             const canAdd = canAddModel(count);
             const remaining = Math.max(0, limit - count);
-            const addLabel = canAdd ? "AÃ±adir modelo" : "MÃ¡ximo alcanzado";
+            const addLabel = canAdd ? "Añadir modelo" : "Máximo alcanzado";
             const addTitle = canAdd
-                ? `Puedes crear ${remaining} modelo${remaining === 1 ? "" : "s"} mÃ¡s`
+                ? `Puedes crear ${remaining} modelo${remaining === 1 ? "" : "s"} más`
                 : getModelWarning();
             const modelThumbs = items.map((item, index) => {
                 const src = getItemImage(item);
@@ -707,7 +754,7 @@
         if (!rasgosAutoAdvanceEnabled) return true;
 
         if (!rasgosConfirmModal) {
-            return window.confirm("Si te devuelves, se desactivara el avance automatico y tendras que usar Siguiente en cada pantalla. ¿Continuar?");
+            return window.confirm("Si te devuelves, se desactivara el avance automatico y tendras que usar Siguiente en cada pantalla. �Continuar?");
         }
 
         if (rasgosConfirmCopy) {
@@ -1200,32 +1247,41 @@
                             <div class="benditoai-inline-edit-preview">
                                 <img class="benditoai-inline-edit-model-preview" src="${displayImage}" alt="${displayName}">
                             </div>
+                            <div class="benditoai-inline-edit-flow">
                             <div class="benditoai-inline-edit-head">
                                 <span class="benditoai-inline-edit-head-icon" aria-hidden="true"><i class="fas fa-magic"></i></span>
                                 <div class="benditoai-inline-edit-head-copy">
                                     <label class="benditoai-inline-edit-label">&iquest;Que deseas cambiar?</label>
-                                    <p>Describe claramente el cambio que quieres realizar.</p>
+                                    <p>Tienes dos opciones para realizar el cambio en el outfit del modelo.</p>
                                 </div>
                                 <button type="button" class="benditoai-inline-edit-close" aria-label="Cerrar editor">x</button>
                             </div>
+
                             <div class="benditoai-inline-edit-text-wrap">
+                                <div class="benditoai-inline-edit-card-head">
+                                    <span class="benditoai-inline-edit-option-tag">Opcion 1</span>
+                                    <strong>Escribir el cambio</strong>
+                                    <p>Describe con texto la prenda o estilo que quieres aplicar al modelo.</p>
+                                </div>
                                 <textarea class="benditoai-inline-edit-text" maxlength="200" placeholder="Ej: cambia los tenis por unas botas de color negro"></textarea>
                                 <span class="benditoai-inline-edit-count" data-inline-edit-count>0/200</span>
-                            </div>
-                            <div class="benditoai-inline-edit-style" hidden>
-                                <span class="benditoai-inline-edit-style-label">Estilo</span>
-                                <span class="benditoai-inline-edit-style-chip">
-                                    <i class="fas fa-music" aria-hidden="true"></i>
-                                    <span class="benditoai-inline-edit-style-value"></span>
-                                </span>
-                                <button type="button" class="benditoai-inline-edit-style-remove" aria-label="Quitar estilo seleccionado" hidden>x</button>
+                                <p class="benditoai-inline-edit-text-tip"><i class="far fa-lightbulb" aria-hidden="true"></i> Describe una prenda, color, accesorio o estilo especifico para obtener mejores resultados.</p>
+                                <div class="benditoai-inline-edit-style" hidden>
+                                    <span class="benditoai-inline-edit-style-label">Estilo aplicado al texto</span>
+                                    <span class="benditoai-inline-edit-style-chip">
+                                        <i class="fas fa-music" aria-hidden="true"></i>
+                                        <span class="benditoai-inline-edit-style-value"></span>
+                                    </span>
+                                    <button type="button" class="benditoai-inline-edit-style-remove" aria-label="Quitar estilo seleccionado" hidden>x</button>
+                                </div>
                             </div>
                             <input type="hidden" class="benditoai-inline-edit-selected-style" value="">
                             <input type="hidden" class="benditoai-inline-edit-selected-style-id" value="">
                             <div class="benditoai-inline-edit-ref-block">
                                 <div class="benditoai-inline-edit-ref-title">
-                                    <strong>Foto de referencia <span>(opcional)</span></strong>
-                                    <p>Sube una foto de la prenda o estilo que deseas aplicar.</p>
+                                    <span class="benditoai-inline-edit-option-tag">Opcion 2</span>
+                                    <strong>Subir imagen de prenda</strong>
+                                    <p>Sube una imagen de la prenda o estilo que quieres aplicar al modelo.</p>
                                 </div>
                                 <input type="file" class="benditoai-inline-edit-ref-file" accept="image/png,image/jpeg,image/webp" hidden>
                                 <button type="button" class="benditoai-inline-edit-ref-trigger">
@@ -1241,9 +1297,10 @@
                             </div>
                             <div class="benditoai-inline-edit-submit-block">
                                 <div class="benditoai-inline-edit-actions">
-                                    <button type="button" class="benditoai-inline-edit-submit">Enviar cambio</button>
+                                    <button type="button" class="benditoai-inline-edit-submit">Continuar</button>
                                     <button type="button" class="benditoai-inline-edit-cancel">Volver</button>
                                 </div>
+                            </div>
                             </div>
                         </div>
                     </div>
@@ -1310,7 +1367,7 @@
                             <div class="benditoai-desktop-campaign-spotlight-main">
                                 <span class="benditoai-desktop-campaign-spotlight-icon" aria-hidden="true"><i class="fas fa-rocket"></i></span>
                                 <div class="benditoai-desktop-campaign-spotlight-copy">
-                                    <h5>¿Listo para promocionar tus productos?</h5>
+                                    <h5>�Listo para promocionar tus productos?</h5>
                                     <p>Lanza una campana con este modelo</p>
                                 </div>
                             </div>
@@ -1688,6 +1745,7 @@
     resetResult();
     showConfigStage();
 });
+
 
 
 

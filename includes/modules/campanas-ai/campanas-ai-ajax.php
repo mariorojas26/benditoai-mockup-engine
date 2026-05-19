@@ -140,6 +140,9 @@ RULES:
     $path = $upload['path'] . '/' . $filename;
 
     file_put_contents($path, $image);
+    if (function_exists('benditoai_apply_free_plan_watermark')) {
+        benditoai_apply_free_plan_watermark($path, $user_id);
+    }
 
     $url = $upload['url'] . '/' . $filename;
 

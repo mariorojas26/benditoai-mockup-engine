@@ -1,18 +1,28 @@
-# Guia Visual General BenditoAI
+# Guia Visual Oficial BenditoAI
 
-Esta guia define el look & feel general para modulos BenditoAI. No esta pensada solo para tabs; sirve para formularios, cards, paneles, dashboards, wizards, resultados, historiales y herramientas IA.
+Esta guia es la fuente unica de verdad para construir UI en este plugin.
+Si una propuesta visual no cumple esta guia, se considera fuera de look & feel.
+
+## Regla Operativa (Obligatoria)
+
+Antes de crear o refactorizar cualquier componente:
+
+1. Leer esta guia.
+2. Reusar tokens/criterios aqui definidos.
+3. Validar el checklist final.
+4. Si se necesita romper una regla, documentar por que.
 
 ## Direccion Visual
 
 - Estilo oscuro, premium, tecnologico y enfocado en IA.
-- Base casi negra, con superficies morado oscuro.
+- Base casi negra, superficies morado oscuro.
 - Acento principal violeta brillante.
 - Contraste alto para titulos y acciones.
-- Bordes finos con violeta translucido.
-- Componentes compactos, faciles de escanear y sin espacios vacios innecesarios.
-- No usar `font-family` en modulos: todos deben heredar la tipografia global de la web.
+- Bordes finos violeta translucido.
+- Componentes compactos, escaneables, sin espacios muertos.
+- No definir `font-family` en modulos: heredar tipografia global.
 
-## Paleta Base
+## Paleta Base (Design Tokens)
 
 ```css
 :root {
@@ -45,32 +55,30 @@ Esta guia define el look & feel general para modulos BenditoAI. No esta pensada 
 }
 ```
 
-## Fondos
-
-Usar fondos oscuros y sobrios. Evitar gradientes grandes decorativos, orbes o bokeh.
+## Fondos y Superficies
 
 ```css
 .bai-page-section {
-    background: #05020d;
-    color: #ffffff;
+    background: var(--bai-bg);
+    color: var(--bai-text);
 }
 
 .bai-surface {
-    background: rgba(18, 8, 38, 0.78);
+    background: var(--bai-surface);
     border: 1px solid rgba(124, 58, 255, 0.24);
 }
 
 .bai-panel {
-    background: linear-gradient(180deg, rgba(22, 11, 49, 0.95), rgba(10, 5, 23, 0.98));
+    background: linear-gradient(180deg, var(--bai-surface-strong), var(--bai-surface-bottom));
     border: 1px solid rgba(124, 58, 255, 0.3);
 }
 ```
 
 Reglas:
 
-- Usa superficies oscuras para agrupar contenido.
-- Usa el panel con gradiente solo en contenedores importantes.
-- Usa `#0a0518` como fondo para areas de imagen, preview o media.
+- No usar fondos blancos en herramientas principales del plugin.
+- Evitar orbes, bokeh o decoracion grande salvo solicitud explicita.
+- Usar `#0a0518` para areas de media/preview.
 
 ## Bordes, Radios y Sombras
 
@@ -90,34 +98,31 @@ Reglas:
 }
 ```
 
-Uso recomendado:
+Uso:
 
 - Botones: `12px`.
-- Cards compactas: `14px`.
-- Paneles principales: `16px`.
+- Cards: `14px`.
+- Paneles: `16px`.
 - Badges/chips: `999px`.
-- Sombras solo si ayudan a separar capas, no como decoracion pesada.
+- Sombras solo para separacion de capas.
 
 ## Tipografia
 
-No definir familia tipografica en modulos.
-
 ```css
 .bai-title {
-    color: #ffffff;
+    color: var(--bai-text);
     line-height: 1.2;
     font-weight: 800;
 }
 
-.bai-subtitle,
 .bai-description {
-    color: rgba(236, 232, 255, 0.9);
+    color: var(--bai-text-soft);
     line-height: 1.32;
     font-weight: 400;
 }
 
 .bai-muted {
-    color: rgba(236, 232, 255, 0.72);
+    color: var(--bai-text-muted);
 }
 ```
 
@@ -134,31 +139,21 @@ Escala sugerida:
 
 Reglas:
 
-- No usar uppercase sostenido en labels comunes.
-- Titulos fuertes, descripciones suaves.
-- En mobile, reducir antes de apilar demasiado.
+- Evitar pesos excesivos en bloques largos.
+- Titulos fuertes, descripcion suave.
+- No abusar de uppercase sostenido.
 
 ## Botones
 
-### Boton primario
-
 ```css
 .bai-btn-primary {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
     min-height: 42px;
     padding: 10px 18px;
     border-radius: 12px;
     border: 1px solid rgba(124, 58, 255, 0.68);
     background: #5e1df7;
-    color: #ffffff;
+    color: #fff;
     font-weight: 600;
-    line-height: 1;
-    text-decoration: none;
-    cursor: pointer;
-    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
 }
 
 .bai-btn-primary:hover {
@@ -166,16 +161,8 @@ Reglas:
     border-color: rgba(167, 139, 250, 0.9);
     transform: translateY(-1px);
 }
-```
 
-### Boton secundario / ghost
-
-```css
 .bai-btn-ghost {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
     min-height: 42px;
     padding: 10px 18px;
     border-radius: 12px;
@@ -183,23 +170,8 @@ Reglas:
     background: transparent;
     color: #c4b5fd;
     font-weight: 600;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-}
-
-.bai-btn-ghost:hover {
-    background: rgba(124, 58, 255, 0.12);
-    border-color: rgba(124, 58, 255, 0.65);
-    color: #ffffff;
 }
 ```
-
-Reglas:
-
-- Usar icono de flecha solo cuando la accion navega.
-- En mobile, botones importantes a ancho completo.
-- No usar sombras fuertes en botones.
 
 ## Cards y Paneles
 
@@ -227,157 +199,17 @@ Reglas:
 
 Reglas:
 
-- No meter cards dentro de cards salvo items repetidos o controles funcionales.
-- Mantener padding compacto: `14px-18px`.
-- Usar gap de `8px-14px`.
+- Evitar cards dentro de cards sin necesidad funcional.
+- Padding recomendado: `14px-18px`.
+- Gap recomendado: `8px-14px`.
 
-## Badges y Chips
+## Estados, Inputs y Media
 
-### Badge de estado o tokens
-
-```css
-.bai-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 28px;
-    padding: 5px 10px;
-    border-radius: 999px;
-    border: 1px solid rgba(124, 58, 255, 0.42);
-    background: rgba(124, 58, 255, 0.14);
-    color: #c4b5fd;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1;
-    white-space: nowrap;
-}
-
-.bai-badge-success {
-    border-color: rgba(34, 197, 94, 0.34);
-    background: rgba(34, 197, 94, 0.12);
-    color: #86efac;
-}
-```
-
-### Microbeneficios
-
-```css
-.bai-chip-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-.bai-chip {
-    display: inline-flex;
-    align-items: center;
-    min-height: 26px;
-    padding: 5px 9px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.055);
-    color: rgba(236, 232, 255, 0.82);
-    font-size: 12px;
-    line-height: 1.2;
-}
-```
-
-## Inputs y Formularios
-
-```css
-.bai-field label {
-    display: block;
-    margin-bottom: 6px;
-    color: rgba(236, 232, 255, 0.9);
-    font-weight: 600;
-}
-
-.bai-input,
-.bai-select,
-.bai-textarea {
-    width: 100%;
-    border-radius: 12px;
-    border: 1px solid rgba(124, 58, 255, 0.28);
-    background: rgba(10, 5, 23, 0.78);
-    color: #ffffff;
-    padding: 12px 14px;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-}
-
-.bai-input:focus,
-.bai-select:focus,
-.bai-textarea:focus {
-    outline: none;
-    border-color: rgba(124, 58, 255, 0.75);
-    background: rgba(18, 8, 38, 0.92);
-    box-shadow: 0 0 0 3px rgba(124, 58, 255, 0.14);
-}
-
-.bai-input::placeholder,
-.bai-textarea::placeholder {
-    color: rgba(220, 209, 250, 0.38);
-}
-```
-
-Reglas:
-
-- Inputs oscuros.
-- Focus violeta suave.
-- Placeholder sutil, nunca blanco fuerte.
-
-## Imagenes y Media
-
-```css
-.bai-media {
-    width: 100%;
-    border-radius: 13px;
-    overflow: hidden;
-    background: #0a0518;
-}
-
-.bai-media img,
-.bai-media video {
-    display: block;
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    object-position: center center;
-}
-```
-
-Reglas:
-
-- Media siempre con `overflow: hidden`.
-- Usar `object-fit: cover` para previews.
-- No usar imagenes oscuras/borrosas cuando el usuario debe inspeccionar detalles.
-
-## Estados
-
-```css
-.bai-error {
-    border-radius: 10px;
-    border: 1px solid rgba(251, 113, 133, 0.5);
-    background: rgba(95, 24, 43, 0.58);
-    color: #ffd2dc;
-    padding: 10px 12px;
-    font-size: 0.84rem;
-}
-
-.bai-success {
-    border-radius: 10px;
-    border: 1px solid rgba(34, 197, 94, 0.34);
-    background: rgba(34, 197, 94, 0.12);
-    color: #86efac;
-    padding: 10px 12px;
-    font-size: 0.84rem;
-}
-```
+- Inputs: oscuros con focus violeta suave.
+- Error/success: contraste claro, borde definido.
+- Media: siempre con `overflow: hidden` y `object-fit: cover`.
 
 ## Espaciado
-
-Escala recomendada:
 
 ```css
 :root {
@@ -394,75 +226,33 @@ Escala recomendada:
 
 Reglas:
 
-- Paneles compactos: `16px`.
+- Paneles: `16px`.
 - Separacion entre controles: `8px-12px`.
 - Separacion entre bloques: `14px-18px`.
-- Evitar padding grande en componentes de trabajo.
-
-## Responsive
-
-```css
-@media (max-width: 768px) {
-    .bai-panel {
-        padding: 18px;
-        border-radius: 14px;
-    }
-
-    .bai-btn-primary,
-    .bai-btn-ghost {
-        width: 100%;
-        min-height: 40px;
-        padding: 10px 14px;
-        font-size: 13px;
-    }
-
-    .bai-chip {
-        min-height: 23px;
-        padding: 4px 8px;
-        font-size: 11px;
-    }
-}
-
-@media (max-width: 390px) {
-    .bai-panel {
-        padding: 16px;
-    }
-}
-```
 
 ## Movimiento
 
-```css
-@keyframes bai-panel-open {
-    from {
-        opacity: 0;
-        transform: translateY(5px) scale(0.998);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-```
+- Transiciones: `0.16s-0.26s`.
+- Hover sin saltos bruscos ni cambios de layout.
+- Respetar `prefers-reduced-motion`.
 
-Reglas:
+## Checklist QA UI (Obligatorio)
 
-- Transiciones cortas: `0.16s-0.26s`.
-- Evitar blur animado en mobile.
-- Hover no debe mover layout ni cambiar dimensiones.
+Antes de entregar un componente, validar:
 
-## Checklist de Consistencia
-
-- Hereda `font-family`.
-- Fondo oscuro, superficies morado oscuro.
-- Acento violeta `#7c3aff` / `#5e1df7`.
-- Texto principal blanco, texto secundario lavanda suave.
-- Bordes violetas translucidos.
+- Hereda tipografia global.
+- Usa paleta y tokens de esta guia.
+- Fondo/superficie oscuros coherentes.
+- Jerarquia de texto clara: titulo > descripcion > metadata.
 - Radios entre `10px` y `16px`.
-- Badges/chips tipo pill.
-- Botones primarios violetas solidos.
-- Inputs oscuros con focus violeta.
-- Imagenes dentro de contenedores con radio y `object-fit: cover`.
-- Mobile compacto, botones full width cuando sean acciones principales.
-- No usar uppercase sostenido.
-- No usar orbes, bokeh o decoraciones que no aporten.
+- Botones consistentes con estilos primario/ghost.
+- Responsive probado en `320`, `768`, `1024`.
+- Sin scroll horizontal.
+- Hover/focus visibles y estables.
+- Si hay animacion, incluye fallback de `prefers-reduced-motion`.
+
+## Politica de Uso en el Proyecto
+
+- Esta guia aplica a cualquier nuevo shortcode, bloque o dashboard del plugin.
+- Si un modulo requiere excepcion visual, documentar en el PR/comentario tecnico: motivo + alcance.
+- Si hay conflicto entre decisiones ad hoc y esta guia, prevalece esta guia.

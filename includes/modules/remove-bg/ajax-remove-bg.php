@@ -59,6 +59,9 @@ function benditoai_remove_background() {
     if ($return_var !== 0 || !file_exists($output_path)) {
         wp_send_json_error("Error eliminando fondo");
     }
+    if (function_exists('benditoai_apply_free_plan_watermark')) {
+        benditoai_apply_free_plan_watermark($output_path, $user_id);
+    }
 
     $url = $upload_dir['url'] . '/' . $output_filename;
 

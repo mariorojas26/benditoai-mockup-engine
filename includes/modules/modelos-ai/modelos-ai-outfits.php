@@ -564,7 +564,12 @@ function benditoai_preview_edit_modelo_outfit() {
         $extra_images[] = $reference_image;
     }
 
-    if (is_array($selected_style_context)) {
+    $has_reference = !empty($extra_images);
+    if ($has_reference) {
+        $is_style_only_prompt = false;
+    }
+
+    if (!$has_reference && is_array($selected_style_context)) {
         $style_label = trim((string) ($selected_style_context['label'] ?? ''));
         $style_hint = trim((string) ($selected_style_context['hint'] ?? ''));
         if ($style_hint !== '') {
@@ -574,7 +579,7 @@ function benditoai_preview_edit_modelo_outfit() {
         }
     }
 
-    $prompt = benditoai_modelo_build_edit_prompt($texto, !empty($extra_images), $reference_context, $is_style_only_prompt);
+    $prompt = benditoai_modelo_build_edit_prompt($texto, $has_reference, $reference_context, $is_style_only_prompt);
 
     require_once BENDIDOAI_PLUGIN_PATH . 'includes/services/gemini/gemini-api.php';
     $response = benditoai_call_gemini($main_base64, $prompt, $extra_images);
@@ -599,6 +604,9 @@ function benditoai_preview_edit_modelo_outfit() {
     $saved = file_put_contents($path, $image_binary);
     if ($saved === false) {
         wp_send_json_error(array('message' => 'No se pudo guardar preview'));
+    }
+    if (function_exists('benditoai_apply_free_plan_watermark')) {
+        benditoai_apply_free_plan_watermark($path, $user_id);
     }
 
     $preview_url = trailingslashit($upload['url']) . $filename;

@@ -22,7 +22,7 @@ Use this skill as the first stop for work in `bendidoai-mockup-engine`. It is a 
 - Model creation, rasgos miniwizard, model history, editing, outfits, and campaign handoff: read `references/modelos-ai.md`.
 - Tokens, plans, limits, and usage rules: read `references/tokens-plans.md`.
 - Mockups, remove-bg, enhance, trends, and campaigns: read `references/workflows.md`.
-- UI conventions, CSS, asset paths, images, and visual system: read `references/ui-assets.md`.
+- UI conventions, CSS, asset paths, images, and visual system: read `references/ui-assets.md` and `../../../assets/docs/guia-look-and-feel-card-skills.md` (obligatorio para cualquier UI nueva o refactor UI).
 - Gemini/API calls, prompts, generated media, and persistence: read `references/ai-services.md`.
 - How to keep this skill accurate and lean: read `references/maintenance.md`.
 
@@ -42,3 +42,4 @@ Use this skill as the first stop for work in `bendidoai-mockup-engine`. It is a 
 - For UI work, check both shortcode markup and related JS; much of this plugin uses PHP-rendered HTML plus vanilla JS.
 - Do not assume paths from older notes are correct; verify with `rg --files` if a reference and source disagree.
 - Keep references concise. Put "what connects to what" here, not whole functions.
+

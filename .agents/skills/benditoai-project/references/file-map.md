@@ -44,6 +44,7 @@ Use this to pick the smallest source set before reading code.
 - `includes/modules/plans/plans-functions.php`: plan data and limits.
 - `includes/modules/plans/plans-init.php`: default plan on registration.
 - `includes/modules/plans/ajax-update-plan.php`: admin/user plan updates.
+- `includes/modules/plans/plans-shortcode.php`: pricing cards shortcode markup for starter/pro/elite plans.
 
 ## Services
 

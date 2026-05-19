@@ -30,6 +30,7 @@ Frontend UI renders through a shortcode, vanilla JS collects form state, `fetch(
 - `[benditoai_modelos_ai_historial]`: model history and saved outfits.
 - `[benditoai_campanas_ai]`: campaign creation.
 - `[benditoai_tokens]`, `[benditoai_desktop_tokens]`: token display.
+- `[benditoai_plan_cards]`: starter/pro/elite subscription cards with customizable copy and media placeholder.
 - `[benditoai_remove_bg]`, `[benditoai_enhance_image]`, `[benditoai_trending]`: tools.
 - UX/home shortcodes live under `includes/modules/ux`, `includes/modules/Home`, and `includes/modules/scroll-video`.
 

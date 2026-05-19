@@ -61,6 +61,7 @@ benditoai_require_files(array(
     'includes/core/variables.php',
     'includes/core/prompts.php',
     'includes/core/browser-theme.php',
+    'includes/core/free-plan-watermark.php',
 
     'includes/services/gemini/gemini-api.php',
     'includes/services/gemini/gemini-api-text.php',
@@ -72,6 +73,7 @@ benditoai_require_files(array(
     'includes/modules/plans/plans-functions.php',
     'includes/modules/plans/plans-init.php',
     'includes/modules/plans/ajax-update-plan.php',
+    'includes/modules/plans/plans-shortcode.php',
 
     'includes/modules/tokens/tokens-manager.php',
     'includes/modules/tokens/tokens-shortcode.php',

@@ -101,18 +101,17 @@ document.addEventListener("DOMContentLoaded", function () {
         const manualText = getInlineText(item)?.value?.trim() || "";
         const file = getInlineFile(item);
         const hasReference = Boolean(file && file.files && file.files[0]);
-        const style = getActiveStyleData(item);
+        const rawStyle = getActiveStyleData(item);
+        const style = hasReference ? { label: "", id: "", hint: "" } : rawStyle;
         let request = manualText;
         let mode = "Texto manual";
 
         if (!request && hasReference) {
             request = "Cambia exactamente la prenda de la imagen adjunta por la del modelo, sin cambiar su rostro ni su pose. Ajusta la prenda perfectamente, de forma fiel, realista y natural.";
-            mode = style.label ? "Prenda + estilo" : "Prenda adjunta";
+            mode = "Prenda adjunta";
         } else if (!request && style.label) {
             request = `Viste al modelo con ropa aleatoriamente al estilo ${style.label}, manteniendo el rostro del modelo fiel y su pose.`;
             mode = "Estilo automatico";
-        } else if (request && hasReference && style.label) {
-            mode = "Texto + prenda + estilo";
         } else if (request && hasReference) {
             mode = "Texto + prenda";
         } else if (request && style.label) {
@@ -338,9 +337,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const previewWrap = getInlineRefTriggerPreview(item);
         const previewImg = getInlineRefTriggerPreviewImg(item);
         const triggerText = getInlineRefTriggerText(item);
+        const trigger = previewWrap?.closest(".benditoai-inline-edit-ref-trigger");
         if (!previewWrap || !previewImg || !triggerText) return;
 
         if (!imageUrl) {
+            trigger?.classList.remove("is-has-reference");
             previewWrap.hidden = true;
             previewWrap.classList.remove("is-ready");
             previewImg.hidden = true;
@@ -355,8 +356,10 @@ document.addEventListener("DOMContentLoaded", function () {
         previewImg.onload = () => {
             previewImg.hidden = false;
             previewWrap.classList.add("is-ready");
+            trigger?.classList.add("is-has-reference");
         };
         previewImg.onerror = () => {
+            trigger?.classList.remove("is-has-reference");
             previewWrap.hidden = true;
             previewWrap.classList.remove("is-ready");
             previewImg.hidden = true;
@@ -448,7 +451,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         if (submit) {
             submit.disabled = isLoading;
-            submit.textContent = isLoading ? "Editando..." : "Enviar cambio";
+            submit.textContent = isLoading ? "Editando..." : "Continuar";
         }
     };
 
@@ -509,7 +512,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const info = item.querySelector(".benditoai-historial-info");
         if (info) info.style.display = "none";
         showEditor(item);
-        window.setTimeout(() => centerEditorInView(item), 70);
     };
 
     const handlePreviewEdit = async (item) => {
@@ -528,8 +530,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const selectedStyleId = selectedStyleIdInput?.value?.trim() || "";
         let texto = text.value.trim();
         const hasReferenceGarment = Boolean(file && file.files && file.files[0]);
+        const shouldSendStyle = !hasReferenceGarment && Boolean(selectedStyle);
         const isAutoGarmentPrompt = !texto && hasReferenceGarment;
-        const isAutoStylePrompt = !texto && !hasReferenceGarment && selectedStyle;
+        const isAutoStylePrompt = !texto && shouldSendStyle;
 
         if (isAutoGarmentPrompt) {
             texto = "Cambia exactamente la prenda de la imagen adjunta por la del modelo, sin cambiar su rostro ni su pose. Ajusta la prenda perfectamente, de forma fiel, realista y natural.";
@@ -560,10 +563,10 @@ document.addEventListener("DOMContentLoaded", function () {
             formData.append("prenda_referencia", file.files[0]);
         }
 
-        if (selectedStyle) {
+        if (shouldSendStyle) {
             formData.append("selected_style", selectedStyle);
         }
-        if (selectedStyleId) {
+        if (shouldSendStyle && selectedStyleId) {
             formData.append("selected_style_id", selectedStyleId);
         }
 
@@ -860,7 +863,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
             syncRefTriggerPreview(item, "", "");
         }
-        if (name) name.textContent = file ? file.name : "";
+        if (name) name.textContent = "";
         schedulePromptDebuggerUpdate(item);
     };
 
