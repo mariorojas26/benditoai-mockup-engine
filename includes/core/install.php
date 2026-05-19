@@ -68,7 +68,7 @@ function benditoai_create_campanas_ai_table() {
         image_url TEXT,
 
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-
+ 
         PRIMARY KEY (id)
     ) $charset_collate;";
 
