@@ -5,6 +5,7 @@
 - `includes/services/gemini/gemini-api.php`: accepts base64 image plus prompt, optional extra images.
 - `includes/services/gemini/gemini-api-text.php`: text-only prompt flow for image generation.
 - `includes/services/gemini/gemini-api-multi-image.php`: two-image prompt flow.
+- `includes/services/gemini/gemini-api-campaign.php`: campaign image generation wrapper with primary image, extra references, prompt, aspect ratio, and image size.
 
 ## Model And Mockup Prompt Sources
 

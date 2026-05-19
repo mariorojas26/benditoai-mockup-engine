@@ -51,6 +51,7 @@ Use this to pick the smallest source set before reading code.
 - `includes/services/gemini/gemini-api.php`: image-to-image Gemini call.
 - `includes/services/gemini/gemini-api-text.php`: text prompt to image response.
 - `includes/services/gemini/gemini-api-multi-image.php`: multi-image Gemini call.
+- `includes/services/gemini/gemini-api-campaign.php`: campaign-specific Gemini call with aspect ratio/image size support.
 
 ## Styling And Assets
 

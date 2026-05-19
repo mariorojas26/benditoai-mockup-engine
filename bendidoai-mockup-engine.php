@@ -66,6 +66,7 @@ benditoai_require_files(array(
     'includes/services/gemini/gemini-api.php',
     'includes/services/gemini/gemini-api-text.php',
     'includes/services/gemini/gemini-api-multi-image.php',
+    'includes/services/gemini/gemini-api-campaign.php',
 
     'includes/modules/auth/auth-redirect.php',
 
