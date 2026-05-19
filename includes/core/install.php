@@ -76,7 +76,7 @@ function benditoai_create_campanas_ai_table() {
     dbDelta($sql);
 
     error_log("âœ… benditoai_create_campanas_ai_table ejecutada: $table_name");
-}
+} 
 
 /**
  * Crear tabla modelos AI
