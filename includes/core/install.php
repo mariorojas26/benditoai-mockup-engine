@@ -64,7 +64,7 @@ function benditoai_create_campanas_ai_table() {
         ambiente VARCHAR(100) DEFAULT '',
         mood VARCHAR(100) DEFAULT '',
 
-        prompt TEXT,
+        prompt TEXT, 
         image_url TEXT,
 
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
