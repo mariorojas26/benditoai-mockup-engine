@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const steps = Array.from(root.querySelectorAll(".baiw-step"));
     const indicators = Array.from(root.querySelectorAll("[data-step-indicator]"));
+    const stepper = root.querySelector(".bai-campaign-stepper");
     const progress = document.getElementById("benditoai-campaign-progress");
     const createModelUrl = root.dataset.createModelUrl || "/crea-modelo/";
     const editModelUrl = root.dataset.editModelUrl || "/mis-modelos/";
@@ -14,12 +15,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const modelUrlInput = document.getElementById("benditoai-campaign-model-url");
     const outfitIdInput = document.getElementById("benditoai-campaign-outfit-id");
     const outfitTagInput = document.getElementById("benditoai-campaign-outfit-tag");
+    const modelSelect = document.getElementById("benditoai-campaign-model-select");
+    const outfitStage = document.getElementById("benditoai-campaign-outfit-stage");
 
     let step = 0;
     let productImages = [];
     let selectedModel = null;
     let lastPayload = null;
     let lastResults = [];
+    let modelPickerTimer = null;
 
     const formatMeta = {
         instagram: { id: "instagram", label: "Instagram", ratio: "1:1", size: "1080x1080", imageSize: "1K" },
@@ -36,6 +40,31 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!el) return;
         el.hidden = hidden;
         el.setAttribute("aria-hidden", hidden ? "true" : "false");
+    };
+
+    const setModelPickerVisible = (visible) => {
+        const picker = $("#benditoai-campaign-model-picker");
+        if (!picker) return;
+
+        window.clearTimeout(modelPickerTimer);
+
+        if (visible) {
+            picker.hidden = false;
+            picker.setAttribute("aria-hidden", "false");
+            window.requestAnimationFrame(() => {
+                picker.classList.add("is-visible");
+                window.setTimeout(() => {
+                    picker.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+                }, 120);
+            });
+            return;
+        }
+
+        picker.classList.remove("is-visible");
+        picker.setAttribute("aria-hidden", "true");
+        modelPickerTimer = window.setTimeout(() => {
+            picker.hidden = true;
+        }, 260);
     };
 
     const toast = (message) => {
@@ -64,7 +93,16 @@ document.addEventListener("DOMContentLoaded", function () {
         return targetStep;
     };
 
-    const showStep = (targetStep) => {
+    const scrollToWizardTop = () => {
+        window.requestAnimationFrame(() => {
+            window.setTimeout(() => {
+                const top = root.getBoundingClientRect().top + window.pageYOffset - 28;
+                window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+            }, 40);
+        });
+    };
+
+    const showStep = (targetStep, shouldScroll = false) => {
         step = targetStep;
 
         steps.forEach((item) => {
@@ -73,12 +111,31 @@ document.addEventListener("DOMContentLoaded", function () {
             setHidden(item, !isActive);
         });
 
+        const visibleIndicators = indicators.filter((item) => {
+            const itemStep = Number(item.dataset.stepIndicator);
+            return !(itemStep === 2 && flowInput.value !== "use_model");
+        });
+
+        let activeVisibleIndex = visibleIndicators.findIndex((item) => Number(item.dataset.stepIndicator) === targetStep);
+        if (activeVisibleIndex < 0) activeVisibleIndex = 0;
+
+        const windowStart = Math.floor(activeVisibleIndex / 3) * 3;
+        const windowEnd = windowStart + 3;
+        const windowItems = visibleIndicators.slice(windowStart, windowEnd);
+
+        if (stepper) stepper.classList.toggle("is-single-window", windowItems.length === 1);
+
         indicators.forEach((item) => {
             const itemStep = Number(item.dataset.stepIndicator);
             const isSkipped = itemStep === 2 && flowInput.value !== "use_model";
+            const visibleIndex = visibleIndicators.indexOf(item);
+            const isInWindow = !isSkipped && visibleIndex >= windowStart && visibleIndex < windowEnd;
+
             item.classList.toggle("is-active", itemStep === targetStep);
             item.classList.toggle("is-complete", !isSkipped && itemStep < targetStep);
-            item.style.display = isSkipped ? "none" : "";
+            item.classList.toggle("is-window-visible", isInWindow);
+            item.style.display = isInWindow ? "" : "none";
+            item.setAttribute("aria-hidden", isInWindow ? "false" : "true");
         });
 
         if (progress) {
@@ -86,6 +143,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const position = Math.min(total, visibleStepPosition(targetStep));
             progress.style.width = `${Math.round((position / total) * 100)}%`;
         }
+
+        if (shouldScroll) scrollToWizardTop();
     };
 
     const getNextStep = () => {
@@ -111,58 +170,114 @@ document.addEventListener("DOMContentLoaded", function () {
             card.classList.toggle("is-active", card.dataset.campaignFlow === flow);
         });
 
-        const picker = $("#benditoai-campaign-model-picker");
-        setHidden(picker, flow !== "use_model");
+        setModelPickerVisible(flow === "use_model");
         showStep(step);
 
+        if (flow === "use_model") {
+            const firstModelValue = Array.from(modelSelect?.options || []).find((opt) => opt.value)?.value || "";
+            if (!modelSelect?.value && firstModelValue) {
+                modelSelect.value = firstModelValue;
+                applyModelFromSelect(firstModelValue);
+            } else if (modelSelect?.value) {
+                applyModelFromSelect(modelSelect.value);
+            } else {
+                if (outfitStage) setHidden(outfitStage, true);
+                $$(".bai-campaign-outfit-set").forEach((set) => setHidden(set, true));
+            }
+        }
+
         if (flow !== "use_model") {
+            selectedModel = null;
+            if (modelSelect) modelSelect.value = "";
+            modelIdInput.value = "";
+            modelUrlInput.value = "";
+            outfitIdInput.value = "";
+            outfitTagInput.value = "";
+            if (outfitStage) setHidden(outfitStage, true);
+            $$(".bai-campaign-outfit-set").forEach((set) => setHidden(set, true));
+            $$(".bai-campaign-outfit-chip").forEach((chip) => chip.classList.remove("is-active"));
+            updateSelectedModelPreview();
+        }
+    };
+
+    const applyModelFromSelect = (modelId) => {
+        if (!modelId) {
             selectedModel = null;
             modelIdInput.value = "";
             modelUrlInput.value = "";
             outfitIdInput.value = "";
             outfitTagInput.value = "";
-            $$(".bai-campaign-model-card").forEach((card) => card.classList.remove("is-active"));
+            if (outfitStage) setHidden(outfitStage, true);
+            $$(".bai-campaign-outfit-set").forEach((set) => setHidden(set, true));
+            $$(".bai-campaign-outfit-chip").forEach((chip) => chip.classList.remove("is-active"));
             updateSelectedModelPreview();
+            return;
         }
-    };
 
-    const applySelectedModel = (card, outfitButton = null) => {
-        if (!card) return;
+        const selectedOption = Array.from(modelSelect?.options || []).find((option) => option.value === String(modelId));
+        if (!selectedOption) return;
 
-        const activeOutfit = outfitButton || card.querySelector(".bai-campaign-outfit-chip.is-active") || card.querySelector(".bai-campaign-outfit-chip");
-
-        $$(".bai-campaign-model-card").forEach((item) => item.classList.remove("is-active"));
-        card.classList.add("is-active");
-
-        card.querySelectorAll(".bai-campaign-outfit-chip").forEach((chip) => {
-            chip.classList.toggle("is-active", chip === activeOutfit);
-        });
+        const modelName = selectedOption.dataset.modelName || selectedOption.textContent?.trim() || "Modelo AI";
+        const modelUrl = selectedOption.dataset.modelUrl || "";
 
         selectedModel = {
-            id: card.dataset.modelId || "",
-            name: card.dataset.modelName || "Modelo AI",
-            modelUrl: card.dataset.modelUrl || "",
-            outfitId: activeOutfit?.dataset.outfitId || card.dataset.outfitId || "",
-            outfitTag: activeOutfit?.dataset.outfitTag || card.dataset.outfitTag || "principal",
-            outfitName: activeOutfit?.dataset.outfitName || card.dataset.outfitName || "Principal",
-            imageUrl: activeOutfit?.dataset.outfitUrl || card.dataset.outfitUrl || card.dataset.modelUrl || "",
+            id: String(modelId),
+            name: modelName,
+            modelUrl,
+            outfitId: "",
+            outfitTag: "",
+            outfitName: "",
+            imageUrl: modelUrl,
+        };
+
+        modelIdInput.value = selectedModel.id;
+        modelUrlInput.value = selectedModel.modelUrl;
+        outfitIdInput.value = "";
+        outfitTagInput.value = "";
+
+        if (outfitStage) setHidden(outfitStage, false);
+        $$(".bai-campaign-outfit-set").forEach((set) => {
+            setHidden(set, String(set.dataset.modelId) !== String(modelId));
+        });
+        $$(".bai-campaign-outfit-chip").forEach((chip) => chip.classList.remove("is-active"));
+
+        const activeSet = $$(".bai-campaign-outfit-set")
+            .find((set) => String(set.dataset.modelId) === String(modelId));
+        const firstOutfit = activeSet?.querySelector(".bai-campaign-outfit-chip");
+        if (firstOutfit) {
+            applySelectedOutfit(firstOutfit);
+            return;
+        }
+
+        updateSelectedModelPreview();
+    };
+
+    const applySelectedOutfit = (outfitButton) => {
+        if (!outfitButton) return;
+
+        const modelId = outfitButton.dataset.modelId || "";
+        const modelName = outfitButton.dataset.modelName || selectedModel?.name || "Modelo AI";
+        const modelUrl = outfitButton.dataset.modelUrl || selectedModel?.modelUrl || "";
+
+        selectedModel = {
+            id: modelId,
+            name: modelName,
+            modelUrl,
+            outfitId: outfitButton.dataset.outfitId || "",
+            outfitTag: outfitButton.dataset.outfitTag || "principal",
+            outfitName: outfitButton.dataset.outfitName || "Principal",
+            imageUrl: outfitButton.dataset.outfitUrl || modelUrl,
         };
 
         modelIdInput.value = selectedModel.id;
         modelUrlInput.value = selectedModel.imageUrl;
         outfitIdInput.value = selectedModel.outfitId;
         outfitTagInput.value = selectedModel.outfitTag;
+        if (modelSelect && modelSelect.value !== String(selectedModel.id)) modelSelect.value = String(selectedModel.id);
 
-        const modelImage = card.querySelector(".bai-campaign-model-image img");
-        if (modelImage && selectedModel.imageUrl) {
-            modelImage.src = selectedModel.imageUrl;
-            modelImage.alt = selectedModel.outfitName || selectedModel.name;
-        }
-
-        const selectedOutfitLabel = card.querySelector("[data-selected-outfit-label]");
-        if (selectedOutfitLabel) {
-            selectedOutfitLabel.textContent = `Outfit: ${selectedModel.outfitName || "Principal"}`;
-        }
+        $$(".bai-campaign-outfit-chip").forEach((chip) => {
+            chip.classList.toggle("is-active", chip === outfitButton);
+        });
 
         try {
             localStorage.setItem("benditoai_campaign_model_ref", JSON.stringify({
@@ -188,7 +303,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const editLink = $("#benditoai-edit-model-link");
 
         if (name) name.textContent = selectedModel?.name || "Sin seleccionar";
-        if (outfit) outfit.textContent = selectedModel ? `Outfit: ${selectedModel.outfitName || "Principal"}` : "Selecciona modelo y outfit en la pantalla inicial.";
+        if (outfit) {
+            outfit.textContent = selectedModel
+                ? (selectedModel.outfitId ? `Outfit: ${selectedModel.outfitName || "Principal"}` : "Selecciona un outfit para continuar.")
+                : "Selecciona modelo y outfit en la pantalla inicial.";
+        }
 
         if (media) {
             media.innerHTML = selectedModel?.imageUrl
@@ -204,25 +323,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    const updateMainProductPreview = () => {
-        const preview = $("#benditoai-product-main-preview");
-        const first = productImages[0];
-
-        if (preview) {
-            preview.innerHTML = first
-                ? `<img src="${first.data}" alt="${escapeHtml(first.name)}">`
-                : `<i class="fas fa-image" aria-hidden="true"></i><p>La imagen principal aparecera al subir referencias.</p>`;
-        }
-
-    };
-
     const renderProductThumbs = () => {
         const thumbs = $("#benditoai-product-thumbs");
         if (!thumbs) return;
 
         if (!productImages.length) {
             thumbs.innerHTML = "";
-            updateMainProductPreview();
             return;
         }
 
@@ -232,15 +338,24 @@ document.addEventListener("DOMContentLoaded", function () {
                 <figcaption>
                     <span>${index === 0 ? "Principal" : `Ref ${index + 1}`}</span>
                     <span class="bai-campaign-thumb-actions">
-                        <button type="button" class="bai-campaign-mini-btn" data-image-action="up" aria-label="Mover arriba" ${index === 0 ? "disabled" : ""}><i class="fas fa-arrow-left" aria-hidden="true"></i></button>
-                        <button type="button" class="bai-campaign-mini-btn" data-image-action="down" aria-label="Mover abajo" ${index === productImages.length - 1 ? "disabled" : ""}><i class="fas fa-arrow-right" aria-hidden="true"></i></button>
                         <button type="button" class="bai-campaign-mini-btn" data-image-action="remove" aria-label="Eliminar"><i class="fas fa-trash" aria-hidden="true"></i></button>
                     </span>
                 </figcaption>
             </figure>
         `).join("");
 
-        updateMainProductPreview();
+    };
+
+    const scrollToProductThumbs = () => {
+        const thumbs = $("#benditoai-product-thumbs");
+        if (!thumbs || !productImages.length) return;
+
+        window.requestAnimationFrame(() => {
+            window.setTimeout(() => {
+                const top = thumbs.getBoundingClientRect().top + window.pageYOffset - 24;
+                window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+            }, 60);
+        });
     };
 
     const readFiles = async (files) => {
@@ -270,6 +385,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         renderProductThumbs();
+        scrollToProductThumbs();
     };
 
     const validateStep = () => {
@@ -278,7 +394,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 toast("Elige como quieres iniciar la campana.");
                 return false;
             }
-            if (flowInput.value === "use_model" && !selectedModel) {
+            if (flowInput.value === "use_model" && (!selectedModel || !selectedModel.outfitId)) {
                 toast("Selecciona un modelo y outfit para continuar.");
                 return false;
             }
@@ -301,7 +417,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
-        if (step === 2 && flowInput.value === "use_model" && !selectedModel) {
+        if (step === 2 && flowInput.value === "use_model" && (!selectedModel || !selectedModel.outfitId)) {
             toast("Selecciona el modelo que se usara en la campana.");
             return false;
         }
@@ -505,7 +621,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     ? res.data.images
                     : (res.data?.image_url ? [{ image_url: res.data.image_url, label: "Campana", size: "" }] : []);
                 renderResults(images);
-                showStep(6);
+                showStep(6, true);
                 return;
             }
 
@@ -514,7 +630,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 errorBox.textContent = message;
                 setHidden(errorBox, false);
             }
-            showStep(6);
+            showStep(6, true);
         } catch (error) {
             console.error(error);
             setGenerating(false);
@@ -522,83 +638,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 errorBox.textContent = "Error inesperado, intenta de nuevo.";
                 setHidden(errorBox, false);
             }
-            showStep(6);
+            showStep(6, true);
         }
-    };
-
-    const hydrateModelFromContext = () => {
-        let payload = null;
-
-        try {
-            const params = new URLSearchParams(window.location.search);
-            const modelId = params.get("modelo_id") || "";
-            const imageUrl = params.get("model_url") || "";
-            if (modelId || imageUrl) {
-                payload = {
-                    id: modelId,
-                    image_url: imageUrl,
-                    nombre: params.get("modelo_nombre") || "Modelo AI",
-                    outfit_id: params.get("outfit_id") || "",
-                    outfit_tag: params.get("outfit_tag") || "",
-                };
-            }
-        } catch (error) {
-            payload = null;
-        }
-
-        if (!payload) {
-            try {
-                payload = JSON.parse(localStorage.getItem("benditoai_campaign_model_ref") || "null");
-            } catch (error) {
-                payload = null;
-            }
-        }
-
-        if (!payload) {
-            try {
-                payload = JSON.parse(localStorage.getItem("benditoai_selected_model") || "null");
-            } catch (error) {
-                payload = null;
-            }
-        }
-
-        if (!payload || (!payload.id && !payload.image_url)) return;
-
-        const cards = $$(".bai-campaign-model-card");
-        const card = cards.find((item) => {
-            return (payload.id && String(item.dataset.modelId) === String(payload.id)) ||
-                (payload.image_url && item.dataset.modelUrl === payload.image_url);
-        });
-
-        if (!card) {
-            if (!payload.image_url) return;
-
-            setFocusFlow("use_model");
-            selectedModel = {
-                id: String(payload.id || ""),
-                name: String(payload.nombre || payload.modelo_nombre || "Modelo AI"),
-                modelUrl: String(payload.image_url || ""),
-                outfitId: String(payload.outfit_id || ""),
-                outfitTag: String(payload.outfit_tag || "principal"),
-                outfitName: String(payload.outfit_name || "Principal"),
-                imageUrl: String(payload.image_url || ""),
-            };
-            modelIdInput.value = selectedModel.id;
-            modelUrlInput.value = selectedModel.imageUrl;
-            outfitIdInput.value = selectedModel.outfitId;
-            outfitTagInput.value = selectedModel.outfitTag;
-            updateSelectedModelPreview();
-            return;
-        }
-
-        let outfit = null;
-        if (payload.outfit_id) {
-            outfit = Array.from(card.querySelectorAll(".bai-campaign-outfit-chip"))
-                .find((chip) => String(chip.dataset.outfitId) === String(payload.outfit_id));
-        }
-
-        setFocusFlow("use_model");
-        applySelectedModel(card, outfit);
     };
 
     root.addEventListener("click", (event) => {
@@ -608,25 +649,20 @@ document.addEventListener("DOMContentLoaded", function () {
             setFocusFlow(focusCard.dataset.campaignFlow);
         }
 
-        const modelMain = event.target.closest(".bai-campaign-model-main");
-        if (modelMain && root.contains(modelMain)) {
-            applySelectedModel(modelMain.closest(".bai-campaign-model-card"));
-        }
-
         const outfitChip = event.target.closest(".bai-campaign-outfit-chip");
         if (outfitChip && root.contains(outfitChip)) {
             event.stopPropagation();
-            applySelectedModel(outfitChip.closest(".bai-campaign-model-card"), outfitChip);
+            applySelectedOutfit(outfitChip);
         }
 
         const next = event.target.closest(".benditoai-next");
         if (next && root.contains(next)) {
-            if (validateStep()) showStep(getNextStep());
+            if (validateStep()) showStep(getNextStep(), true);
         }
 
         const prev = event.target.closest(".benditoai-prev");
         if (prev && root.contains(prev)) {
-            showStep(getPrevStep());
+            showStep(getPrevStep(), true);
         }
 
         const thumbButton = event.target.closest("[data-image-action]");
@@ -637,14 +673,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (action === "remove") {
                 productImages.splice(index, 1);
-            }
-
-            if (action === "up" && index > 0) {
-                [productImages[index - 1], productImages[index]] = [productImages[index], productImages[index - 1]];
-            }
-
-            if (action === "down" && index < productImages.length - 1) {
-                [productImages[index + 1], productImages[index]] = [productImages[index], productImages[index + 1]];
             }
 
             renderProductThumbs();
@@ -709,6 +737,10 @@ document.addEventListener("DOMContentLoaded", function () {
         $("#benditoai-campaign-cta")?.addEventListener(eventName, updateCopyPreview);
     });
 
+    modelSelect?.addEventListener("change", function () {
+        applyModelFromSelect(this.value);
+    });
+
     $("#benditoai-campaign-style")?.addEventListener("change", () => {
         updateStyleHint();
     });
@@ -734,7 +766,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!validateStep()) return;
             lastPayload = buildPayload();
         }
-        showStep(5);
+        showStep(5, true);
         generarCampana(lastPayload);
     });
 
@@ -749,16 +781,19 @@ document.addEventListener("DOMContentLoaded", function () {
         modelUrlInput.value = "";
         outfitIdInput.value = "";
         outfitTagInput.value = "";
+        if (modelSelect) modelSelect.value = "";
         $$(".is-active").forEach((item) => {
             if (!item.classList.contains("baiw-step")) item.classList.remove("is-active");
         });
-        setHidden($("#benditoai-campaign-model-picker"), true);
+        setModelPickerVisible(false);
+        if (outfitStage) setHidden(outfitStage, true);
+        $$(".bai-campaign-outfit-set").forEach((set) => setHidden(set, true));
         renderProductThumbs();
         renderResults([]);
         updateSelectedModelPreview();
         updateCopyPreview();
         resetVisual();
-        showStep(0);
+        showStep(0, true);
     });
 
     $("#benditoai-download-all")?.addEventListener("click", () => {
@@ -797,7 +832,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    hydrateModelFromContext();
     selectDefaultPalette();
     updateStyleHint();
     updateCopyPreview();

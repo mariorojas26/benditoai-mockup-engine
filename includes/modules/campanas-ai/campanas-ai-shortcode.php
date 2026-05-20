@@ -112,24 +112,17 @@ function benditoai_campanas_ai_shortcode() {
                 <h2 class="baiw-title-main">Crea tu campana</h2>
                 <p>Construye una pieza profesional desde producto, modelo opcional, direccion visual, copy y formatos finales.</p>
             </div>
-            <aside class="baiw-ai-helper" aria-label="Asistencia IA">
-                <span class="baiw-ai-helper__spark" aria-hidden="true"><i class="fas fa-wand-magic-sparkles"></i></span>
-                <span class="baiw-ai-helper__copy">
-                    <strong>IA creativa</strong>
-                    <small>Prompt guiado por presets</small>
-                </span>
-                <span class="baiw-ai-helper__badge" aria-hidden="true">AI</span>
-            </aside>
+
         </header>
 
         <ol class="baiw-stepper bai-campaign-stepper" aria-label="Progreso del wizard">
-            <li class="is-active" data-step-indicator="0"><span class="baiw-step-badge">0</span><span class="baiw-step-copy"><strong>Enfoque</strong><small>Modelo</small></span></li>
-            <li data-step-indicator="1"><span class="baiw-step-badge">1</span><span class="baiw-step-copy"><strong>Producto</strong><small>Base</small></span></li>
-            <li data-step-indicator="2"><span class="baiw-step-badge">2</span><span class="baiw-step-copy"><strong>Modelo</strong><small>Confirmar</small></span></li>
-            <li data-step-indicator="3"><span class="baiw-step-badge">3</span><span class="baiw-step-copy"><strong>Visual</strong><small>Look</small></span></li>
-            <li data-step-indicator="4"><span class="baiw-step-badge">4</span><span class="baiw-step-copy"><strong>Copy</strong><small>Marketing</small></span></li>
-            <li data-step-indicator="5"><span class="baiw-step-badge">5</span><span class="baiw-step-copy"><strong>Formatos</strong><small>Exportar</small></span></li>
-            <li data-step-indicator="6"><span class="baiw-step-badge">6</span><span class="baiw-step-copy"><strong>Resultado</strong><small>Final</small></span></li>
+            <li class="is-active" data-step-indicator="0"><span class="baiw-step-badge">1</span><span class="baiw-step-copy"><strong>Enfoque</strong><small>Modelo</small></span></li>
+            <li data-step-indicator="1"><span class="baiw-step-badge">2</span><span class="baiw-step-copy"><strong>Producto</strong><small>Base</small></span></li>
+            <li data-step-indicator="2"><span class="baiw-step-badge">3</span><span class="baiw-step-copy"><strong>Modelo</strong><small>Confirmar</small></span></li>
+            <li data-step-indicator="3"><span class="baiw-step-badge">4</span><span class="baiw-step-copy"><strong>Visual</strong><small>Look</small></span></li>
+            <li data-step-indicator="4"><span class="baiw-step-badge">5</span><span class="baiw-step-copy"><strong>Copy</strong><small>Marketing</small></span></li>
+            <li data-step-indicator="5"><span class="baiw-step-badge">6</span><span class="baiw-step-copy"><strong>Formatos</strong><small>Exportar</small></span></li>
+            <li data-step-indicator="6"><span class="baiw-step-badge">7</span><span class="baiw-step-copy"><strong>Resultado</strong><small>Final</small></span></li>
         </ol>
 
         <div class="baiw-progress-track" aria-hidden="true">
@@ -146,7 +139,7 @@ function benditoai_campanas_ai_shortcode() {
             <section class="baiw-step is-active" data-step="0" aria-hidden="false">
                 <div class="baiw-card">
                     <div class="baiw-card-heading">
-                        <span class="baiw-card-heading__icon" aria-hidden="true"><i class="fas fa-route"></i></span>
+
                         <div>
                             <h3>Elige el enfoque de la campana</h3>
                             <p class="baiw-hint">Define si el producto se vendera con un modelo, con un modelo nuevo o sin persona.</p>
@@ -154,25 +147,30 @@ function benditoai_campanas_ai_shortcode() {
                     </div>
 
                     <div class="bai-campaign-focus-grid">
-                        <button type="button" class="bai-campaign-focus-card" data-campaign-flow="create_model" data-tooltip="Te llevaremos a crea-modelo para preparar primero tu modelo.">
+                        <button type="button" class="bai-campaign-focus-card" data-campaign-flow="create_model">
                             <span class="bai-campaign-focus-icon" aria-hidden="true"><i class="fas fa-user-plus"></i></span>
                             <strong>Crear modelo nuevo</strong>
                             <small>Ideal si aun no tienes un personaje listo para vender.</small>
                             <em>Ir a crea-modelo</em>
+                            <span class="bai-campaign-focus-reveal">Te llevaremos a crea-modelo para preparar primero tu modelo.</span>
                         </button>
 
-                        <button type="button" class="bai-campaign-focus-card" data-campaign-flow="use_model" data-has-models="<?php echo empty($modelos) ? '0' : '1'; ?>" data-tooltip="<?php echo empty($modelos) ? esc_attr('Abriremos el selector. Si no aparece ningun modelo, puedes ir a Mis modelos o crear uno nuevo.') : esc_attr('Selecciona un modelo y uno de sus outfits guardados.'); ?>">
+                        <button type="button" class="bai-campaign-focus-card" data-campaign-flow="use_model" data-has-models="<?php echo empty($modelos) ? '0' : '1'; ?>">
                             <span class="bai-campaign-focus-icon" aria-hidden="true"><i class="fas fa-user-check"></i></span>
                             <strong>Usar modelo ya creado</strong>
                             <small>Activa tus modelos y outfits existentes.</small>
                             <em><?php echo empty($modelos) ? 'Abrir selector' : count($modelos) . ' modelos disponibles'; ?></em>
+                            <span class="bai-campaign-focus-reveal">
+                                <?php echo esc_html(empty($modelos) ? 'Abriremos el selector. Si no aparece ningun modelo, puedes ir a Mis modelos o crear uno nuevo.' : 'Selecciona un modelo y uno de sus outfits guardados.'); ?>
+                            </span>
                         </button>
 
-                        <button type="button" class="bai-campaign-focus-card" data-campaign-flow="no_model" data-tooltip="La IA enfocara el resultado en producto, set, composicion y marca, sin personas.">
+                        <button type="button" class="bai-campaign-focus-card" data-campaign-flow="no_model">
                             <span class="bai-campaign-focus-icon" aria-hidden="true"><i class="fas fa-box-open"></i></span>
                             <strong>No usar modelo</strong>
                             <small>Campana centrada 100% en el producto.</small>
                             <em>Producto protagonista</em>
+                            <span class="bai-campaign-focus-reveal">La IA enfocara el resultado en producto, set, composicion y marca, sin personas.</span>
                         </button>
                     </div>
 
@@ -183,7 +181,28 @@ function benditoai_campanas_ai_shortcode() {
                         </div>
 
                         <?php if (!empty($modelos)): ?>
-                            <div class="bai-campaign-model-grid">
+                            <div class="bai-campaign-model-select-wrap">
+                                <div class="baiw-field">
+                                    <label for="benditoai-campaign-model-select">Modelo</label>
+                                    <div class="baiw-input-shell bai-campaign-model-shell">
+                                        <i class="fas fa-user" aria-hidden="true"></i>
+                                        <select id="benditoai-campaign-model-select" aria-label="Selecciona un modelo">
+                                            <option value="">Selecciona un modelo</option>
+                                            <?php foreach ($modelos as $m): ?>
+                                                <option
+                                                    value="<?php echo esc_attr((int) $m->id); ?>"
+                                                    data-model-name="<?php echo esc_attr($m->nombre_modelo); ?>"
+                                                    data-model-url="<?php echo esc_url($m->image_url); ?>"
+                                                >
+                                                    <?php echo esc_html($m->nombre_modelo); ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bai-campaign-outfit-stage" id="benditoai-campaign-outfit-stage" hidden>
                                 <?php foreach ($modelos as $m): ?>
                                     <?php
                                     $mid = (int) $m->id;
@@ -197,49 +216,11 @@ function benditoai_campanas_ai_shortcode() {
                                         $fallback->image_url = $m->image_url;
                                         $model_outfits = array($fallback);
                                     }
-                                    $first_outfit = reset($model_outfits);
-                                    $principal_outfit = null;
-                                    foreach ($model_outfits as $candidate_outfit) {
-                                        if ((string) ($candidate_outfit->outfit_tag ?? '') === 'principal') {
-                                            $principal_outfit = $candidate_outfit;
-                                            break;
-                                        }
-                                    }
-                                    if (!$principal_outfit && !empty($model_outfits)) {
-                                        $principal_outfit = $first_outfit;
-                                    }
-                                    $display_image = !empty($principal_outfit->image_url)
-                                        ? (string) $principal_outfit->image_url
-                                        : (string) ($m->image_url ?? '');
-                                    $display_name = !empty($principal_outfit->nombre_outfit)
-                                        ? (string) $principal_outfit->nombre_outfit
-                                        : (string) $m->nombre_modelo;
                                     ?>
-                                    <article
-                                        class="bai-campaign-model-card"
-                                        data-model-id="<?php echo esc_attr($mid); ?>"
-                                        data-model-name="<?php echo esc_attr($m->nombre_modelo); ?>"
-                                        data-model-url="<?php echo esc_url($m->image_url); ?>"
-                                        data-outfit-id="<?php echo esc_attr((int) $principal_outfit->id); ?>"
-                                        data-outfit-tag="<?php echo esc_attr($principal_outfit->outfit_tag); ?>"
-                                        data-outfit-name="<?php echo esc_attr($display_name); ?>"
-                                        data-outfit-url="<?php echo esc_url($display_image); ?>"
-                                    >
-                                        <button type="button" class="bai-campaign-model-main">
-                                            <span class="bai-campaign-model-image">
-                                                <img src="<?php echo esc_url($display_image); ?>" alt="<?php echo esc_attr($display_name); ?>">
-                                                <span class="bai-campaign-model-selected" aria-hidden="true"><i class="fas fa-check"></i></span>
-                                            </span>
-                                            <span class="bai-campaign-model-copy">
-                                                <strong><?php echo esc_html($m->nombre_modelo); ?></strong>
-                                                <span class="bai-campaign-model-meta"><?php echo esc_html(count($model_outfits) . ' outfit' . (count($model_outfits) === 1 ? '' : 's') . ' disponible' . (count($model_outfits) === 1 ? '' : 's')); ?></span>
-                                                <small data-selected-outfit-label><?php echo esc_html('Outfit: ' . $display_name); ?></small>
-                                            </span>
-                                        </button>
-
+                                    <div class="bai-campaign-outfit-set" data-model-id="<?php echo esc_attr($mid); ?>" hidden>
                                         <div class="bai-campaign-outfit-group">
                                             <span>Outfits guardados</span>
-                                            <em>Elige una referencia</em>
+                                            <em>Selecciona uno para continuar</em>
                                         </div>
                                         <div class="bai-campaign-outfit-rail" aria-label="Outfits guardados">
                                             <?php foreach ($model_outfits as $outfit): ?>
@@ -248,10 +229,13 @@ function benditoai_campanas_ai_shortcode() {
                                                 ?>
                                                 <button
                                                     type="button"
-                                                    class="bai-campaign-outfit-chip<?php echo $outfit === $first_outfit ? ' is-active' : ''; ?>"
+                                                    class="bai-campaign-outfit-chip bai-campaign-outfit-card"
+                                                    data-model-id="<?php echo esc_attr($mid); ?>"
+                                                    data-model-name="<?php echo esc_attr($m->nombre_modelo); ?>"
+                                                    data-model-url="<?php echo esc_url($m->image_url); ?>"
                                                     data-outfit-id="<?php echo esc_attr((int) $outfit->id); ?>"
                                                     data-outfit-tag="<?php echo esc_attr($outfit->outfit_tag); ?>"
-                                                    data-outfit-name="<?php echo esc_attr($outfit->nombre_outfit); ?>"
+                                                    data-outfit-name="<?php echo esc_attr($outfit_label); ?>"
                                                     data-outfit-url="<?php echo esc_url($outfit->image_url); ?>"
                                                     aria-label="<?php echo esc_attr('Usar outfit ' . $outfit_label); ?>"
                                                 >
@@ -259,8 +243,15 @@ function benditoai_campanas_ai_shortcode() {
                                                     <span><?php echo esc_html($outfit_label); ?></span>
                                                 </button>
                                             <?php endforeach; ?>
+
+                                            <?php if (count($model_outfits) <= 1): ?>
+                                                <div class="bai-campaign-outfit-placeholder">
+                                        <i class="fas fa-tshirt" aria-hidden="true"></i>
+                                                    <strong>Aqui iran tus demas outfits guardados</strong>
+                                                </div>
+                                            <?php endif; ?>
                                         </div>
-                                    </article>
+                                    </div>
                                 <?php endforeach; ?>
                             </div>
                         <?php else: ?>
@@ -288,7 +279,7 @@ function benditoai_campanas_ai_shortcode() {
                 <div class="baiw-card bai-campaign-product-card">
                     <div class="bai-campaign-product-copy">
                         <div class="baiw-card-heading">
-                            <span class="baiw-card-heading__icon" aria-hidden="true"><i class="fas fa-bag-shopping"></i></span>
+
                             <div>
                                 <h3>Producto base</h3>
                                 <p class="baiw-hint">Nombra el producto, elige categoria y sube hasta 3 imagenes de referencia en un solo paso.</p>
@@ -322,14 +313,6 @@ function benditoai_campanas_ai_shortcode() {
 
                         <div class="bai-campaign-thumbs" id="benditoai-product-thumbs" aria-live="polite"></div>
                     </div>
-
-                    <aside class="bai-campaign-live-preview">
-                        <span class="bai-campaign-preview-label">Imagen principal</span>
-                        <div class="bai-campaign-preview-media" id="benditoai-product-main-preview">
-                            <i class="fas fa-image" aria-hidden="true"></i>
-                            <p>La imagen principal aparecera al subir referencias.</p>
-                        </div>
-                    </aside>
                 </div>
 
                 <div class="baiw-nav">
@@ -341,7 +324,7 @@ function benditoai_campanas_ai_shortcode() {
             <section class="baiw-step" data-step="2" aria-hidden="true" hidden>
                 <div class="baiw-card bai-campaign-confirm-model">
                     <div class="baiw-card-heading">
-                        <span class="baiw-card-heading__icon" aria-hidden="true"><i class="fas fa-user-gear"></i></span>
+
                         <div>
                             <h3>Confirmacion de modelo</h3>
                             <p class="baiw-hint">Revisa el modelo y outfit que se usaran para la campana.</p>
@@ -660,6 +643,7 @@ function benditoai_campanas_ai_shortcode() {
 .benditoai-campaign-wizard .baiw-ai-helper__copy {
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 .benditoai-campaign-wizard .baiw-header {
@@ -734,12 +718,22 @@ function benditoai_campanas_ai_shortcode() {
 
 .benditoai-campaign-wizard .baiw-stepper {
     display: grid;
-    grid-template-columns: repeat(7, minmax(88px, 1fr));
-    gap: 8px;
+    grid-template-columns: repeat(3, minmax(200px, 1fr));
+    justify-content: center;
+    gap: 10px;
+    max-width: 980px;
     padding: 0;
     margin: 0 0 12px;
     list-style: none;
-    overflow-x: auto;
+    overflow: hidden;
+    transition: max-width 0.24s ease;
+}
+
+.benditoai-campaign-wizard .baiw-stepper.is-single-window {
+    grid-template-columns: minmax(260px, 1fr);
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .benditoai-campaign-wizard .baiw-stepper li {
@@ -749,14 +743,22 @@ function benditoai_campanas_ai_shortcode() {
     min-height: 42px;
     padding: 8px;
     border-radius: 12px;
-    border: 1px solid var(--baiw-border);
-    background: rgba(18, 8, 38, 0.78);
+    border: 1px solid rgba(124, 58, 255, 0.2);
+    background: rgba(18, 8, 38, 0.52);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.22s ease, transform 0.22s ease, border-color 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+}
+
+.benditoai-campaign-wizard .baiw-stepper li.is-window-visible {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .benditoai-campaign-wizard .baiw-stepper li.is-active,
 .benditoai-campaign-wizard .baiw-stepper li.is-complete {
     border-color: var(--baiw-border-active);
-    background: rgba(21, 9, 46, 0.9);
+    background: rgba(24, 11, 50, 0.86);
 }
 
 .benditoai-campaign-wizard .baiw-step-badge {
@@ -822,7 +824,8 @@ function benditoai_campanas_ai_shortcode() {
 
 .benditoai-campaign-wizard .baiw-card-heading {
     gap: 12px;
-    margin-bottom: 14px;
+    margin: 37px 0px;
+    text-align: center;
 }
 
 .benditoai-campaign-wizard .baiw-field {
@@ -962,9 +965,9 @@ function benditoai_campanas_ai_shortcode() {
 
 .bai-campaign-focus-card {
     display: grid;
-    gap: 9px;
-    min-height: 176px;
-    padding: 16px;
+    gap: 11px;
+    min-height: 196px;
+    padding: 20px;
     text-align: left;
 }
 
@@ -991,28 +994,26 @@ function benditoai_campanas_ai_shortcode() {
     cursor: not-allowed;
 }
 
-.bai-campaign-focus-card[data-tooltip]::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    left: 12px;
-    right: 12px;
-    bottom: calc(100% + 8px);
-    z-index: 4;
-    padding: 8px 10px;
-    border-radius: 10px;
-    border: 1px solid rgba(124, 58, 255, 0.3);
-    background: #0a0518;
-    color: rgba(236, 232, 255, 0.9);
-    font-size: 0.76rem;
-    line-height: 1.25;
+.bai-campaign-focus-reveal {
+    display: block;
+    overflow: hidden;
+    max-height: 0;
+    margin-top: 0;
+    padding: 0;
+    color: rgba(236, 232, 255, 0.74);
+    font-size: 0.78rem;
+    line-height: 1.35;
+    font-weight: 500;
     opacity: 0;
     pointer-events: none;
-    transform: translateY(4px);
-    transition: opacity 0.18s ease, transform 0.18s ease;
+    transform: translateY(-4px);
+    transition: max-height 0.24s ease, margin-top 0.24s ease, opacity 0.22s ease, transform 0.22s ease;
 }
 
-.bai-campaign-focus-card:hover::after,
-.bai-campaign-focus-card:focus-visible::after {
+.bai-campaign-focus-card:hover .bai-campaign-focus-reveal,
+.bai-campaign-focus-card:focus-visible .bai-campaign-focus-reveal {
+    max-height: 62px;
+    margin-top: 2px;
     opacity: 1;
     transform: translateY(0);
 }
@@ -1039,19 +1040,32 @@ function benditoai_campanas_ai_shortcode() {
 }
 
 .bai-campaign-model-picker {
+    max-height: 0;
+    margin-top: 0;
+    padding: 0 20px;
+    border-radius: 18px;
+    border: 1px solid rgba(124, 58, 255, 0);
+    background: rgba(10, 5, 23, 0);
+    opacity: 0;
+    overflow: hidden;
+    transform: translateY(-8px) scale(0.992);
+    transition: max-height 0.28s ease, margin-top 0.24s ease, padding 0.24s ease, opacity 0.22s ease, transform 0.24s ease, border-color 0.24s ease, background 0.24s ease;
+}
+
+.bai-campaign-model-picker.is-visible {
+    max-height: 980px;
     margin-top: 18px;
-    padding: 16px;
-    border-radius: 16px;
-    border: 1px solid rgba(124, 58, 255, 0.24);
+    padding: 20px;
+    border-color: rgba(124, 58, 255, 0.24);
     background: rgba(10, 5, 23, 0.48);
+    opacity: 1;
+    transform: translateY(0) scale(1);
 }
 
 .bai-campaign-subhead {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 14px;
+    display: grid;
+    gap: 6px;
+    margin-bottom: 16px;
 }
 
 .bai-campaign-subhead h4,
@@ -1062,9 +1076,36 @@ function benditoai_campanas_ai_shortcode() {
 }
 
 .bai-campaign-subhead p {
-    max-width: 560px;
-    margin: 4px 0 0;
+    max-width: 760px;
+    margin: 0;
     color: var(--baiw-muted);
+}
+
+.bai-campaign-model-select-wrap {
+    margin-bottom: 14px;
+}
+
+.bai-campaign-model-shell {
+    min-height: 54px;
+}
+
+.bai-campaign-model-shell select {
+    padding-left: 45px;
+}
+
+.bai-campaign-outfit-stage {
+    display: grid;
+    gap: 10px;
+}
+
+.bai-campaign-outfit-set {
+    display: grid;
+    gap: 10px;
+}
+
+.bai-campaign-outfit-stage[hidden],
+.bai-campaign-outfit-set[hidden] {
+    display: none !important;
 }
 
 .bai-campaign-empty-models {
@@ -1112,10 +1153,10 @@ function benditoai_campanas_ai_shortcode() {
 
 .bai-campaign-model-card {
     display: grid;
-    gap: 10px;
+    gap: 12px;
     min-width: 0;
-    padding: 12px;
-    border-radius: 16px;
+    padding: 14px;
+    border-radius: 18px;
     border: 1px solid rgba(124, 58, 255, 0.24);
     background: rgba(18, 8, 38, 0.72);
     transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
@@ -1134,11 +1175,11 @@ function benditoai_campanas_ai_shortcode() {
 
 .bai-campaign-model-main {
     display: grid;
-    grid-template-columns: 132px minmax(0, 1fr);
-    align-items: stretch;
-    gap: 12px;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 14px;
     width: 100%;
-    min-height: 154px;
+    min-height: 0;
     padding: 0;
     border: none;
     background: transparent;
@@ -1158,8 +1199,8 @@ function benditoai_campanas_ai_shortcode() {
 
 .bai-campaign-model-image {
     position: relative;
-    aspect-ratio: 4 / 5;
-    min-height: 154px;
+    aspect-ratio: 3 / 4;
+    min-height: 260px;
     border-radius: 14px;
     background: #0a0518;
 }
@@ -1178,21 +1219,22 @@ function benditoai_campanas_ai_shortcode() {
 
 .bai-campaign-model-copy {
     display: grid;
-    align-content: center;
+    align-content: start;
     gap: 8px;
     min-width: 0;
+    padding: 0 2px;
 }
 
 .bai-campaign-model-copy strong {
     color: #ffffff;
-    font-size: 1.02rem;
+    font-size: 1.05rem;
     line-height: 1.16;
     white-space: normal;
 }
 
 .bai-campaign-model-copy small {
     color: var(--baiw-muted);
-    font-size: 0.82rem;
+    font-size: 0.84rem;
 }
 
 .bai-campaign-model-meta {
@@ -1239,9 +1281,28 @@ function benditoai_campanas_ai_shortcode() {
 }
 
 .bai-campaign-outfit-rail {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 8px;
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 2px 2px 6px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(124, 58, 255, 0.55) rgba(10, 5, 23, 0.45);
+}
+
+.bai-campaign-outfit-rail::-webkit-scrollbar {
+    height: 8px;
+}
+
+.bai-campaign-outfit-rail::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(124, 58, 255, 0.55);
+}
+
+.bai-campaign-outfit-rail::-webkit-scrollbar-track {
+    border-radius: 999px;
+    background: rgba(10, 5, 23, 0.45);
 }
 
 .bai-campaign-outfit-group {
@@ -1268,21 +1329,70 @@ function benditoai_campanas_ai_shortcode() {
 .bai-campaign-outfit-chip {
     display: grid;
     gap: 6px;
-    min-width: 0;
+    flex: 0 0 122px;
+    min-width: 122px;
     margin: 0;
-    padding: 7px;
+    padding: 8px;
     border-radius: 12px;
     border: 1px solid rgba(124, 58, 255, 0.24);
     background: rgba(10, 5, 23, 0.72);
     color: rgba(236, 232, 255, 0.9);
     cursor: pointer;
     text-align: center;
+    scroll-snap-align: start;
     transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+
+.bai-campaign-outfit-card {
+    flex-basis: 200px;
+    min-width: 200px;
+    align-content: start;
+    padding: 9px;
+    border-radius: 14px;
+    text-align: left;
+}
+
+.bai-campaign-outfit-card img {
+    aspect-ratio: 3 / 4;
+    border-radius: 10px;
+}
+
+.bai-campaign-outfit-card span {
+    margin-top: 2px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1.15;
+    white-space: nowrap;
+}
+
+.bai-campaign-outfit-placeholder {
+    display: grid;
+    place-items: center;
+    gap: 10px;
+    flex: 0 0 200px;
+    min-width: 200px;
+    padding: 14px;
+    border-radius: 14px;
+    border: 1px dashed rgba(124, 58, 255, 0.38);
+    background: rgba(10, 5, 23, 0.45);
+    color: var(--baiw-muted);
+    text-align: center;
+}
+
+.bai-campaign-outfit-placeholder i {
+    font-size: 1.15rem;
+    color: #a78bfa;
+}
+
+.bai-campaign-outfit-placeholder strong {
+    font-size: 0.86rem;
+    line-height: 1.25;
+    color: rgba(236, 232, 255, 0.86);
 }
 
 .bai-campaign-outfit-chip img {
     width: 100%;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 1 / 1.9;
     height: auto;
     border-radius: 10px;
     object-fit: cover;
@@ -1313,6 +1423,14 @@ function benditoai_campanas_ai_shortcode() {
     grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
     gap: 16px;
     align-items: stretch;
+}
+
+.bai-campaign-product-card {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.bai-campaign-product-copy {
+    max-width: 100%;
 }
 
 .bai-campaign-live-preview,
@@ -1729,9 +1847,7 @@ function benditoai_campanas_ai_shortcode() {
 }
 
 @media (max-width: 1024px) {
-    .benditoai-campaign-wizard .baiw-stepper {
-        grid-template-columns: repeat(7, 118px);
-    }
+    .benditoai-campaign-wizard .baiw-stepper { max-width: 100%; }
 
     .bai-campaign-focus-grid,
     .bai-campaign-model-grid {
@@ -1763,6 +1879,12 @@ function benditoai_campanas_ai_shortcode() {
         width: 100%;
     }
 
+    .benditoai-campaign-wizard .baiw-stepper,
+    .benditoai-campaign-wizard .baiw-stepper.is-single-window {
+        grid-template-columns: 1fr;
+        max-width: 100%;
+    }
+
     .bai-campaign-focus-grid,
     .bai-campaign-model-grid,
     .bai-campaign-empty-models,
@@ -1774,20 +1896,30 @@ function benditoai_campanas_ai_shortcode() {
     }
 
     .bai-campaign-focus-card {
-        min-height: 144px;
+        min-height: 162px;
     }
 
     .bai-campaign-model-main {
-        grid-template-columns: 108px minmax(0, 1fr);
-        min-height: 132px;
+        min-height: 0;
     }
 
     .bai-campaign-model-image {
-        min-height: 132px;
+        min-height: 220px;
     }
 
     .bai-campaign-outfit-rail {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .bai-campaign-outfit-chip {
+        flex-basis: 108px;
+        min-width: 108px;
+    }
+
+    .bai-campaign-outfit-card,
+    .bai-campaign-outfit-placeholder {
+        flex-basis: 168px;
+        min-width: 168px;
     }
 
     .bai-campaign-composite-stage,
@@ -1802,16 +1934,26 @@ function benditoai_campanas_ai_shortcode() {
 
 @media (max-width: 420px) {
     .bai-campaign-model-main {
-        grid-template-columns: 92px minmax(0, 1fr);
-        min-height: 116px;
+        min-height: 0;
     }
 
     .bai-campaign-model-image {
-        min-height: 116px;
+        min-height: 180px;
     }
 
     .bai-campaign-outfit-rail {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .bai-campaign-outfit-chip {
+        flex-basis: 96px;
+        min-width: 96px;
+    }
+
+    .bai-campaign-outfit-card,
+    .bai-campaign-outfit-placeholder {
+        flex-basis: 144px;
+        min-width: 144px;
     }
 }
 </style>
