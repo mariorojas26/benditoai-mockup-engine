@@ -321,7 +321,7 @@ function benditoai_campanas_ai_shortcode() {
                 </div>
             </section>
 
-            <section class="baiw-step" data-step="2" aria-hidden="true" hidden>
+            <section class="baiw-step" data-step="2" aria-hidden="true" hidden> 
                 <div class="baiw-card bai-campaign-confirm-model">
                     <div class="baiw-card-heading">
 
