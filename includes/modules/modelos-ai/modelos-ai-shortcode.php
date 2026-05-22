@@ -2924,42 +2924,81 @@ function benditoai_modelos_ai_shortcode() {
 
 .benditoai-modelos-wizard .baiw-stepper {
     position: relative;
-    gap: clamp(14px, 3vw, 54px);
-    margin-bottom: 26px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: center;
+    gap: clamp(16px, 3vw, 44px);
+    margin-bottom: 24px;
 }
 
 .benditoai-modelos-wizard .baiw-stepper::before {
-    content: "";
-    position: absolute;
-    left: 18%;
-    right: 18%;
-    top: 50%;
-    height: 2px;
-    background: rgba(124, 58, 255, 0.34);
-    transform: translateY(-50%);
-    z-index: 0;
+    display: none;
 }
 
 .benditoai-modelos-wizard .baiw-stepper li {
     position: relative;
     z-index: 1;
-    min-height: 72px;
-    grid-template-columns: auto minmax(0, 1fr);
+    min-height: 58px;
+    grid-template-columns: auto minmax(0, 1fr) minmax(34px, 0.72fr);
     place-items: initial;
     align-items: center;
     justify-content: start;
-    gap: 14px;
-    padding: 14px 20px;
-    border-radius: 8px;
-    background: rgba(13, 7, 31, 0.82);
+    gap: 12px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 16px;
+    background: transparent;
+    color: rgba(236, 232, 255, 0.78);
+}
+
+.benditoai-modelos-wizard .baiw-stepper li::after {
+    content: "";
+    display: block;
+    grid-column: 3;
+    width: 100%;
+    height: 2px;
+    border-radius: 999px;
+    background: rgba(124, 58, 255, 0.28);
+}
+
+.benditoai-modelos-wizard .baiw-stepper li:last-child::after {
+    display: none;
 }
 
 .benditoai-modelos-wizard .baiw-stepper li.is-active {
-    border-color: rgba(149, 104, 255, 0.92);
-    background: linear-gradient(90deg, rgba(124, 58, 255, 0.32), rgba(18, 8, 38, 0.88));
+    grid-template-columns: auto minmax(0, 1fr) minmax(34px, 0.65fr);
+    padding: 13px 18px;
+    border-color: rgba(149, 104, 255, 0.74);
+    background: linear-gradient(135deg, rgba(124, 58, 255, 0.78), rgba(40, 17, 92, 0.92));
     box-shadow:
-        0 0 0 1px rgba(149, 104, 255, 0.38),
-        0 18px 32px rgba(4, 1, 12, 0.28);
+        0 0 0 1px rgba(149, 104, 255, 0.2),
+        0 16px 34px rgba(14, 2, 40, 0.34);
+    color: #ffffff;
+}
+
+.benditoai-modelos-wizard .baiw-stepper li.is-complete {
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+    color: rgba(246, 242, 255, 0.9);
+}
+
+.benditoai-modelos-wizard .baiw-step-badge {
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.12);
+    color: rgba(236, 232, 255, 0.86);
+    font-size: 0.88rem;
+    font-weight: 800;
+}
+
+.benditoai-modelos-wizard .baiw-stepper li.is-active .baiw-step-badge {
+    background: #ffffff;
+    color: #5e1df7;
+}
+
+.benditoai-modelos-wizard .baiw-stepper li.is-complete .baiw-step-badge {
+    background: rgba(124, 58, 255, 0.28);
+    color: #ffffff;
 }
 
 .benditoai-modelos-wizard .baiw-step-copy strong,
@@ -2969,14 +3008,14 @@ function benditoai_modelos_ai_shortcode() {
 
 .benditoai-modelos-wizard .baiw-step-copy strong {
     color: #ffffff;
-    font-size: 0.92rem;
+    font-size: 0.88rem;
     line-height: 1.15;
 }
 
 .benditoai-modelos-wizard .baiw-step-copy small {
-    margin-top: 5px;
+    margin-top: 2px;
     color: rgba(236, 232, 255, 0.74);
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     line-height: 1.25;
 }
 
@@ -3312,6 +3351,21 @@ function benditoai_modelos_ai_shortcode() {
     }
 
     .benditoai-modelos-wizard .baiw-stepper::before {
+        display: none;
+    }
+
+    .benditoai-modelos-wizard .baiw-stepper li,
+    .benditoai-modelos-wizard .baiw-stepper li.is-active {
+        grid-template-columns: auto minmax(0, 1fr);
+        padding: 12px 14px;
+        background: rgba(18, 8, 38, 0.68);
+    }
+
+    .benditoai-modelos-wizard .baiw-stepper li.is-active {
+        background: linear-gradient(135deg, rgba(124, 58, 255, 0.78), rgba(40, 17, 92, 0.92));
+    }
+
+    .benditoai-modelos-wizard .baiw-stepper li::after {
         display: none;
     }
 

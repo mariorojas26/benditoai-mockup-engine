@@ -17,6 +17,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const outfitTagInput = document.getElementById("benditoai-campaign-outfit-tag");
     const modelSelect = document.getElementById("benditoai-campaign-model-select");
     const outfitStage = document.getElementById("benditoai-campaign-outfit-stage");
+    const inlineError = document.getElementById("benditoai-campaign-inline-error");
+    const productModeInput = document.getElementById("benditoai-product-mode");
+    const productUploadFields = document.getElementById("benditoai-product-upload-fields");
+    const modelProductNote = document.getElementById("benditoai-model-product-note");
 
     let step = 0;
     let productImages = [];
@@ -40,6 +44,31 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!el) return;
         el.hidden = hidden;
         el.setAttribute("aria-hidden", hidden ? "true" : "false");
+    };
+
+    const clearInlineError = () => {
+        if (!inlineError) return;
+        inlineError.textContent = "";
+        inlineError.classList.remove("is-success");
+        setHidden(inlineError, true);
+    };
+
+    const showInlineMessage = (message, type = "error") => {
+        if (!inlineError) return;
+
+        const activeStep = root.querySelector(".baiw-step.is-active");
+        const nav = activeStep?.querySelector(":scope > .baiw-nav");
+        if (activeStep && nav && inlineError.parentElement !== activeStep) {
+            activeStep.insertBefore(inlineError, nav);
+        }
+
+        inlineError.textContent = message;
+        inlineError.classList.toggle("is-success", type === "success");
+        setHidden(inlineError, false);
+
+        window.requestAnimationFrame(() => {
+            inlineError.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+        });
     };
 
     const setModelPickerVisible = (visible) => {
@@ -67,9 +96,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 260);
     };
 
-    const toast = (message) => {
-        window.alert(message);
-    };
+    const toast = (message, type = "error") => showInlineMessage(message, type);
 
     const escapeHtml = (value) => String(value || "")
         .replace(/&/g, "&amp;")
@@ -104,6 +131,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const showStep = (targetStep, shouldScroll = false) => {
         step = targetStep;
+        clearInlineError();
+
+        if (targetStep === 2) updateSelectedModelPreview();
 
         steps.forEach((item) => {
             const isActive = Number(item.dataset.step) === targetStep;
@@ -134,6 +164,7 @@ document.addEventListener("DOMContentLoaded", function () {
             item.classList.toggle("is-active", itemStep === targetStep);
             item.classList.toggle("is-complete", !isSkipped && itemStep < targetStep);
             item.classList.toggle("is-window-visible", isInWindow);
+            item.classList.toggle("is-window-last", isInWindow && windowItems[windowItems.length - 1] === item);
             item.style.display = isInWindow ? "" : "none";
             item.setAttribute("aria-hidden", isInWindow ? "false" : "true");
         });
@@ -158,6 +189,28 @@ document.addEventListener("DOMContentLoaded", function () {
         return Math.max(0, step - 1);
     };
 
+    const getProductMode = () => productModeInput?.value || "";
+
+    const setProductMode = (mode) => {
+        const requestedMode = mode === "model_product" || mode === "upload_product" ? mode : "";
+        const nextMode = requestedMode === "model_product" && flowInput.value !== "use_model"
+            ? ""
+            : requestedMode;
+
+        if (productModeInput) productModeInput.value = nextMode;
+
+        $$(".bai-campaign-product-mode-card").forEach((card) => {
+            const isModelProduct = card.dataset.productMode === "model_product";
+            setHidden(card, isModelProduct && flowInput.value !== "use_model");
+            card.classList.toggle("is-active", nextMode !== "" && card.dataset.productMode === nextMode);
+        });
+
+        setHidden(productUploadFields, nextMode !== "upload_product");
+        setHidden(modelProductNote, nextMode !== "model_product");
+        updateCopyPreview();
+        updateSelectedModelPreview();
+    };
+
     const setFocusFlow = (flow) => {
         if (flow === "create_model") {
             window.location.href = createModelUrl;
@@ -174,16 +227,16 @@ document.addEventListener("DOMContentLoaded", function () {
         showStep(step);
 
         if (flow === "use_model") {
-            const firstModelValue = Array.from(modelSelect?.options || []).find((opt) => opt.value)?.value || "";
-            if (!modelSelect?.value && firstModelValue) {
-                modelSelect.value = firstModelValue;
-                applyModelFromSelect(firstModelValue);
-            } else if (modelSelect?.value) {
-                applyModelFromSelect(modelSelect.value);
-            } else {
-                if (outfitStage) setHidden(outfitStage, true);
-                $$(".bai-campaign-outfit-set").forEach((set) => setHidden(set, true));
-            }
+            selectedModel = null;
+            if (modelSelect) modelSelect.value = "";
+            modelIdInput.value = "";
+            modelUrlInput.value = "";
+            outfitIdInput.value = "";
+            outfitTagInput.value = "";
+            if (outfitStage) setHidden(outfitStage, true);
+            $$(".bai-campaign-outfit-set").forEach((set) => setHidden(set, true));
+            $$(".bai-campaign-outfit-chip").forEach((chip) => chip.classList.remove("is-active"));
+            updateSelectedModelPreview();
         }
 
         if (flow !== "use_model") {
@@ -197,6 +250,15 @@ document.addEventListener("DOMContentLoaded", function () {
             $$(".bai-campaign-outfit-set").forEach((set) => setHidden(set, true));
             $$(".bai-campaign-outfit-chip").forEach((chip) => chip.classList.remove("is-active"));
             updateSelectedModelPreview();
+        }
+
+        if (flow === "no_model") {
+            setProductMode("");
+            showStep(getNextStep(), true);
+        }
+
+        if (flow === "use_model") {
+            setProductMode("");
         }
     };
 
@@ -243,11 +305,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const activeSet = $$(".bai-campaign-outfit-set")
             .find((set) => String(set.dataset.modelId) === String(modelId));
-        const firstOutfit = activeSet?.querySelector(".bai-campaign-outfit-chip");
-        if (firstOutfit) {
-            applySelectedOutfit(firstOutfit);
-            return;
-        }
+        if (activeSet) scrollToOutfits(activeSet);
 
         updateSelectedModelPreview();
     };
@@ -300,13 +358,30 @@ document.addEventListener("DOMContentLoaded", function () {
         const media = $("#benditoai-selected-model-preview");
         const name = $("#benditoai-selected-model-name");
         const outfit = $("#benditoai-selected-outfit-name");
+        const product = $("#benditoai-confirm-product-name");
+        const category = $("#benditoai-confirm-category-name");
         const editLink = $("#benditoai-edit-model-link");
+        const productInput = $("#benditoai-campaign-product");
+        const categorySelect = $("#benditoai-campaign-category");
 
         if (name) name.textContent = selectedModel?.name || "Sin seleccionar";
         if (outfit) {
             outfit.textContent = selectedModel
-                ? (selectedModel.outfitId ? `Outfit: ${selectedModel.outfitName || "Principal"}` : "Selecciona un outfit para continuar.")
+                ? (selectedModel.outfitId ? (selectedModel.outfitName || "Principal") : "Selecciona un outfit para continuar.")
                 : "Selecciona modelo y outfit en la pantalla inicial.";
+        }
+
+        if (product) {
+            product.textContent = getProductMode() === "model_product"
+                ? (selectedModel?.outfitName || "Outfit seleccionado")
+                : (productInput?.value.trim() || "Sin producto");
+        }
+        if (category) {
+            category.textContent = getProductMode() === "model_product"
+                ? "Moda / outfit del modelo"
+                : (categorySelect?.value
+                ? (categorySelect.selectedOptions[0]?.textContent?.trim() || "Sin categoria")
+                : "Sin categoria");
         }
 
         if (media) {
@@ -358,6 +433,17 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     };
 
+    const scrollToOutfits = (target = null) => {
+        const outfitTarget = target || $("#benditoai-campaign-outfit-stage");
+        if (!outfitTarget) return;
+
+        window.requestAnimationFrame(() => {
+            window.setTimeout(() => {
+                outfitTarget.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+            }, 120);
+        });
+    };
+
     const readFiles = async (files) => {
         const selected = Array.from(files || []).filter((file) => file.type && file.type.startsWith("image/"));
         const slots = Math.max(0, 3 - productImages.length);
@@ -401,6 +487,15 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (step === 1) {
+            if (!getProductMode()) {
+                toast("Elige como quieres definir el producto de la campana.");
+                return false;
+            }
+
+            if (getProductMode() === "model_product" && flowInput.value === "use_model" && selectedModel?.outfitId) {
+                return true;
+            }
+
             const product = $("#benditoai-campaign-product")?.value.trim();
             const category = $("#benditoai-campaign-category")?.value;
             if (!product) {
@@ -472,7 +567,9 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     const updateCopyPreview = () => {
-        const product = $("#benditoai-campaign-product")?.value.trim() || "Producto destacado";
+        const product = getProductMode() === "model_product"
+            ? (selectedModel?.outfitName || "Outfit del modelo")
+            : ($("#benditoai-campaign-product")?.value.trim() || "Producto destacado");
         const slogan = $("#benditoai-campaign-slogan")?.value.trim() || "Tu eslogan aqui";
         const cta = $("#benditoai-campaign-cta")?.value.trim() || "Descubre mas";
 
@@ -517,8 +614,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         return {
             campaign_flow: flowInput.value,
-            producto: ($("#benditoai-campaign-product")?.value || "").trim(),
-            categoria: formData.get("categoria") || "",
+            product_mode: getProductMode(),
+            producto: getProductMode() === "model_product"
+                ? (selectedModel?.outfitName || selectedModel?.name || "Outfit del modelo")
+                : ($("#benditoai-campaign-product")?.value || "").trim(),
+            categoria: getProductMode() === "model_product" ? "Moda / outfit del modelo" : (formData.get("categoria") || ""),
             product_images: JSON.stringify(productImages.map((item) => item.data)),
             use_model: flowInput.value === "use_model" ? "1" : "0",
             model_id: modelIdInput.value || "",
@@ -653,6 +753,15 @@ document.addEventListener("DOMContentLoaded", function () {
         if (outfitChip && root.contains(outfitChip)) {
             event.stopPropagation();
             applySelectedOutfit(outfitChip);
+            if (step === 0 && validateStep()) showStep(getNextStep(), true);
+        }
+
+        const productModeCard = event.target.closest(".bai-campaign-product-mode-card");
+        if (productModeCard && root.contains(productModeCard)) {
+            setProductMode(productModeCard.dataset.productMode || "upload_product");
+            if (step === 1 && getProductMode() === "model_product" && validateStep()) {
+                showStep(getNextStep(), true);
+            }
         }
 
         const next = event.target.closest(".benditoai-next");
@@ -785,6 +894,7 @@ document.addEventListener("DOMContentLoaded", function () {
         $$(".is-active").forEach((item) => {
             if (!item.classList.contains("baiw-step")) item.classList.remove("is-active");
         });
+        setProductMode("");
         setModelPickerVisible(false);
         if (outfitStage) setHidden(outfitStage, true);
         $$(".bai-campaign-outfit-set").forEach((set) => setHidden(set, true));
@@ -826,13 +936,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
         try {
             await navigator.clipboard.writeText(first.image_url);
-            toast("Link copiado al portapapeles.");
+            toast("Link copiado al portapapeles.", "success");
         } catch (error) {
             toast("No se pudo compartir automaticamente.");
         }
     });
 
     selectDefaultPalette();
+    setProductMode("");
     updateStyleHint();
     updateCopyPreview();
     updateFormatPreview();

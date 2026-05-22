@@ -219,6 +219,7 @@ function benditoai_campana_get_owned_model_image($user_id, $model_id, $outfit_id
 
 function benditoai_campana_build_prompt($data) {
     $flow = $data['use_model'] ? 'with_model' : 'without_model';
+    $model_is_product = !empty($data['model_is_product']);
     $angle_instruction = '';
 
     if (!empty($data['vary_background'])) {
@@ -243,11 +244,16 @@ function benditoai_campana_build_prompt($data) {
         $colors = $data['palette'];
     }
 
+    $product_route = $model_is_product
+        ? "The selected model/outfit is the product. Treat the visible clothing, styling, logos, colors and materials on the model as the commercial item to advertise."
+        : "The uploaded product reference images define the commercial product to advertise.";
+
     $prompt = "Create a professional AI marketing campaign image.
 
 Product:
 - Name: {$data['product']}
 - Category: {$data['category']}
+- Product route: {$product_route}
 
 Visual direction:
 - Campaign tone: {$data['tone']}
@@ -270,13 +276,23 @@ Core rules:
 ";
 
     if ($flow === 'with_model') {
-        $prompt .= "
+        if ($model_is_product) {
+            $prompt .= "
+Model-as-product campaign route:
+- Use the provided model/outfit reference as the primary product image and identity reference.
+- Keep the same person, pose credibility, clothing, logos, textures, colors and outfit styling consistent.
+- Make the campaign showcase the outfit/clothing already worn by the model; do not invent a separate product.
+- The model and outfit are the hero. Build a fashion/brand campaign around that look.
+";
+        } else {
+            $prompt .= "
 Model integration:
 - Use the provided model/outfit reference as the same person and styling reference.
 - Keep identity, face, proportions and outfit consistent with the reference.
 - Integrate the model naturally with the product.
 - The model supports the product; the product still leads the campaign.
 ";
+        }
     } else {
         $prompt .= "
 No-model campaign route:
@@ -300,6 +316,8 @@ function benditoai_generar_campana() {
     $producto = benditoai_campana_text('producto');
     $categoria = benditoai_campana_text('categoria');
     $use_model = benditoai_campana_text('use_model', '0') === '1';
+    $product_mode = sanitize_key(benditoai_campana_text('product_mode', 'upload_product'));
+    $model_is_product = $use_model && $product_mode === 'model_product';
     $model_id = (int) benditoai_campana_text('model_id', '0');
     $outfit_id = (int) benditoai_campana_text('outfit_id', '0');
     $model_url = esc_url_raw(benditoai_campana_text('model_url'));
@@ -322,7 +340,7 @@ function benditoai_generar_campana() {
 
     $formats = benditoai_campana_json_array('formatos');
 
-    if ($producto === '' || empty($product_images_raw)) {
+    if (!$model_is_product && ($producto === '' || empty($product_images_raw))) {
         wp_send_json_error('Faltan datos del producto.');
     }
 
@@ -349,11 +367,11 @@ function benditoai_generar_campana() {
         }
     }
 
-    if (empty($product_images)) {
+    if (empty($product_images) && !$model_is_product) {
         wp_send_json_error('Imagen de producto invalida.');
     }
 
-    $primary_product = array_shift($product_images);
+    $primary_product = !$model_is_product ? array_shift($product_images) : null;
     $extra_images = array_values($product_images);
     $model_reference = null;
     $owned_model = null;
@@ -380,7 +398,20 @@ function benditoai_generar_campana() {
             wp_send_json_error('No se pudo cargar la imagen del modelo.');
         }
 
-        $extra_images[] = $model_reference;
+        if ($model_is_product) {
+            $primary_product = $model_reference;
+        } else {
+            $extra_images[] = $model_reference;
+        }
+    }
+
+    if (!$primary_product) {
+        wp_send_json_error('No se pudo preparar la referencia principal de la campana.');
+    }
+
+    if ($model_is_product) {
+        $producto = $producto !== '' ? $producto : (string) ($owned_model['outfit_name'] ?? 'Outfit del modelo');
+        $categoria = $categoria !== '' ? $categoria : 'Moda / outfit del modelo';
     }
 
     $generated = array();
@@ -395,6 +426,7 @@ function benditoai_generar_campana() {
 
         $prompt = benditoai_campana_build_prompt(array(
             'use_model' => $use_model,
+            'model_is_product' => $model_is_product,
             'product' => $producto,
             'category' => $categoria,
             'tone' => $tono,

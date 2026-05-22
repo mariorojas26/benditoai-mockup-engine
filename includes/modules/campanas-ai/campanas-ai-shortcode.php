@@ -269,7 +269,7 @@ function benditoai_campanas_ai_shortcode() {
                         <?php endif; ?>
                     </div>
 
-                    <div class="baiw-nav">
+                    <div class="baiw-nav bai-campaign-start-nav" hidden>
                         <button type="button" class="baiw-btn baiw-btn--primary benditoai-next">Siguiente</button>
                     </div>
                 </div>
@@ -280,38 +280,60 @@ function benditoai_campanas_ai_shortcode() {
                     <div class="bai-campaign-product-copy">
                         <div class="baiw-card-heading">
 
-                            <div>
-                                <h3>Producto base</h3>
-                                <p class="baiw-hint">Nombra el producto, elige categoria y sube hasta 3 imagenes de referencia en un solo paso.</p>
+                            <div class="bai-campaign-product-heading">
+                                <h3>Producto a vender</h3>
+                                <p class="baiw-hint">Elige si quieres que el modelo muestre un producto en la campaña, o si la campaña sera enfocada en el modelo.</p>
                             </div>
                         </div>
 
-                        <div class="baiw-field">
-                            <label for="benditoai-campaign-product">Nombre del producto</label>
-                            <div class="baiw-input-shell">
-                                <i class="fas fa-tag" aria-hidden="true"></i>
-                                <input id="benditoai-campaign-product" name="producto" type="text" maxlength="70" placeholder="Ej: chaqueta denim oversized" required>
+                        <input type="hidden" name="product_mode" id="benditoai-product-mode" value="">
+
+                        <div class="bai-campaign-product-mode" aria-label="Tipo de producto de campana">
+                            <button type="button" class="bai-campaign-product-mode-card" data-product-mode="upload_product">
+                                <span aria-hidden="true"><i class="fas fa-upload"></i></span>
+                                <strong>Cargar producto al modelo</strong>
+                                <small>Sube referencias del producto para que el modelo lo exhiba en la campana.</small>
+                            </button>
+                            <button type="button" class="bai-campaign-product-mode-card" data-product-mode="model_product">
+                                <span aria-hidden="true"><i class="fas fa-tshirt"></i></span>
+                                <strong>Mi modelo ya es el producto</strong>
+                                <small>Usa el outfit seleccionado como pieza principal de la campana.</small>
+                            </button>
+                        </div>
+
+                        <div class="bai-campaign-model-product-note" id="benditoai-model-product-note" hidden>
+                            <i class="fas fa-check-circle" aria-hidden="true"></i>
+                            <p>Usaremos el modelo y outfit seleccionados como referencia principal. No necesitas subir fotos adicionales del producto.</p>
+                        </div>
+
+                        <div class="bai-campaign-product-upload-fields" id="benditoai-product-upload-fields" hidden>
+                            <div class="baiw-field">
+                                <label for="benditoai-campaign-product">Nombre del producto</label>
+                                <div class="baiw-input-shell">
+                                    <i class="fas fa-tag" aria-hidden="true"></i>
+                                    <input id="benditoai-campaign-product" name="producto" type="text" maxlength="70" placeholder="Ej: chaqueta denim oversized">
+                                </div>
                             </div>
+
+                            <div class="baiw-field">
+                                <label for="benditoai-campaign-category">Categoria</label>
+                                <select id="benditoai-campaign-category" name="categoria">
+                                    <option value="">Selecciona categoria</option>
+                                    <?php foreach ($category_options as $category): ?>
+                                        <option value="<?php echo esc_attr($category); ?>"><?php echo esc_html($category); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+
+                            <label class="bai-campaign-dropzone" id="benditoai-product-dropzone" for="benditoai-product-images">
+                                <input type="file" id="benditoai-product-images" accept="image/*" multiple hidden>
+                                <span aria-hidden="true"><i class="fas fa-images"></i></span>
+                                <strong>Arrastra tus imagenes aqui</strong>
+                                <small>o haz clic para seleccionar maximo 3 archivos</small>
+                            </label>
+
+                            <div class="bai-campaign-thumbs" id="benditoai-product-thumbs" aria-live="polite"></div>
                         </div>
-
-                        <div class="baiw-field">
-                            <label for="benditoai-campaign-category">Categoria</label>
-                            <select id="benditoai-campaign-category" name="categoria" required>
-                                <option value="">Selecciona categoria</option>
-                                <?php foreach ($category_options as $category): ?>
-                                    <option value="<?php echo esc_attr($category); ?>"><?php echo esc_html($category); ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-
-                        <label class="bai-campaign-dropzone" id="benditoai-product-dropzone" for="benditoai-product-images">
-                            <input type="file" id="benditoai-product-images" accept="image/*" multiple hidden>
-                            <span aria-hidden="true"><i class="fas fa-images"></i></span>
-                            <strong>Arrastra tus imagenes aqui</strong>
-                            <small>o haz clic para seleccionar maximo 3 archivos</small>
-                        </label>
-
-                        <div class="bai-campaign-thumbs" id="benditoai-product-thumbs" aria-live="polite"></div>
                     </div>
                 </div>
 
@@ -321,30 +343,50 @@ function benditoai_campanas_ai_shortcode() {
                 </div>
             </section>
 
-            <section class="baiw-step" data-step="2" aria-hidden="true" hidden> 
+            <section class="baiw-step" data-step="2" aria-hidden="true" hidden>
                 <div class="baiw-card bai-campaign-confirm-model">
-                    <div class="baiw-card-heading">
-
-                        <div>
-                            <h3>Confirmacion de modelo</h3>
-                            <p class="baiw-hint">Revisa el modelo y outfit que se usaran para la campana.</p>
-                        </div>
+                    <div class="bai-campaign-confirm-heading">
+                        <h3>Confirmacion de modelo</h3>
+                        <p>Revisa la informacion del modelo y el producto para tu campana.</p>
                     </div>
 
-                    <div class="bai-campaign-confirm-grid">
-                        <div class="bai-campaign-confirm-media" id="benditoai-selected-model-preview">
-                            <i class="fas fa-user" aria-hidden="true"></i>
+                    <div class="bai-campaign-confirm-layout">
+                        <div class="bai-campaign-confirm-hero">
+                            <div class="bai-campaign-confirm-media" id="benditoai-selected-model-preview">
+                                <i class="fas fa-user" aria-hidden="true"></i>
+                            </div>
                         </div>
-                        <div class="bai-campaign-confirm-copy">
-                            <span>Modelo seleccionado</span>
-                            <h4 id="benditoai-selected-model-name">Sin seleccionar</h4>
-                            <p id="benditoai-selected-outfit-name">Selecciona modelo y outfit en la pantalla inicial.</p>
-                            <a class="baiw-btn" id="benditoai-edit-model-link" href="<?php echo esc_url($edit_model_url); ?>" data-exit-warning="1">
-                                <i class="fas fa-pen" aria-hidden="true"></i>
-                                Editar modelo
-                            </a>
-                            <p class="bai-campaign-exit-note"><i class="fas fa-circle-info" aria-hidden="true"></i> Al editar saldras del modulo de campanas.</p>
-                        </div>
+
+                        <aside class="bai-campaign-confirm-side">
+                            <div class="bai-campaign-confirm-details">
+                                <h4>Detalles seleccionados</h4>
+                                <dl>
+                                    <div>
+                                        <dt><i class="fas fa-user" aria-hidden="true"></i><span>Modelo</span></dt>
+                                        <dd id="benditoai-selected-model-name">Sin seleccionar</dd>
+                                    </div>
+                                    <div>
+                                        <dt><i class="fas fa-tshirt" aria-hidden="true"></i><span>Outfit</span></dt>
+                                        <dd id="benditoai-selected-outfit-name">Selecciona modelo y outfit.</dd>
+                                    </div>
+                                    <div>
+                                        <dt><i class="fas fa-shopping-bag" aria-hidden="true"></i><span>Producto</span></dt>
+                                        <dd id="benditoai-confirm-product-name">Sin producto</dd>
+                                    </div>
+                                    <div>
+                                        <dt><i class="fas fa-tag" aria-hidden="true"></i><span>Categoria</span></dt>
+                                        <dd id="benditoai-confirm-category-name">Sin categoria</dd>
+                                    </div>
+                                </dl>
+                                <div class="bai-campaign-confirm-footer">
+                                    <p><i class="fas fa-check-circle" aria-hidden="true"></i> Esta informacion se usara como base en tu campana.</p>
+                                    <a class="bai-campaign-edit-model-link" id="benditoai-edit-model-link" href="<?php echo esc_url($edit_model_url); ?>" data-exit-warning="1">
+                                        <i class="fas fa-pen" aria-hidden="true"></i>
+                                        Editar modelo
+                                    </a>
+                                </div>
+                            </div>
+                        </aside>
                     </div>
                 </div>
 
@@ -584,6 +626,8 @@ function benditoai_campanas_ai_shortcode() {
                     </div>
                 </div>
             </section>
+
+            <div class="baiw-error-inline" id="benditoai-campaign-inline-error" role="alert" aria-live="polite" hidden></div>
         </form>
     </div>
 </div>
@@ -718,14 +762,14 @@ function benditoai_campanas_ai_shortcode() {
 
 .benditoai-campaign-wizard .baiw-stepper {
     display: grid;
-    grid-template-columns: repeat(3, minmax(200px, 1fr));
-    justify-content: center;
-    gap: 10px;
-    max-width: 980px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: center;
+    gap: clamp(16px, 3vw, 44px);
+    max-width: 100%;
     padding: 0;
-    margin: 0 0 12px;
+    margin: 0 0 18px;
     list-style: none;
-    overflow: hidden;
+    overflow: visible;
     transition: max-width 0.24s ease;
 }
 
@@ -737,17 +781,30 @@ function benditoai_campanas_ai_shortcode() {
 }
 
 .benditoai-campaign-wizard .baiw-stepper li {
-    display: flex;
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) minmax(34px, 0.72fr);
     align-items: center;
-    gap: 8px;
-    min-height: 42px;
-    padding: 8px;
-    border-radius: 12px;
-    border: 1px solid rgba(124, 58, 255, 0.2);
-    background: rgba(18, 8, 38, 0.52);
+    gap: 12px;
+    min-height: 58px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 16px;
+    background: transparent;
+    color: rgba(236, 232, 255, 0.78);
     opacity: 0;
     transform: translateY(8px);
-    transition: opacity 0.22s ease, transform 0.22s ease, border-color 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+    transition: opacity 0.22s ease, transform 0.22s ease, border-color 0.22s ease, background 0.22s ease, box-shadow 0.22s ease, color 0.22s ease;
+}
+
+.benditoai-campaign-wizard .baiw-stepper li::after {
+    content: "";
+    display: block;
+    grid-column: 3;
+    width: 100%;
+    height: 2px;
+    border-radius: 999px;
+    background: rgba(124, 58, 255, 0.28);
 }
 
 .benditoai-campaign-wizard .baiw-stepper li.is-window-visible {
@@ -755,34 +812,53 @@ function benditoai_campanas_ai_shortcode() {
     transform: translateY(0);
 }
 
-.benditoai-campaign-wizard .baiw-stepper li.is-active,
+.benditoai-campaign-wizard .baiw-stepper li.is-window-last::after {
+    display: none;
+}
+
+.benditoai-campaign-wizard .baiw-stepper li.is-active {
+    grid-template-columns: auto minmax(0, 1fr) minmax(34px, 0.65fr);
+    padding: 13px 18px;
+    border-color: rgba(149, 104, 255, 0.74);
+    background:
+        linear-gradient(135deg, rgba(124, 58, 255, 0.78), rgba(40, 17, 92, 0.92));
+    box-shadow:
+        0 0 0 1px rgba(149, 104, 255, 0.2),
+        0 16px 34px rgba(14, 2, 40, 0.34);
+    color: #ffffff;
+}
+
 .benditoai-campaign-wizard .baiw-stepper li.is-complete {
-    border-color: var(--baiw-border-active);
-    background: rgba(24, 11, 50, 0.86);
+    color: rgba(246, 242, 255, 0.9);
 }
 
 .benditoai-campaign-wizard .baiw-step-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 26px;
-    height: 26px;
+    width: 32px;
+    height: 32px;
     border-radius: 999px;
-    background: rgba(124, 58, 255, 0.14);
-    color: #c4b5fd;
-    font-size: 0.78rem;
+    background: rgba(255, 255, 255, 0.12);
+    color: rgba(236, 232, 255, 0.86);
+    font-size: 0.88rem;
     font-weight: 800;
 }
 
-.benditoai-campaign-wizard .is-active .baiw-step-badge,
 .benditoai-campaign-wizard .is-complete .baiw-step-badge {
-    background: #5e1df7;
+    background: rgba(124, 58, 255, 0.28);
     color: #ffffff;
+}
+
+.benditoai-campaign-wizard .is-active .baiw-step-badge {
+    background: #ffffff;
+    color: #5e1df7;
 }
 
 .benditoai-campaign-wizard .baiw-step-copy {
     display: grid;
     gap: 1px;
+    min-width: 0;
 }
 
 .benditoai-campaign-wizard .baiw-step-copy strong,
@@ -791,19 +867,17 @@ function benditoai_campanas_ai_shortcode() {
 }
 
 .benditoai-campaign-wizard .baiw-step-copy strong {
-    font-size: 0.78rem;
+    color: #ffffff;
+    font-size: 0.88rem;
 }
 
 .benditoai-campaign-wizard .baiw-step-copy small {
-    font-size: 0.68rem;
+    color: rgba(236, 232, 255, 0.78);
+    font-size: 0.76rem;
 }
 
 .benditoai-campaign-wizard .baiw-progress-track {
-    height: 7px;
-    margin-bottom: 16px;
-    border-radius: 999px;
-    background: rgba(124, 58, 255, 0.14);
-    overflow: hidden;
+    display: none;
 }
 
 .benditoai-campaign-wizard .baiw-progress-fill {
@@ -1065,7 +1139,10 @@ function benditoai_campanas_ai_shortcode() {
 .bai-campaign-subhead {
     display: grid;
     gap: 6px;
-    margin-bottom: 16px;
+
+    justify-content: center;
+    text-align: center;
+    margin: 40px 0px;
 }
 
 .bai-campaign-subhead h4,
@@ -1433,6 +1510,92 @@ function benditoai_campanas_ai_shortcode() {
     max-width: 100%;
 }
 
+.bai-campaign-product-mode {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.bai-campaign-product-mode-card {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+    min-height: 108px;
+    padding: 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(124, 58, 255, 0.24);
+    background: rgba(18, 8, 38, 0.7);
+    color: #ffffff;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+}
+
+.bai-campaign-product-mode-card > span {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: rgba(124, 58, 255, 0.14);
+    color: #c4b5fd;
+}
+
+.bai-campaign-product-mode-card strong,
+.bai-campaign-product-mode-card small {
+    grid-column: 2;
+}
+
+.bai-campaign-product-mode-card strong {
+    font-size: 0.98rem;
+    line-height: 1.2;
+}
+
+.bai-campaign-product-mode-card small {
+    color: var(--baiw-muted);
+    line-height: 1.35;
+}
+
+.bai-campaign-product-mode-card:hover,
+.bai-campaign-product-mode-card.is-active {
+    border-color: rgba(124, 58, 255, 0.68);
+    background: rgba(21, 9, 46, 0.9);
+}
+
+.bai-campaign-product-mode-card.is-active {
+    box-shadow: 0 0 0 1px rgba(182, 148, 255, 0.45);
+}
+
+.bai-campaign-product-mode-card[hidden],
+.bai-campaign-product-upload-fields[hidden],
+.bai-campaign-model-product-note[hidden] {
+    display: none !important;
+}
+
+.bai-campaign-model-product-note {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin: 4px 0 14px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(34, 197, 94, 0.28);
+    background: rgba(34, 197, 94, 0.1);
+    color: rgba(236, 232, 255, 0.88);
+}
+
+.bai-campaign-model-product-note i {
+    color: #86efac;
+    margin-top: 2px;
+}
+
+.bai-campaign-model-product-note p {
+    margin: 0;
+    line-height: 1.35;
+}
+
 .bai-campaign-live-preview,
 .bai-campaign-copy-intent,
 .bai-campaign-format-preview,
@@ -1540,28 +1703,187 @@ function benditoai_campanas_ai_shortcode() {
     cursor: pointer;
 }
 
+.bai-campaign-confirm-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1.05fr);
+    gap: 24px;
+    align-items: stretch;
+    margin-top: 18px;
+}
+
+.bai-campaign-confirm-hero,
+.bai-campaign-confirm-side {
+    display: grid;
+    gap: 16px;
+}
+
+.bai-campaign-confirm-heading h3 {
+    margin: 0;
+    color: #ffffff;
+    font-size: clamp(1.55rem, 2vw, 2.2rem);
+    line-height: 1.1;
+}
+.bai-campaign-confirm-heading {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 40px 0px;
+    gap:8px;
+}
+
+.bai-campaign-confirm-heading p {
+    margin: 6px 0 0;
+    color: rgba(236, 232, 255, 0.82);
+    font-size: 1rem;
+    line-height: 1.35;
+}
+
+.bai-campaign-edit-model-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    width: fit-content;
+    margin-top: 12px;
+    color: #c4b5fd;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-decoration: none;
+    opacity: 0.78;
+    transition: opacity 0.18s ease, color 0.18s ease;
+}
+
+.bai-campaign-edit-model-link:hover {
+    color: #ffffff;
+    opacity: 1;
+}
+
 .bai-campaign-confirm-media {
     display: grid;
     place-items: center;
-    min-height: 360px;
+    width: 50%;
+    min-width: 260px;
+    min-height: 420px;
+    margin: 0 auto;
     color: #c4b5fd;
     font-size: 2rem;
 }
 
-.bai-campaign-confirm-copy {
-    align-self: center;
+.bai-campaign-confirm-media img {
+    object-fit: cover;
 }
 
-.bai-campaign-confirm-copy p {
-    color: var(--baiw-muted);
+.bai-campaign-confirm-tip,
+.bai-campaign-confirm-details {
+    border-radius: 16px;
+    border: 1px solid rgba(124, 58, 255, 0.24);
+    background: rgba(10, 5, 23, 0.46);
 }
 
-.bai-campaign-exit-note {
-    display: inline-flex;
-    gap: 7px;
+.bai-campaign-confirm-tip {
+    display: grid;
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 9px;
+    align-items: start;
+    justify-self: end;
+    align-self: start;
+    width: fit-content;
+    max-width: 380px;
+    padding: 10px 12px;
+    margin-left: auto;
+    border-radius: 12px;
+}
+
+.bai-campaign-confirm-tip > span {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 9px;
+    background: rgba(124, 58, 255, 0.14);
+    color: #d8b4fe;
+    font-size: 0.82rem;
+}
+
+.bai-campaign-confirm-tip strong,
+.bai-campaign-confirm-details h4 {
+    color: #ffffff;
+    font-weight: 800;
+}
+
+.bai-campaign-confirm-tip p {
+    margin: 3px 0 0;
+    color: rgba(236, 232, 255, 0.82);
+    font-size: 0.78rem;
+    line-height: 1.32;
+}
+
+.bai-campaign-confirm-details {
+    display: grid;
+    align-content: start;
+    min-height: 420px;
+    padding: 24px;
+}
+
+.bai-campaign-confirm-details h4 {
+    margin: 0 0 22px;
+    color: #d8b4fe;
+    font-size: 1rem;
+}
+
+.bai-campaign-confirm-details dl {
+    display: grid;
+    gap: 0;
+    margin: 0;
+}
+
+.bai-campaign-confirm-details dl > div {
+    display: grid;
+    grid-template-columns: minmax(150px, 0.75fr) minmax(0, 1fr);
+    gap: 20px;
     align-items: center;
-    margin-top: 10px;
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(124, 58, 255, 0.18);
+}
+
+.bai-campaign-confirm-details dt {
+    display: inline-grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    color: rgba(236, 232, 255, 0.9);
+    font-weight: 700;
+}
+
+.bai-campaign-confirm-details dt i {
+    color: #d8b4fe;
+    font-size: 1.25rem;
+}
+
+.bai-campaign-confirm-details dd {
+    min-width: 0;
+    margin: 0;
+    color: #ffffff;
+    line-height: 1.35;
+}
+
+.bai-campaign-confirm-footer {
+    display: grid;
+    gap: 8px;
+    margin-top: 22px;
+}
+
+.bai-campaign-confirm-footer p {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    margin: 0;
     color: var(--baiw-muted);
+    font-size: 0.86rem;
+}
+
+.bai-campaign-confirm-footer p i {
+    color: #a78bfa;
 }
 
 .bai-campaign-visual-layout {
@@ -1827,12 +2149,24 @@ function benditoai_campanas_ai_shortcode() {
 }
 
 .benditoai-campaign-wizard .baiw-error-inline {
+    display: block;
     margin: 12px 0 0;
     padding: 10px 12px;
     border-radius: 10px;
     border: 1px solid rgba(251, 113, 133, 0.5);
     background: rgba(95, 24, 43, 0.58);
     color: #ffd2dc;
+    font-size: 0.84rem;
+}
+
+.benditoai-campaign-wizard .baiw-error-inline[hidden] {
+    display: none !important;
+}
+
+.benditoai-campaign-wizard .baiw-error-inline.is-success {
+    border-color: rgba(34, 197, 94, 0.34);
+    background: rgba(34, 197, 94, 0.12);
+    color: #86efac;
 }
 
 @keyframes baiCampaignSpin {
@@ -1858,8 +2192,13 @@ function benditoai_campanas_ai_shortcode() {
     .bai-campaign-product-card,
     .bai-campaign-copy-step,
     .bai-campaign-format-layout,
-    .bai-campaign-confirm-grid {
+    .bai-campaign-confirm-grid,
+    .bai-campaign-confirm-layout {
         grid-template-columns: 1fr;
+    }
+
+    .bai-campaign-confirm-media {
+        min-height: 420px;
     }
 }
 
@@ -1883,9 +2222,26 @@ function benditoai_campanas_ai_shortcode() {
     .benditoai-campaign-wizard .baiw-stepper.is-single-window {
         grid-template-columns: 1fr;
         max-width: 100%;
+        gap: 10px;
+    }
+
+    .benditoai-campaign-wizard .baiw-stepper li,
+    .benditoai-campaign-wizard .baiw-stepper li.is-active {
+        grid-template-columns: auto minmax(0, 1fr);
+        padding: 12px 14px;
+        background: rgba(18, 8, 38, 0.68);
+    }
+
+    .benditoai-campaign-wizard .baiw-stepper li.is-active {
+        background: linear-gradient(135deg, rgba(124, 58, 255, 0.78), rgba(40, 17, 92, 0.92));
+    }
+
+    .benditoai-campaign-wizard .baiw-stepper li::after {
+        display: none;
     }
 
     .bai-campaign-focus-grid,
+    .bai-campaign-product-mode,
     .bai-campaign-model-grid,
     .bai-campaign-empty-models,
     .bai-campaign-thumbs,
@@ -1897,6 +2253,37 @@ function benditoai_campanas_ai_shortcode() {
 
     .bai-campaign-focus-card {
         min-height: 162px;
+    }
+
+    .bai-campaign-confirm-details {
+        min-height: 0;
+        padding: 18px;
+    }
+
+    .bai-campaign-confirm-details dl > div {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 14px 0;
+    }
+
+    .bai-campaign-confirm-media {
+        width: 100%;
+        min-width: 0;
+        min-height: 340px;
+    }
+
+    .bai-campaign-confirm-tip {
+        grid-template-columns: 30px minmax(0, 1fr);
+        max-width: none;
+        width: auto;
+        justify-self: stretch;
+        margin-left: 0;
+        padding: 10px 12px;
+    }
+
+    .bai-campaign-confirm-tip > span {
+        width: 28px;
+        height: 28px;
     }
 
     .bai-campaign-model-main {

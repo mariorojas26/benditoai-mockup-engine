@@ -31,6 +31,11 @@
   - DB schema/insert/response if persisted.
   - History display if user-facing.
 
+## Campaign Prompt Notes
+
+- `product_mode=upload_product` uses uploaded product images as the primary reference.
+- `product_mode=model_product` is only valid with a selected model/outfit; the outfit image becomes the primary image reference and the prompt treats the visible clothing/styling as the product being advertised.
+
 ## Service Debugging
 
 - First check request field presence and nonce/login.
