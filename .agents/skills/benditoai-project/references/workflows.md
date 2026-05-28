@@ -1,5 +1,15 @@
 # Workflows
 
+## Product Workflow Philosophy
+
+BenditoAI workflows should feel like guided production pipelines, not isolated demos. A user may create a model, save outfits, send that model to a campaign, generate commercial visuals, edit or download results, and continue using the same account/tokens.
+
+When changing any workflow, trace the full loop:
+
+`input UI -> frontend state -> AJAX payload -> PHP validation -> AI/service call -> persistence -> JSON response -> rendered result/history -> token update`.
+
+If only one side of that loop changes, bugs usually appear later in history cards, saved outfits, campaign handoff, or token display.
+
 ## Mockup
 
 - Shortcodes: `includes/modules/mockup/shortcodes.php`.
@@ -41,6 +51,15 @@
 - Auth dropdown/user menu: `includes/modules/auth`.
 - Login/register customization and redirects: `auth-redirect.php`.
 - Home widgets and UX cards: `includes/modules/Home`, `includes/modules/ux`, `assets/js/home`.
+- GSAP home components should use scoped CSS/JS and not affect regular page scroll outside their section.
+
+## Cross-Flow Connections
+
+- Model history can hand selected model/outfit data to campaign creation through localStorage.
+- Token-consuming tools should update shared token UI immediately after success.
+- Generated images often need download affordances and stable URLs for later reuse.
+- Plan limits can affect model count, outfit count, and feature availability.
+- Auth redirects and login state can change whether a shortcode renders the full tool or a prompt to log in.
 
 ## Investigation Pattern
 
@@ -48,3 +67,4 @@
 - For a generation bug: read endpoint + service + prompt source.
 - For a persistence bug: read endpoint + `install.php` table schema + any helper module.
 - For token/limit issues: read endpoint + `tokens-plans.md` files + plan helpers.
+- For a cross-flow bug: inspect localStorage keys, response data shape, and both source/destination modules.

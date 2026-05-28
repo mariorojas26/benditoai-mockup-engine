@@ -3,6 +3,7 @@
     const MOBILE_QUERY = window.matchMedia("(max-width: 768px)");
     const REDUCED_MOTION_QUERY = window.matchMedia("(prefers-reduced-motion: reduce)");
     const SLIDE_SPACING = 116;
+    const SHARPNESS_HOLD = 0.22;
 
     function clamp(value, min, max) {
         return Math.min(max, Math.max(min, value));
@@ -34,26 +35,6 @@
         }
 
         return clamp(progress, 0, 1) * (totalItems - 1);
-    }
-
-    function getSceneMetrics(section) {
-        const viewportH = getViewportHeight();
-        const rect = section.getBoundingClientRect();
-        const travel = Math.max(section.offsetHeight - viewportH, 1);
-        const firstCardHold = Math.min(viewportH * 0.18, travel * 0.22);
-        const animatedTravel = Math.max(travel - firstCardHold, 1);
-
-        return {
-            animatedTravel: animatedTravel,
-            firstCardHold: firstCardHold,
-            rect: rect,
-        };
-    }
-
-    function getSceneProgress(section) {
-        const metrics = getSceneMetrics(section);
-
-        return clamp((-metrics.rect.top - metrics.firstCardHold) / metrics.animatedTravel, 0, 1);
     }
 
     function setActive(section, index) {
@@ -114,14 +95,15 @@
         panels.forEach(function (panel, index) {
             const offset = index - stage;
             const distance = Math.min(Math.abs(offset), 1);
+            const easedDistance = clamp((distance - SHARPNESS_HOLD) / (1 - SHARPNESS_HOLD), 0, 1);
             const visible = distance < 1.18 || index === activeIndex;
             const direction = clamp(offset, -1, 1);
             const leftAmount = clamp(-offset, 0, 1);
-            const opacity = clamp(1 - distance * 0.46, 0, 1);
-            const brightness = clamp(1 - distance * 0.34 - leftAmount * 0.26, 0.34, 1);
-            const saturate = clamp(1.02 - distance * 0.18 - leftAmount * 0.12, 0.72, 1.02);
-            const blur = distance * 6 + leftAmount * 4;
-            const glassOpacity = clamp(distance * 0.62 + leftAmount * 0.28, 0, 0.9);
+            const opacity = clamp(1 - easedDistance * 0.46, 0, 1);
+            const brightness = clamp(1 - easedDistance * 0.34 - leftAmount * 0.2, 0.38, 1);
+            const saturate = clamp(1.02 - easedDistance * 0.18 - leftAmount * 0.1, 0.76, 1.02);
+            const blur = easedDistance * 6 + leftAmount * 2.8;
+            const glassOpacity = clamp(easedDistance * 0.62 + leftAmount * 0.22, 0, 0.9);
 
             panel.style.setProperty("--bai-glass-opacity", glassOpacity.toFixed(3));
 
@@ -140,6 +122,7 @@
         panelImages.forEach(function (image, index) {
             const offset = index - stage;
             const distance = Math.min(Math.abs(offset), 1);
+            const easedDistance = clamp((distance - SHARPNESS_HOLD) / (1 - SHARPNESS_HOLD), 0, 1);
             const direction = clamp(offset, -1, 1);
 
             if (!image) {
@@ -148,7 +131,7 @@
 
             gsap.set(image, {
                 xPercent: direction * 3,
-                scale: 1.01 + distance * 0.035,
+                scale: 1.01 + easedDistance * 0.035,
                 overwrite: true,
             });
         });
@@ -197,22 +180,39 @@
         setSectionHeight(section);
         renderScene(section, cards, panels, panelImages, 0, gsap);
 
-        ScrollTrigger.create({
-            trigger: section,
-            start: "top top",
-            end: "bottom bottom",
-            scrub: 0.9,
-            invalidateOnRefresh: true,
-            onUpdate: function () {
-                renderScene(section, cards, panels, panelImages, getSceneProgress(section), gsap);
+        const pin = section.querySelector(".benditoai-gsap-cards__pin") || section;
+        const timeline = gsap.timeline({
+            defaults: {
+                ease: "none",
             },
-            onRefreshInit: function () {
-                setSectionHeight(section);
-            },
-            onRefresh: function () {
-                renderScene(section, cards, panels, panelImages, getSceneProgress(section), gsap);
+            scrollTrigger: {
+                trigger: section,
+                start: "top top",
+                end: function () {
+                    return "+=" + getScrollDistance(section);
+                },
+                pin: pin,
+                pinSpacing: true,
+                scrub: 0.65,
+                anticipatePin: 1,
+                invalidateOnRefresh: true,
+                refreshPriority: 1,
+                onRefreshInit: function () {
+                    setSectionHeight(section);
+                },
+                onUpdate: function (self) {
+                    renderScene(section, cards, panels, panelImages, self.progress, gsap);
+                },
+                onRefresh: function (self) {
+                    renderScene(section, cards, panels, panelImages, self.progress, gsap);
+                },
             },
         });
+
+        timeline.to({}, {
+            duration: 1,
+        });
+
     }
 
     function init() {

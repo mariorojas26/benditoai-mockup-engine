@@ -7,6 +7,27 @@
 - Many model wizard styles are inline in `modelos-ai-shortcode.php`; global/shared styles are in `assets/css/styles.css`.
 - Beware duplicate CSS blocks in shortcode files. Later rules often win by cascade.
 
+## Brand Feel
+
+BenditoAI should feel like a premium AI commerce studio: dark, precise, fast, and conversion-oriented. It is not a playful generic AI demo and not a white SaaS dashboard. The UI should help users generate, inspect, edit, and reuse visuals with confidence.
+
+Good BenditoAI UI:
+
+- Uses near-black bases and dark purple surfaces.
+- Uses violet for active, focus, and primary states.
+- Makes previews and generated images the visual priority.
+- Keeps controls compact and predictable.
+- Shows loading, empty, error, and success states clearly.
+- Avoids marketing filler inside actual tools.
+
+Bad BenditoAI UI:
+
+- White cards or bright neutral dashboards.
+- Huge hero copy inside operational tools.
+- Decorative gradients/orbs that compete with images.
+- Layout shifts when selecting options or when results load.
+- Hiding important controls behind unclear custom UI.
+
 ## Common UI Patterns
 
 - Choice tiles use `.baiw-choice-tile`, `data-choice-target`, `data-choice-value`, and hidden select fields.
@@ -14,6 +35,17 @@
 - Range inputs use `.baiw-range` and `--range-progress`.
 - Choices.js is used for enhanced selects where `select.baiw-enhanced-select` is present.
 - Model wizard modal/back behavior lives in `modelos-ai-script.js`.
+- Primary tool forms often use dark panels, compact labels, and image preview areas.
+- Generated result cards must support download/edit/delete/use-for-campaign actions when that module expects them.
+- If JS dynamically creates cards, match PHP-rendered classes and data attributes.
+
+## Motion And Scroll
+
+- Use GSAP/ScrollTrigger for complex scroll-linked home/marketing animations.
+- Scroll animations should have one source of truth for progress; avoid mixing CSS sticky, manual scroll math, and ScrollTrigger pinning unless the interaction explicitly requires it.
+- Use `scrub` for scroll-linked progress and avoid separate forced snapping unless requested and tested.
+- Always include or preserve `prefers-reduced-motion` fallback.
+- Keep animation transforms on child elements, not on pinned containers.
 
 ## Asset Paths
 
@@ -29,12 +61,18 @@
 - For model wizard, check desktop and mobile when changing grid/tile/rail behavior.
 - Avoid layout shifts: keep stable heights for cards/tiles and stable tracks for rails.
 - Horizontal rails should make scroll affordance visible with scrollbar, fade, or partial next item.
+- Test key UI at roughly 320, 768, 1024, and desktop widths.
+- Keep media previews visible and useful on mobile.
+- If a section is 100vh, ensure it still has readable content on shorter laptop viewports.
 
 ## Debugging UI
 
 - If selected/hover/focus colors look inconsistent, search for repeated selectors in both `assets/css/styles.css` and shortcode inline style blocks.
 - If an image tile appears blank, verify generated URL, file extension, URL encoding, and CSS variable `--baiw-choice-image`.
 - If a button does not show, inspect JS `style.display` logic before changing CSS.
+- If an AJAX UI appears stuck, inspect browser console plus JSON response shape before changing layout.
+- If tokens do not update, check whether response includes `tokens` and whether `tokens.js` helper is called.
+- If a modal/card exists in PHP and JS, update both render paths.
 
 ## Mandatory Look And Feel Guide
 
