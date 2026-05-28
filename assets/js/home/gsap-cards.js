@@ -62,7 +62,9 @@
         });
 
         tiles.forEach(function (tile, tileIndex) {
-            tile.classList.toggle("is-active", tileIndex === index);
+            const isActive = tileIndex === index;
+            tile.classList.toggle("is-active", isActive);
+            tile.setAttribute("aria-current", isActive ? "step" : "false");
         });
     }
 

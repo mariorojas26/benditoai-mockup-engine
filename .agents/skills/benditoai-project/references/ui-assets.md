@@ -42,6 +42,7 @@ Bad BenditoAI UI:
 ## Motion And Scroll
 
 - Use GSAP/ScrollTrigger for complex scroll-linked home/marketing animations.
+- Reusable GSAP stepper: use `.bai-gsap-stepper` with child `.bai-gsap-stepper__dot`; toggle `.is-active` and `aria-current="step"` per active card. Each dot represents one card and the active dot expands like an Apple-style capsule.
 - Scroll animations should have one source of truth for progress; avoid mixing CSS sticky, manual scroll math, and ScrollTrigger pinning unless the interaction explicitly requires it.
 - Default GSAP feel for BenditoAI: calm, smooth, premium, and fluid. The user prefers tranquil transitions over aggressive, robotic, or frame-by-frame movement.
 - Use `scrub` for scroll-linked progress and render from the smoothed timeline progress when possible, not raw trigger progress.
