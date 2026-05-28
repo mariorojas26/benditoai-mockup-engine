@@ -21,6 +21,7 @@
 - `assets/images/peinados/`: hairstyle JPGs named exactly by label.
 - `assets/images/estilosDeModelo/`: style references and thumbnails used in model history/edit outfit flow.
 - `assets/images/carrouselSkills/`: skill carousel images, with fallbacks in `cardsSkills.php`.
+- `[benditoai_gsap_cards]` defaults to `assets/images/1crea.png`, `assets/images/creamodelo.png`, and `assets/images/vendemodelo.png`; override with `image_1`, `image_2`, `image_3`.
 - Icons such as download/edit/delete are under `assets/images/`.
 
 ## Responsive Notes

@@ -32,6 +32,7 @@ Frontend UI renders through a shortcode, vanilla JS collects form state, `fetch(
 - `[benditoai_tokens]`, `[benditoai_desktop_tokens]`: token display.
 - `[benditoai_plan_cards]`: starter/pro/elite subscription cards with customizable copy and media placeholder.
 - `[benditoai_remove_bg]`, `[benditoai_enhance_image]`, `[benditoai_trending]`: tools.
+- `[benditoai_gsap_cards]`: GSAP/ScrollTrigger pinned 3-card Home component with synchronized image transitions and expanding copy.
 - UX/home shortcodes live under `includes/modules/ux`, `includes/modules/Home`, and `includes/modules/scroll-video`.
 
 ## Safety Defaults

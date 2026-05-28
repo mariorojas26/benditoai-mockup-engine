@@ -1,0 +1,322 @@
+.benditoai-gsap-cards {
+    --bai-bg: #020006;
+    --bai-text: #ffffff;
+    --bai-text-soft: rgba(245, 242, 255, 0.9);
+    --bai-text-muted: rgba(236, 232, 255, 0.68);
+    --bai-text-accent: #c4b5fd;
+    --bai-accent: #7c3aff;
+    --bai-accent-soft: rgba(124, 58, 255, 0.14);
+    --bai-border-soft: rgba(124, 58, 255, 0.24);
+    --bai-gsap-scroll-height: 280vh;
+    color: var(--bai-text);
+    background: var(--bai-bg);
+    min-height: var(--bai-gsap-scroll-height);
+    overflow: clip;
+}
+
+.benditoai-gsap-cards__pin {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    min-height: 100vh;
+    overflow: hidden;
+    background:
+        linear-gradient(90deg, rgba(2, 0, 6, 0.96) 0%, rgba(2, 0, 6, 0.62) 34%, rgba(2, 0, 6, 0.08) 64%, rgba(2, 0, 6, 0.5) 100%),
+        radial-gradient(circle at 70% 42%, rgba(124, 58, 255, 0.1), transparent 38%),
+        #020006;
+}
+
+.benditoai-gsap-cards__layout {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    perspective: 1400px;
+}
+
+.benditoai-gsap-cards__copy {
+    position: relative;
+    z-index: 3;
+    width: min(430px, calc(100% - 32px));
+    height: 100%;
+    margin-left: clamp(18px, 4.8vw, 78px);
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+}
+
+.benditoai-gsap-cards__copy::before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    inset: auto auto 50% clamp(-36px, -4vw, -18px);
+    width: min(48vw, 620px);
+    height: min(86vh, 860px);
+    transform: translateY(50%);
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse at 24% 50%, rgba(2, 0, 6, 0.9), rgba(2, 0, 6, 0.52) 46%, rgba(2, 0, 6, 0.12) 66%, rgba(2, 0, 6, 0) 82%);
+    filter: blur(18px);
+}
+
+.benditoai-gsap-cards__card {
+    position: absolute;
+    z-index: 1;
+    width: min(520px, 100%);
+    opacity: 0;
+    visibility: hidden;
+}
+
+.benditoai-gsap-cards__card.is-active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.benditoai-gsap-cards__title {
+    margin: 0;
+    color: var(--bai-text);
+    font-size: clamp(1.75rem, 3.2vw, 3.55rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0;
+    text-wrap: balance;
+}
+
+.benditoai-gsap-cards__summary {
+    max-width: 460px;
+    margin: clamp(22px, 3vh, 36px) 0 0;
+    color: var(--bai-text-soft);
+    font-size: clamp(0.98rem, 1.22vw, 1.22rem);
+    font-style: italic;
+    font-weight: 500;
+    line-height: 1.32;
+}
+
+.benditoai-gsap-cards__detail {
+    max-height: none;
+    opacity: 1;
+}
+
+.benditoai-gsap-cards__detail p {
+    max-width: 480px;
+    margin: clamp(24px, 4vh, 44px) 0 0;
+    color: var(--bai-text-soft);
+    font-size: clamp(0.9rem, 1.08vw, 1.08rem);
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.benditoai-gsap-cards__media {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    border: 0;
+    background: transparent;
+    overflow: visible;
+    transform-style: preserve-3d;
+}
+
+.benditoai-gsap-cards__steps {
+    position: absolute;
+    z-index: 4;
+    left: clamp(18px, 4.8vw, 78px);
+    bottom: clamp(20px, 4.8vh, 44px);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+}
+
+.benditoai-gsap-cards__steps-tile {
+    width: 34px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(245, 242, 255, 0.16);
+    border-radius: 8px;
+    background: rgba(245, 242, 255, 0.06);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+    color: rgba(245, 242, 255, 0.52);
+    font-size: 0.78rem;
+    font-weight: 650;
+    line-height: 1;
+    letter-spacing: 0;
+}
+
+.benditoai-gsap-cards__steps-tile.is-active {
+    width: 46px;
+    border-color: rgba(196, 181, 253, 0.58);
+    background: rgba(124, 58, 255, 0.22);
+    color: #ffffff;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 12px 30px rgba(124, 58, 255, 0.18);
+}
+
+.benditoai-gsap-cards__image-panel {
+    position: absolute;
+    top: 50%;
+    left: clamp(420px, 35vw, 620px);
+    width: min(66vw, 1180px);
+    height: 100vh;
+    margin: 0;
+    opacity: 0;
+    visibility: hidden;
+    transform-origin: center center;
+    border: 0;
+    border-radius: 0;
+    background: #0a0518;
+    box-shadow: 0 34px 90px rgba(0, 0, 0, 0.38);
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.08) 5%, rgba(0, 0, 0, 0.72) 16%, #000 28%, #000 100%);
+    mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.08) 5%, rgba(0, 0, 0, 0.72) 16%, #000 28%, #000 100%);
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+}
+
+.benditoai-gsap-cards__image-panel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    opacity: var(--bai-glass-opacity, 0);
+    pointer-events: none;
+    background: rgba(10, 5, 24, 0.34);
+    backdrop-filter: blur(10px) saturate(0.78);
+    -webkit-backdrop-filter: blur(10px) saturate(0.78);
+    transition: none;
+}
+
+.benditoai-gsap-cards__image-panel.is-active,
+.benditoai-gsap-cards__image-panel img,
+.benditoai-gsap-cards__static-image {
+    opacity: 1;
+    visibility: visible;
+}
+
+.benditoai-gsap-cards__image-panel img,
+.benditoai-gsap-cards__static-image {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+}
+
+.benditoai-gsap-cards__static-image {
+    height: auto;
+    aspect-ratio: 16 / 10;
+    margin-top: 14px;
+    border-radius: 8px;
+    border: 1px solid var(--bai-border-soft);
+}
+
+.benditoai-gsap-cards:not(.is-static) .benditoai-gsap-cards__static-image {
+    display: none;
+}
+
+.benditoai-gsap-cards.is-static {
+    min-height: auto;
+    overflow: visible;
+}
+
+.benditoai-gsap-cards.is-static .benditoai-gsap-cards__pin {
+    position: relative;
+    height: auto;
+    min-height: auto;
+    padding: 48px 16px;
+}
+
+.benditoai-gsap-cards.is-static .benditoai-gsap-cards__layout {
+    height: auto;
+    min-height: 0;
+}
+
+.benditoai-gsap-cards.is-static .benditoai-gsap-cards__copy {
+    width: min(760px, 100%);
+    height: auto;
+    margin: 0 auto;
+    display: grid;
+    gap: 16px;
+}
+
+.benditoai-gsap-cards.is-static .benditoai-gsap-cards__card {
+    position: relative;
+    opacity: 1;
+    visibility: visible;
+    padding: 16px;
+    border: 1px solid var(--bai-border-soft);
+    border-radius: 10px;
+    background: rgba(18, 8, 38, 0.78);
+}
+
+.benditoai-gsap-cards.is-static .benditoai-gsap-cards__media {
+    display: none;
+}
+
+@media (max-width: 900px) {
+    .benditoai-gsap-cards {
+        --bai-gsap-scroll-height: 320vh;
+    }
+
+    .benditoai-gsap-cards__copy {
+        width: min(520px, calc(100% - 28px));
+        margin-left: 14px;
+        align-items: end;
+        padding-bottom: 12vh;
+    }
+
+    .benditoai-gsap-cards__copy::before {
+        width: 110vw;
+        height: 58vh;
+        left: -22vw;
+    }
+
+    .benditoai-gsap-cards__image-panel {
+        top: 50%;
+        left: 18vw;
+        width: 104vw;
+        height: 100vh;
+    }
+
+    .benditoai-gsap-cards__title {
+        font-size: clamp(1.9rem, 8.5vw, 3.7rem);
+    }
+
+    .benditoai-gsap-cards__summary {
+        font-size: clamp(1rem, 4.5vw, 1.35rem);
+    }
+
+    .benditoai-gsap-cards__detail p {
+        font-size: 1rem;
+    }
+
+    .benditoai-gsap-cards__steps {
+        left: 14px;
+        bottom: 18px;
+    }
+}
+
+@media (max-width: 520px) {
+    .benditoai-gsap-cards__copy {
+        padding-bottom: 9vh;
+    }
+
+    .benditoai-gsap-cards__image-panel {
+        left: 10vw;
+        width: 118vw;
+        height: 100vh;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .benditoai-gsap-cards,
+    .benditoai-gsap-cards * {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}

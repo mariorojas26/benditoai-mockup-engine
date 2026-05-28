@@ -33,6 +33,7 @@ Use this to pick the smallest source set before reading code.
 - `includes/modules/remove-bg/ajax-remove-bg.php`, `includes/modules/remove-bg/shortcode-remove-bg.php`, `assets/js/remove-bg/remove-bg.js`.
 - `includes/modules/enhance-image/ajax-enhance-image.php`, `includes/modules/enhance-image/shortcode-enhance-image.php`, `assets/js/enhance/enhance-image.js`.
 - `includes/modules/tendencias/trending-ajax.php`, `includes/modules/tendencias/trending-shortcode.php`, `assets/js/trending/trending-generator.js`, `assets/js/trending/trending-ui.js`.
+- `includes/modules/Home/gsap-cards/gsap-cards-shortcode.php`, `assets/js/home/gsap-cards.js`, `assets/css/gsap-cards.css`: GSAP/ScrollTrigger Home cards shortcode.
 
 ## Tokens And Plans
 
@@ -55,6 +56,8 @@ Use this to pick the smallest source set before reading code.
 ## Styling And Assets
 
 - `assets/css/styles.css`: global plugin CSS and many shared components.
+- `assets/css/gsap-cards.css`: scoped styles for `[benditoai_gsap_cards]`.
+- `assets/js/home/gsap-cards.js`: GSAP/ScrollTrigger timeline for the Home scroll cards component.
 - `assets/images/rasgosAvatar/`: rasgos/avatar thumbnails.
 - `assets/images/peinados/`: hairstyle JPG assets named exactly like hairstyle labels.
 - `assets/images/estilosDeModelo/`: model outfit/style references.
