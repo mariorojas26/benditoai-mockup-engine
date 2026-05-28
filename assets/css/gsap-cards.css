@@ -45,7 +45,7 @@
 .benditoai-gsap-cards__copy {
     position: relative;
     z-index: 3;
-    width: min(560px, calc(100% - 32px));
+    width: min(640px, calc(100% - 32px));
     height: 100%;
     margin-left: clamp(22px, 4.7vw, 84px);
     display: flex;
@@ -70,9 +70,12 @@
 .benditoai-gsap-cards__card {
     position: absolute;
     z-index: 1;
-    width: min(560px, 100%);
+    width: min(640px, 100%);
     opacity: 0;
     visibility: hidden;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    transform: translateZ(0);
 }
 
 .benditoai-gsap-cards__card.is-active {
@@ -83,12 +86,17 @@
 .benditoai-gsap-cards__title {
     margin: 0;
     color: var(--bai-text);
-    font-size: clamp(3.1rem, 5.35vw, 5.85rem);
+    font-size: clamp(2.85rem, 4.85vw, 5.25rem);
     font-weight: 850;
     line-height: 0.98;
     letter-spacing: 0;
-    text-wrap: balance;
-        text-transform: uppercase;
+    text-wrap: pretty;
+    text-transform: uppercase;
+    white-space: normal;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    hyphens: none !important;
+    max-width: 520px;
 }
 
 
@@ -109,7 +117,7 @@
 }
 
 .benditoai-gsap-cards__detail p {
-    max-width: 580px;
+    max-width: 520px;
     margin: clamp(28px, 4.7vh, 50px) 0 0;
     color: #ffffff;
     font-size: 17px;
@@ -173,6 +181,9 @@
     opacity: 0;
     visibility: hidden;
     transform-origin: center center;
+    will-change: transform, opacity, filter;
+    backface-visibility: hidden;
+    transform: translateZ(0);
     border: 0;
     border-radius: 0;
     background: #0a0518;
@@ -213,6 +224,8 @@
     display: block;
     object-fit: cover;
     object-position: center;
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 .benditoai-gsap-cards__static-image {
@@ -292,7 +305,7 @@
     }
 
     .benditoai-gsap-cards__title {
-        font-size: clamp(2.55rem, 12vw, 4.3rem);
+        font-size: clamp(2.35rem, 10vw, 3.65rem);
         line-height: 0.98;
     }
 
@@ -322,7 +335,7 @@
     }
 
     .benditoai-gsap-cards__title {
-        font-size: clamp(2.25rem, 13.5vw, 3.55rem);
+        font-size: clamp(2.05rem, 11vw, 3.05rem);
     }
 
     .benditoai-gsap-cards__image-panel {

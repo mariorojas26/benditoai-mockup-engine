@@ -67,6 +67,7 @@ The product feeling is: dark premium AI tool, direct-to-commerce, focused on hel
 - Text: white titles, soft lavender body copy, muted metadata.
 - Surfaces: subtle translucent purple borders, compact cards, stable spacing, no white tool surfaces.
 - Motion: smooth and intentional, respect `prefers-reduced-motion`, avoid abrupt layout shifts.
+- GSAP motion preference: calm, fluid, premium, and Apple-like; avoid robotic frame-by-frame motion, abrupt snapping, or aggressive transitions unless the user explicitly asks.
 - Media: previews should be clear, contained, `object-fit: cover`, and never feel like broken placeholders.
 - Typography: inherit the global font; avoid setting `font-family` inside modules unless there is a strong reason.
 - Preferred UI density: SaaS/tool-like, scannable, practical. Avoid oversized decorative sections inside tools.
@@ -86,7 +87,7 @@ The product feeling is: dark premium AI tool, direct-to-commerce, focused on hel
 - Check whether similar behavior already exists in another module.
 - For UI, compare against the look and feel guide and existing components.
 - For AI flows, trace form field -> JS state -> AJAX sanitizer -> prompt -> DB/response -> history rendering.
-- For scroll/animation work, prefer GSAP/ScrollTrigger patterns already loaded by the plugin when available.
+- For scroll/animation work, prefer GSAP/ScrollTrigger patterns already loaded by the plugin when available; use scrubbed timelines and softened progress rather than manual jumps.
 
 ## Rules For Future Work
 

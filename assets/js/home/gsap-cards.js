@@ -90,7 +90,10 @@
         const stepProgress = panels.length > 1 ? clamp(stage / (panels.length - 1), 0, 1) : 0;
 
         section.style.setProperty("--bai-steps-progress", stepProgress.toFixed(4));
-        setActive(section, activeIndex);
+
+        if (section.dataset.activeIndex !== String(activeIndex)) {
+            setActive(section, activeIndex);
+        }
 
         panels.forEach(function (panel, index) {
             const offset = index - stage;
@@ -185,6 +188,9 @@
             defaults: {
                 ease: "none",
             },
+            onUpdate: function () {
+                renderScene(section, cards, panels, panelImages, this.progress(), gsap);
+            },
             scrollTrigger: {
                 trigger: section,
                 start: "top top",
@@ -193,15 +199,12 @@
                 },
                 pin: pin,
                 pinSpacing: true,
-                scrub: 0.65,
+                scrub: 1.05,
                 anticipatePin: 1,
                 invalidateOnRefresh: true,
                 refreshPriority: 1,
                 onRefreshInit: function () {
                     setSectionHeight(section);
-                },
-                onUpdate: function (self) {
-                    renderScene(section, cards, panels, panelImages, self.progress, gsap);
                 },
                 onRefresh: function (self) {
                     renderScene(section, cards, panels, panelImages, self.progress, gsap);

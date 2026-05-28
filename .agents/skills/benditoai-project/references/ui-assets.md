@@ -43,7 +43,10 @@ Bad BenditoAI UI:
 
 - Use GSAP/ScrollTrigger for complex scroll-linked home/marketing animations.
 - Scroll animations should have one source of truth for progress; avoid mixing CSS sticky, manual scroll math, and ScrollTrigger pinning unless the interaction explicitly requires it.
-- Use `scrub` for scroll-linked progress and avoid separate forced snapping unless requested and tested.
+- Default GSAP feel for BenditoAI: calm, smooth, premium, and fluid. The user prefers tranquil transitions over aggressive, robotic, or frame-by-frame movement.
+- Use `scrub` for scroll-linked progress and render from the smoothed timeline progress when possible, not raw trigger progress.
+- Avoid separate forced snapping unless requested and tested. If snap is needed, make it subtle and non-blocking.
+- Prefer transform/opacity animation, `quickTo`/timeline smoothing, and compositor-friendly CSS hints for frequently updated motion.
 - Always include or preserve `prefers-reduced-motion` fallback.
 - Keep animation transforms on child elements, not on pinned containers.
 

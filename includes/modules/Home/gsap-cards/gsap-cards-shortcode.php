@@ -49,9 +49,9 @@ function benditoai_gsap_cards_shortcode($atts) {
 'alt_1' => 'Modelo AI creado para una marca',
 
 
-'title_2' => 'Haz que use tus productos',
+'title_2' => 'Vistelo con tu marca',
 'summary_2' => 'Ponle tus prendas, accesorios y estilo fácilmente.',
-'content_2' => 'Crea outfits ilimitados, cambia ropa cuando quieras y prueba nuevas combinaciones en segundos con IA.',
+'content_2' => 'Crea outfits reutilizables, cambia ropa cuando quieras y prueba nuevas combinaciones en segundos con IA.',
 'eyebrow_2' => 'Paso 02',
 'image_2' => 'assets/images/crea2.png',
 'alt_2' => 'Modelo AI usando ropa de una marca',
@@ -59,7 +59,7 @@ function benditoai_gsap_cards_shortcode($atts) {
 
 'title_3' => 'Haz que venda por ti',
 'summary_3' => 'Crea contenido para redes, anuncios y campañas fácilmente.',
-'content_3' => 'Genera imágenes con tu modelo AI o con tus productos para atraer clientes y hacer que tu marca se vea más pro.',
+'content_3' => 'Genera imágenes con tu modelo para atraer clientes y hacer crecer tu marca.',
 'eyebrow_3' => 'Paso 03',
 'image_3' => 'assets/images/crea3.png',
 'alt_3' => 'Campaña visual creada con BenditoAI',
