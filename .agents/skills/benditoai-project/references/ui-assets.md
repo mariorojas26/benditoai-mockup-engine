@@ -42,7 +42,7 @@ Bad BenditoAI UI:
 ## Motion And Scroll
 
 - Use GSAP/ScrollTrigger for complex scroll-linked home/marketing animations.
-- Reusable GSAP stepper: use `.bai-gsap-stepper` with child `.bai-gsap-stepper__dot`; toggle `.is-active` and `aria-current="step"` per active card. Each dot represents one card and the active dot expands like an Apple-style capsule.
+- Reusable GSAP stepper: use `.bai-gsap-stepper` with child `.bai-gsap-stepper__dot`; update each dot's `--bai-gsap-dot-progress` from `0` to `1` as its card enters/leaves, and keep `.is-active`/`aria-current="step"` for semantics. Each dot represents one card and grows proportionally with scroll.
 - Scroll animations should have one source of truth for progress; avoid mixing CSS sticky, manual scroll math, and ScrollTrigger pinning unless the interaction explicitly requires it.
 - Default GSAP feel for BenditoAI: calm, smooth, premium, and fluid. The user prefers tranquil transitions over aggressive, robotic, or frame-by-frame movement.
 - Use `scrub` for scroll-linked progress and render from the smoothed timeline progress when possible, not raw trigger progress.
@@ -57,7 +57,7 @@ Bad BenditoAI UI:
 - `assets/images/peinados/`: hairstyle JPGs named exactly by label.
 - `assets/images/estilosDeModelo/`: style references and thumbnails used in model history/edit outfit flow.
 - `assets/images/carrouselSkills/`: skill carousel images, with fallbacks in `cardsSkills.php`.
-- `[benditoai_gsap_cards]` defaults to `assets/images/1crea.png`, `assets/images/creamodelo.png`, and `assets/images/vendemodelo.png`; override with `image_1`, `image_2`, `image_3`.
+- `[benditoai_gsap_cards]` defaults to `assets/images/1crea.png`, `assets/images/crea2.png`, and `assets/images/crea3.png`; override desktop images with `image_1`, `image_2`, `image_3` and mobile fallbacks with `image_mobile_1`, `image_mobile_2`, `image_mobile_3`.
 - Icons such as download/edit/delete are under `assets/images/`.
 
 ## Responsive Notes

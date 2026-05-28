@@ -181,17 +181,23 @@
 }
 
 .benditoai-gsap-cards__image-panel.is-active,
+.benditoai-gsap-cards__image-panel picture,
 .benditoai-gsap-cards__image-panel img,
 .benditoai-gsap-cards__static-image {
     opacity: 1;
     visibility: visible;
 }
 
+.benditoai-gsap-cards__image-panel picture,
 .benditoai-gsap-cards__image-panel img,
 .benditoai-gsap-cards__static-image {
     width: 100%;
     height: 100%;
     display: block;
+}
+
+.benditoai-gsap-cards__image-panel img,
+.benditoai-gsap-cards__static-image {
     object-fit: cover;
     object-position: center;
     will-change: transform;
@@ -262,9 +268,14 @@
     }
 
     .benditoai-gsap-cards__copy::before {
-        width: 110vw;
-        height: 58vh;
-        left: -22vw;
+        inset: auto auto -11vh -28vw;
+        width: 158vw;
+        height: 64vh;
+        transform: none;
+        background:
+            linear-gradient(180deg, rgba(2, 0, 6, 0) 0%, rgba(2, 0, 6, 0.28) 22%, rgba(2, 0, 6, 0.78) 56%, rgba(2, 0, 6, 0.96) 84%, #020006 100%),
+            linear-gradient(90deg, rgba(2, 0, 6, 0.94) 0%, rgba(2, 0, 6, 0.58) 16%, rgba(2, 0, 6, 0.2) 34%, rgba(2, 0, 6, 0) 58%);
+        filter: blur(9px);
     }
 
     .benditoai-gsap-cards__image-panel {
@@ -272,6 +283,19 @@
         left: 18vw;
         width: 104vw;
         height: 100vh;
+        -webkit-mask-image: none;
+        mask-image: none;
+    }
+
+    .benditoai-gsap-cards__image-panel::before {
+        content: "";
+        position: absolute;
+        inset: 0 auto 0 0;
+        z-index: 2;
+        width: min(42vw, 190px);
+        pointer-events: none;
+        background: linear-gradient(90deg, rgba(2, 0, 6, 0.95) 0%, rgba(2, 0, 6, 0.76) 18%, rgba(2, 0, 6, 0.36) 48%, rgba(2, 0, 6, 0) 100%);
+        filter: blur(7px);
     }
 
     .benditoai-gsap-cards__title {
@@ -302,6 +326,13 @@
 @media (max-width: 520px) {
     .benditoai-gsap-cards__copy {
         padding-bottom: 10vh;
+    }
+
+    .benditoai-gsap-cards__copy::before {
+        left: -36vw;
+        bottom: -13vh;
+        width: 170vw;
+        height: 66vh;
     }
 
     .benditoai-gsap-cards__title {

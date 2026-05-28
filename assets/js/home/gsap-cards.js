@@ -2,7 +2,7 @@
     const SELECTOR = ".benditoai-gsap-cards";
     const MOBILE_QUERY = window.matchMedia("(max-width: 768px)");
     const REDUCED_MOTION_QUERY = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const SLIDE_SPACING = 116;
+    const SLIDE_SPACING = 152;
     const SHARPNESS_HOLD = 0.22;
     const EXIT_HOLD_PROGRESS = 0.1;
 
@@ -97,6 +97,11 @@
         const stepProgress = panels.length > 1 ? clamp(stage / (panels.length - 1), 0, 1) : 0;
 
         section.style.setProperty("--bai-steps-progress", stepProgress.toFixed(4));
+        section.querySelectorAll(".bai-gsap-stepper__dot").forEach(function (dot, index) {
+            const dotProgress = clamp(1 - Math.abs(index - stage), 0, 1);
+
+            dot.style.setProperty("--bai-gsap-dot-progress", dotProgress.toFixed(4));
+        });
 
         if (section.dataset.activeIndex !== String(activeIndex)) {
             setActive(section, activeIndex);
@@ -104,12 +109,14 @@
 
         panels.forEach(function (panel, index) {
             const offset = index - stage;
-            const distance = Math.min(Math.abs(offset), 1);
+            const rawDistance = Math.abs(offset);
+            const distance = Math.min(rawDistance, 1);
             const easedDistance = clamp((distance - SHARPNESS_HOLD) / (1 - SHARPNESS_HOLD), 0, 1);
-            const visible = distance < 1.18 || index === activeIndex;
+            const visible = rawDistance < 1.04 || index === activeIndex;
+            const carouselOffset = clamp(offset, -1.35, 1.35);
             const direction = clamp(offset, -1, 1);
             const leftAmount = clamp(-offset, 0, 1);
-            const opacity = clamp(1 - easedDistance * 0.46, 0, 1);
+            const opacity = clamp(1 - easedDistance * 0.62, 0, 1);
             const brightness = clamp(1 - easedDistance * 0.34 - leftAmount * 0.2, 0.38, 1);
             const saturate = clamp(1.02 - easedDistance * 0.18 - leftAmount * 0.1, 0.76, 1.02);
             const blur = easedDistance * 6 + leftAmount * 2.8;
@@ -119,12 +126,17 @@
 
             gsap.set(panel, {
                 autoAlpha: visible ? opacity : 0,
-                xPercent: direction * SLIDE_SPACING,
+                xPercent: carouselOffset * SLIDE_SPACING,
                 yPercent: -50,
                 scale: 1 - distance * 0.06,
-                rotateY: direction * -4,
-                rotateZ: -2 + direction * -0.45,
+                rotation: 0,
+                rotationX: 0,
+                rotateY: 0,
+                rotateZ: 0,
+                skewX: 0,
+                skewY: 0,
                 filter: "brightness(" + brightness.toFixed(3) + ") saturate(" + saturate.toFixed(3) + ") blur(" + blur.toFixed(2) + "px)",
+                force3D: true,
                 overwrite: true,
             });
         });
@@ -133,15 +145,22 @@
             const offset = index - stage;
             const distance = Math.min(Math.abs(offset), 1);
             const easedDistance = clamp((distance - SHARPNESS_HOLD) / (1 - SHARPNESS_HOLD), 0, 1);
-            const direction = clamp(offset, -1, 1);
+            const carouselOffset = clamp(offset, -1.35, 1.35);
 
             if (!image) {
                 return;
             }
 
             gsap.set(image, {
-                xPercent: direction * 3,
-                scale: 1.01 + easedDistance * 0.035,
+                xPercent: carouselOffset * 1.4,
+                scale: 1.01 + easedDistance * 0.025,
+                rotation: 0,
+                rotationX: 0,
+                rotationY: 0,
+                rotationZ: 0,
+                skewX: 0,
+                skewY: 0,
+                force3D: true,
                 overwrite: true,
             });
         });

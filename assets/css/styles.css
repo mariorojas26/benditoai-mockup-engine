@@ -9458,13 +9458,14 @@ body.benditoai-inline-edit-open {
 }
 
 .bai-gsap-stepper__dot {
-    width: 8px;
+    --bai-gsap-dot-progress: 0;
+    width: calc(8px + (20px * var(--bai-gsap-dot-progress)));
     height: 8px;
     display: block;
     flex: 0 0 auto;
     border: 0;
     border-radius: 999px;
-    background: var(--bai-gsap-stepper-dot);
+    background: color-mix(in srgb, var(--bai-gsap-stepper-dot), var(--bai-gsap-stepper-active) calc(var(--bai-gsap-dot-progress) * 100%));
     box-shadow: none;
     opacity: 1;
     font-size: 0;
@@ -9478,6 +9479,5 @@ body.benditoai-inline-edit-open {
 
 .bai-gsap-stepper__dot.is-active,
 .bai-gsap-stepper__dot[aria-current="step"] {
-    width: 28px;
-    background: var(--bai-gsap-stepper-active);
+    background: color-mix(in srgb, var(--bai-gsap-stepper-dot), var(--bai-gsap-stepper-active) calc(var(--bai-gsap-dot-progress) * 100%));
 }

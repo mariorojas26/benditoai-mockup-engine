@@ -40,29 +40,30 @@ function benditoai_gsap_cards_shortcode($atts) {
     wp_enqueue_script('benditoai-gsap-cards');
 
     $defaults = array(
-       'title_1' => 'Diseña tu modelo ideal',
-'title_1' => 'Diseña tu modelo ideal',
-'summary_1' => 'Crea personajes digitales que representen tu marca.',
-'content_1' => 'Genera modelos únicos con la apariencia, estilo y vibra que quieras para tu contenido y campañas.',
-'eyebrow_1' => 'Paso 01',
-'image_1' => 'assets/images/1crea.png',
-'alt_1' => 'Modelo AI creado para una marca',
+        'title_1' => 'Diseña tu modelo ideal',
+        'summary_1' => 'Crea personajes digitales que representen tu marca.',
+        'content_1' => 'Genera modelos únicos con la apariencia, estilo y vibra que quieras para tu contenido y campañas.',
+        'eyebrow_1' => 'Paso 01',
+        'image_1' => 'assets/images/1crea.png',
+        'image_mobile_1' => 'assets/images/1crea.png',
+        'alt_1' => 'Modelo AI creado para una marca',
 
+        'title_2' => 'Vistelo con tu marca',
+        'summary_2' => 'Ponle tus prendas, accesorios y estilo fácilmente.',
+        'content_2' => 'Crea outfits reutilizables, cambia ropa cuando quieras y prueba nuevas combinaciones en segundos con IA.',
+        'eyebrow_2' => 'Paso 02',
+        'image_2' => 'assets/images/crea2.png',
+        'image_mobile_2' => 'assets/images/crea2.png',
+        'alt_2' => 'Modelo AI usando ropa de una marca',
 
-'title_2' => 'Vistelo con tu marca',
-'summary_2' => 'Ponle tus prendas, accesorios y estilo fácilmente.',
-'content_2' => 'Crea outfits reutilizables, cambia ropa cuando quieras y prueba nuevas combinaciones en segundos con IA.',
-'eyebrow_2' => 'Paso 02',
-'image_2' => 'assets/images/crea2.png',
-'alt_2' => 'Modelo AI usando ropa de una marca',
+        'title_3' => 'Haz que venda por ti',
+        'summary_3' => 'Crea contenido para redes, anuncios y campañas fácilmente.',
+        'content_3' => 'Genera imágenes con tu modelo para atraer clientes y hacer crecer tu marca.',
+        'eyebrow_3' => 'Paso 03',
+        'image_3' => 'assets/images/crea3.png',
+        'image_mobile_3' => 'assets/images/crea3.png',
+        'alt_3' => 'Campaña visual creada con BenditoAI',
 
-
-'title_3' => 'Haz que venda por ti',
-'summary_3' => 'Crea contenido para redes, anuncios y campañas fácilmente.',
-'content_3' => 'Genera imágenes con tu modelo para atraer clientes y hacer crecer tu marca.',
-'eyebrow_3' => 'Paso 03',
-'image_3' => 'assets/images/crea3.png',
-'alt_3' => 'Campaña visual creada con BenditoAI',
         'scroll_vh' => 180,
         'scroll_vh_mobile' => 220,
         'class' => '',
@@ -83,6 +84,7 @@ function benditoai_gsap_cards_shortcode($atts) {
 
     for ($i = 1; $i <= 3; $i += 1) {
         $fallback_image = $defaults['image_' . $i];
+        $fallback_mobile_image = $defaults['image_mobile_' . $i];
 
         $cards[] = array(
             'title' => (string) $atts['title_' . $i],
@@ -90,6 +92,7 @@ function benditoai_gsap_cards_shortcode($atts) {
             'content' => (string) $atts['content_' . $i],
             'eyebrow' => (string) $atts['eyebrow_' . $i],
             'image' => benditoai_gsap_cards_asset_url($atts['image_' . $i], $fallback_image),
+            'image_mobile' => benditoai_gsap_cards_asset_url($atts['image_mobile_' . $i], $fallback_mobile_image),
             'alt' => (string) $atts['alt_' . $i],
         );
     }
@@ -132,11 +135,17 @@ function benditoai_gsap_cards_shortcode($atts) {
                             data-image-index="<?php echo esc_attr($index); ?>"
                             aria-hidden="<?php echo $index === 0 ? 'false' : 'true'; ?>"
                         >
-                            <img
-                                src="<?php echo $card['image']; ?>"
-                                alt="<?php echo esc_attr($card['alt']); ?>"
-                                loading="<?php echo $index === 0 ? 'eager' : 'lazy'; ?>"
-                            />
+                            <picture>
+                                <source
+                                    media="(max-width: 768px)"
+                                    srcset="<?php echo $card['image_mobile']; ?>"
+                                />
+                                <img
+                                    src="<?php echo $card['image']; ?>"
+                                    alt="<?php echo esc_attr($card['alt']); ?>"
+                                    loading="<?php echo $index === 0 ? 'eager' : 'lazy'; ?>"
+                                />
+                            </picture>
                         </figure>
                     <?php endforeach; ?>
                 </div>
