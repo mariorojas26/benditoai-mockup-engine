@@ -4,6 +4,7 @@
     const REDUCED_MOTION_QUERY = window.matchMedia("(prefers-reduced-motion: reduce)");
     const SLIDE_SPACING = 116;
     const SHARPNESS_HOLD = 0.22;
+    const EXIT_HOLD_PROGRESS = 0.1;
 
     function clamp(value, min, max) {
         return Math.min(max, Math.max(min, value));
@@ -35,6 +36,10 @@
         }
 
         return clamp(progress, 0, 1) * (totalItems - 1);
+    }
+
+    function getAnimatedProgress(progress) {
+        return clamp(progress / (1 - EXIT_HOLD_PROGRESS), 0, 1);
     }
 
     function setActive(section, index) {
@@ -189,7 +194,7 @@
                 ease: "none",
             },
             onUpdate: function () {
-                renderScene(section, cards, panels, panelImages, this.progress(), gsap);
+                renderScene(section, cards, panels, panelImages, getAnimatedProgress(this.progress()), gsap);
             },
             scrollTrigger: {
                 trigger: section,
@@ -207,7 +212,7 @@
                     setSectionHeight(section);
                 },
                 onRefresh: function (self) {
-                    renderScene(section, cards, panels, panelImages, self.progress, gsap);
+                    renderScene(section, cards, panels, panelImages, getAnimatedProgress(self.progress), gsap);
                 },
             },
         });
