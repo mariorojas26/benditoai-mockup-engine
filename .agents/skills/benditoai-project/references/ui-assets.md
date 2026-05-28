@@ -42,6 +42,7 @@ Bad BenditoAI UI:
 ## Motion And Scroll
 
 - Use GSAP/ScrollTrigger for complex scroll-linked home/marketing animations.
+- `[maquina_texto]` renders the centered home hero with four decorative floating cards, two on each side. The cards use `assets/js/home/maquina-hero.js` for subtle GSAP/ScrollTrigger parallax and ambient floating. Override images with `card_1_image` through `card_4_image`; defaults use `assets/images/Home/cardshero1.jpg` through `cardshero4.jpg`.
 - Reusable GSAP stepper: use `.bai-gsap-stepper` with child `.bai-gsap-stepper__dot`; update each dot's `--bai-gsap-dot-progress` from `0` to `1` as its card enters/leaves, and keep `.is-active`/`aria-current="step"` for semantics. Each dot represents one card and grows proportionally with scroll.
 - Scroll animations should have one source of truth for progress; avoid mixing CSS sticky, manual scroll math, and ScrollTrigger pinning unless the interaction explicitly requires it.
 - Default GSAP feel for BenditoAI: calm, smooth, premium, and fluid. The user prefers tranquil transitions over aggressive, robotic, or frame-by-frame movement.
