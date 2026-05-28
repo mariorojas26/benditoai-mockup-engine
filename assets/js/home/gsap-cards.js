@@ -42,6 +42,29 @@
         return clamp(progress / (1 - EXIT_HOLD_PROGRESS), 0, 1);
     }
 
+    function getTimelineProgressForCard(index, totalItems) {
+        if (totalItems <= 1) {
+            return 0;
+        }
+
+        return clamp((index / (totalItems - 1)) * (1 - EXIT_HOLD_PROGRESS), 0, 1);
+    }
+
+    function scrollToTimelineProgress(scrollTrigger, progress, gsap, ScrollTrigger) {
+        const scroller = document.scrollingElement || document.documentElement;
+        const targetScroll = scrollTrigger.start + (scrollTrigger.end - scrollTrigger.start) * clamp(progress, 0, 1);
+
+        gsap.to(scroller, {
+            scrollTop: targetScroll,
+            duration: 0.9,
+            ease: "power3.inOut",
+            overwrite: "auto",
+            onUpdate: function () {
+                ScrollTrigger.update();
+            },
+        });
+    }
+
     function setActive(section, index) {
         const cards = section.querySelectorAll(".benditoai-gsap-cards__card");
         const panels = section.querySelectorAll(".benditoai-gsap-cards__image-panel");
@@ -240,6 +263,17 @@
 
         timeline.to({}, {
             duration: 1,
+        });
+
+        section.querySelectorAll(".bai-gsap-stepper__dot").forEach(function (dot, index) {
+            dot.addEventListener("click", function () {
+                if (!timeline.scrollTrigger) {
+                    return;
+                }
+
+                const targetProgress = getTimelineProgressForCard(index, panels.length);
+                scrollToTimelineProgress(timeline.scrollTrigger, targetProgress, gsap, ScrollTrigger);
+            });
         });
 
     }

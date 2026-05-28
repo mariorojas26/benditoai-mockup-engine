@@ -152,12 +152,13 @@ function benditoai_gsap_cards_shortcode($atts) {
 
                 <div class="benditoai-gsap-cards__steps bai-gsap-stepper" aria-label="Progreso de 3 pasos" role="list">
                     <?php foreach ($cards as $index => $card) : ?>
-                        <span
+                        <button
+                            type="button"
                             class="benditoai-gsap-cards__steps-tile bai-gsap-stepper__dot<?php echo $index === 0 ? ' is-active' : ''; ?>"
-                            role="listitem"
+                            data-step-index="<?php echo esc_attr($index); ?>"
                             aria-label="<?php echo esc_attr('Paso ' . ($index + 1)); ?>"
                             aria-current="<?php echo $index === 0 ? 'step' : 'false'; ?>"
-                        ></span>
+                        ></button>
                     <?php endforeach; ?>
                 </div>
             </div>
