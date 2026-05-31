@@ -46,9 +46,58 @@
             delay: 0.15,
         });
 
+        let hoveredCard = null;
+        const hoverItems = [];
+
+        function enterCard(item) {
+            if (!item || hoveredCard === item.card) {
+                return;
+            }
+
+            if (hoveredCard) {
+                leaveCard(hoverItems.find(function (hoverItem) {
+                    return hoverItem.card === hoveredCard;
+                }));
+            }
+
+            hoveredCard = item.card;
+            item.card.classList.add("is-hovered");
+
+            gsap.to(item.hoverLayer, {
+                scale: 1.42,
+                duration: 0.5,
+                ease: "power3.out",
+                overwrite: "auto",
+            });
+        }
+
+        function leaveCard(item) {
+            if (!item) {
+                return;
+            }
+
+            item.card.classList.remove("is-hovered");
+
+            gsap.to(item.hoverLayer, {
+                scale: 1,
+                duration: 0.56,
+                ease: "power3.out",
+                overwrite: "auto",
+            });
+
+            if (hoveredCard === item.card) {
+                hoveredCard = null;
+            }
+        }
+
         cards.forEach(function (card, index) {
             const move = floatMoves[index] || floatMoves[0];
-            const floatingLayer = card.querySelector(".maquina-float-card__body") || card;
+            const hoverLayer = card.querySelector(".maquina-float-card__hover") || card;
+            const floatingLayer = card.querySelector(".maquina-float-card__body") || hoverLayer;
+
+            gsap.set([hoverLayer, floatingLayer], {
+                transformOrigin: "50% 50%",
+            });
 
             gsap.to(floatingLayer, {
                 x: move.x,
@@ -61,6 +110,65 @@
                 ease: "sine.inOut",
                 overwrite: false,
             });
+
+            hoverItems.push({
+                card: card,
+                hoverLayer: hoverLayer,
+                hitLayer: floatingLayer,
+            });
+
+            card.addEventListener("pointerenter", function () {
+                if (window.matchMedia("(max-width: 820px)").matches) {
+                    return;
+                }
+
+                enterCard(hoverItems[index]);
+            });
+        });
+
+        document.addEventListener("mousemove", function (event) {
+            const isTouchWidth = window.matchMedia("(max-width: 820px)").matches;
+
+            if (isTouchWidth) {
+                if (hoveredCard) {
+                    leaveCard(hoverItems.find(function (item) {
+                        return item.card === hoveredCard;
+                    }));
+                }
+
+                return;
+            }
+
+            const activeItem = hoverItems.find(function (item) {
+                const rect = item.hitLayer.getBoundingClientRect();
+                const padding = 16;
+
+                return event.clientX >= rect.left - padding &&
+                    event.clientX <= rect.right + padding &&
+                    event.clientY >= rect.top - padding &&
+                    event.clientY <= rect.bottom + padding;
+            });
+
+            if (activeItem) {
+                enterCard(activeItem);
+                return;
+            }
+
+            if (hoveredCard) {
+                leaveCard(hoverItems.find(function (item) {
+                    return item.card === hoveredCard;
+                }));
+            }
+        }, { passive: true });
+
+        document.addEventListener("mouseleave", function () {
+            if (!hoveredCard) {
+                return;
+            }
+
+            leaveCard(hoverItems.find(function (item) {
+                return item.card === hoveredCard;
+            }));
         });
 
         const timeline = gsap.timeline({

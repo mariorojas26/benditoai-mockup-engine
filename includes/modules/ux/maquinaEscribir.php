@@ -99,9 +99,11 @@ function maquina_texto_shortcode($atts) {
         <div class="maquina-float-cards" aria-hidden="true">
             <?php foreach ($cards as $card) : ?>
                 <figure class="maquina-float-card maquina-float-card--<?php echo esc_attr($card['index']); ?>" data-maquina-float-card>
-                    <span class="maquina-float-card__body">
-                        <span class="maquina-float-card__media">
-                            <img src="<?php echo esc_url($card['image']); ?>" alt="" loading="lazy" decoding="async">
+                    <span class="maquina-float-card__hover">
+                        <span class="maquina-float-card__body">
+                            <span class="maquina-float-card__media">
+                                <img src="<?php echo esc_url($card['image']); ?>" alt="" loading="lazy" decoding="async">
+                            </span>
                         </span>
                     </span>
                 </figure>
