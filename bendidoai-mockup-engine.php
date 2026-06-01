@@ -85,6 +85,7 @@ benditoai_require_files(array(
     'includes/modules/mockup/shortcodes.php',
     'includes/modules/historial/shortcode-historial.php',
     'includes/modules/scroll-video/scroll-video-shortcode.php',
+    'includes/modules/Home/gsap-cards/gsap-cards-shortcode.php',
 
     'includes/modules/campanas-ai/campanas-ai-shortcode.php',
     'includes/modules/campanas-ai/campanas-ai-ajax.php',
@@ -166,6 +167,43 @@ function benditoai_enqueue_assets() {
         BENDIDOAI_PLUGIN_URL . 'assets/js/scroll-video.js',
         array(),
         $scroll_video_script_version,
+        true
+    );
+
+    $gsap_cards_style_path = BENDIDOAI_PLUGIN_PATH . 'assets/css/gsap-cards.css';
+    $gsap_cards_style_version = file_exists($gsap_cards_style_path) ? (string) filemtime($gsap_cards_style_path) : '1.0';
+
+    wp_register_style(
+        'benditoai-gsap-cards',
+        BENDIDOAI_PLUGIN_URL . 'assets/css/gsap-cards.css',
+        array('benditoai-styles'),
+        $gsap_cards_style_version
+    );
+
+    wp_register_script(
+        'benditoai-gsap',
+        'https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js',
+        array(),
+        '3.13.0',
+        true
+    );
+
+    wp_register_script(
+        'benditoai-gsap-scrolltrigger',
+        'https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js',
+        array('benditoai-gsap'),
+        '3.13.0',
+        true
+    );
+
+    $gsap_cards_script_path = BENDIDOAI_PLUGIN_PATH . 'assets/js/home/gsap-cards.js';
+    $gsap_cards_script_version = file_exists($gsap_cards_script_path) ? (string) filemtime($gsap_cards_script_path) : '1.0';
+
+    wp_register_script(
+        'benditoai-gsap-cards',
+        BENDIDOAI_PLUGIN_URL . 'assets/js/home/gsap-cards.js',
+        array('benditoai-gsap', 'benditoai-gsap-scrolltrigger'),
+        $gsap_cards_script_version,
         true
     );
 

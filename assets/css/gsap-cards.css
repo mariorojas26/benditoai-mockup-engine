@@ -1,0 +1,357 @@
+.benditoai-gsap-cards {
+    --bai-bg: #020006;
+    --bai-text: #ffffff;
+    --bai-text-soft: rgba(245, 242, 255, 0.9);
+    --bai-text-muted: rgba(236, 232, 255, 0.68);
+    --bai-text-accent: #c4b5fd;
+    --bai-accent: #7c3aff;
+    --bai-accent-soft: rgba(124, 58, 255, 0.14);
+    --bai-border-soft: rgba(124, 58, 255, 0.24);
+    --bai-gsap-scroll-height: 280vh;
+    color: var(--bai-text);
+    background: var(--bai-bg);
+    min-height: var(--bai-gsap-scroll-height);
+    overflow: clip;
+}
+
+.benditoai-gsap-cards.has-gsap {
+    min-height: 100vh;
+}
+
+.benditoai-gsap-cards__pin {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    min-height: 100vh;
+    overflow: hidden;
+    background:
+        linear-gradient(90deg, rgba(2, 0, 6, 0.96) 0%, rgba(2, 0, 6, 0.62) 34%, rgba(2, 0, 6, 0.08) 64%, rgba(2, 0, 6, 0.5) 100%),
+        radial-gradient(circle at 70% 42%, rgba(124, 58, 255, 0.1), transparent 38%),
+        #020006;
+}
+
+.benditoai-gsap-cards.has-gsap .benditoai-gsap-cards__pin {
+    position: relative;
+}
+
+.benditoai-gsap-cards__layout {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    perspective: 1400px;
+}
+
+.benditoai-gsap-cards__copy {
+    position: relative;
+    z-index: 3;
+    width: min(640px, calc(100% - 32px));
+    height: 100%;
+    margin-left: clamp(22px, 4.7vw, 84px);
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+}
+
+.benditoai-gsap-cards__copy::before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    inset: auto auto 50% clamp(-36px, -4vw, -18px);
+    width: min(48vw, 620px);
+    height: min(86vh, 860px);
+    transform: translateY(50%);
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse at 24% 50%, rgba(2, 0, 6, 0.9), rgba(2, 0, 6, 0.52) 46%, rgba(2, 0, 6, 0.12) 66%, rgba(2, 0, 6, 0) 82%);
+    filter: blur(18px);
+}
+
+.benditoai-gsap-cards__card {
+    position: absolute;
+    z-index: 1;
+    width: min(640px, 100%);
+    opacity: 0;
+    visibility: hidden;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+}
+
+.benditoai-gsap-cards__card.is-active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.benditoai-gsap-cards__title {
+    margin: 0;
+    color: var(--bai-text);
+    font-size: clamp(2.85rem, 4.85vw, 5.25rem);
+    font-weight: 850;
+    line-height: 0.98;
+    letter-spacing: 0;
+    text-wrap: pretty;
+    text-transform: uppercase;
+    white-space: normal;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    hyphens: none !important;
+    max-width: 520px;
+}
+
+
+.benditoai-gsap-cards__summary {
+    max-width: 600px;
+    margin: clamp(28px, 4.2vh, 48px) 0 0;
+    color: rgb(255 255 255);
+    font-size: clamp(0.78rem, 1.02vw, 1.03rem);
+    font-style: italic;
+    font-weight: 100;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+.benditoai-gsap-cards__detail {
+    max-height: none;
+    opacity: 1;
+}
+
+.benditoai-gsap-cards__detail p {
+    max-width: 520px;
+    margin: clamp(28px, 4.7vh, 50px) 0 0;
+    color: #ffffff;
+    font-size: 17px;
+    line-height: 1.28;
+}
+
+.benditoai-gsap-cards__media {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    border: 0;
+    background: transparent;
+    overflow: visible;
+    transform-style: preserve-3d;
+}
+
+.benditoai-gsap-cards__steps {
+    position: absolute;
+    z-index: 4;
+    left: clamp(18px, 4.8vw, 78px);
+    bottom: clamp(20px, 4.8vh, 44px);
+}
+
+.benditoai-gsap-cards__image-panel {
+    position: absolute;
+    top: 50%;
+    left: clamp(420px, 35vw, 620px);
+    width: min(66vw, 1180px);
+    height: 100vh;
+    margin: 0;
+    opacity: 0;
+    visibility: hidden;
+    transform-origin: center center;
+    will-change: transform, opacity, filter;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    border: 0;
+    border-radius: 0;
+    background: #0a0518;
+    box-shadow: 0 34px 90px rgba(0, 0, 0, 0.38);
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.08) 5%, rgba(0, 0, 0, 0.72) 16%, #000 28%, #000 100%);
+    mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.08) 5%, rgba(0, 0, 0, 0.72) 16%, #000 28%, #000 100%);
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+}
+
+.benditoai-gsap-cards__image-panel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    opacity: var(--bai-glass-opacity, 0);
+    pointer-events: none;
+    background: rgba(10, 5, 24, 0.34);
+    backdrop-filter: blur(10px) saturate(0.78);
+    -webkit-backdrop-filter: blur(10px) saturate(0.78);
+    transition: none;
+}
+
+.benditoai-gsap-cards__image-panel.is-active,
+.benditoai-gsap-cards__image-panel picture,
+.benditoai-gsap-cards__image-panel img,
+.benditoai-gsap-cards__static-image {
+    opacity: 1;
+    visibility: visible;
+}
+
+.benditoai-gsap-cards__image-panel picture,
+.benditoai-gsap-cards__image-panel img,
+.benditoai-gsap-cards__static-image {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.benditoai-gsap-cards__image-panel img,
+.benditoai-gsap-cards__static-image {
+    object-fit: cover;
+    object-position: center;
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+.benditoai-gsap-cards__static-image {
+    height: auto;
+    aspect-ratio: 16 / 10;
+    margin-top: 14px;
+    border-radius: 8px;
+    border: 1px solid var(--bai-border-soft);
+}
+
+.benditoai-gsap-cards:not(.is-static) .benditoai-gsap-cards__static-image {
+    display: none;
+}
+
+.benditoai-gsap-cards.is-static {
+    min-height: auto;
+    overflow: visible;
+}
+
+.benditoai-gsap-cards.is-static .benditoai-gsap-cards__pin {
+    position: relative;
+    height: auto;
+    min-height: auto;
+    padding: 48px 16px;
+}
+
+.benditoai-gsap-cards.is-static .benditoai-gsap-cards__layout {
+    height: auto;
+    min-height: 0;
+}
+
+.benditoai-gsap-cards.is-static .benditoai-gsap-cards__copy {
+    width: min(760px, 100%);
+    height: auto;
+    margin: 0 auto;
+    display: grid;
+    gap: 16px;
+}
+
+.benditoai-gsap-cards.is-static .benditoai-gsap-cards__card {
+    position: relative;
+    opacity: 1;
+    visibility: visible;
+    padding: 16px;
+    border: 1px solid var(--bai-border-soft);
+    border-radius: 10px;
+    background: rgba(18, 8, 38, 0.78);
+}
+
+.benditoai-gsap-cards.is-static .benditoai-gsap-cards__media {
+    display: none;
+}
+
+@media (max-width: 900px) {
+    .benditoai-gsap-cards {
+        --bai-gsap-scroll-height: 320vh;
+    }
+
+    .benditoai-gsap-cards__copy {
+        width: min(520px, calc(100% - 28px));
+        margin-left: 14px;
+        align-items: end;
+        padding-bottom: 13vh;
+    }
+
+    .benditoai-gsap-cards__copy::before {
+        inset: auto auto -11vh -28vw;
+        width: 158vw;
+        height: 64vh;
+        transform: none;
+        background:
+            linear-gradient(180deg, rgba(2, 0, 6, 0) 0%, rgba(2, 0, 6, 0.28) 22%, rgba(2, 0, 6, 0.78) 56%, rgba(2, 0, 6, 0.96) 84%, #020006 100%),
+            linear-gradient(90deg, rgba(2, 0, 6, 0.94) 0%, rgba(2, 0, 6, 0.58) 16%, rgba(2, 0, 6, 0.2) 34%, rgba(2, 0, 6, 0) 58%);
+        filter: blur(9px);
+    }
+
+    .benditoai-gsap-cards__image-panel {
+        top: 50%;
+        left: 18vw;
+        width: 104vw;
+        height: 100vh;
+        -webkit-mask-image: none;
+        mask-image: none;
+    }
+
+    .benditoai-gsap-cards__image-panel::before {
+        content: "";
+        position: absolute;
+        inset: 0 auto 0 0;
+        z-index: 2;
+        width: min(42vw, 190px);
+        pointer-events: none;
+        background: linear-gradient(90deg, rgba(2, 0, 6, 0.95) 0%, rgba(2, 0, 6, 0.76) 18%, rgba(2, 0, 6, 0.36) 48%, rgba(2, 0, 6, 0) 100%);
+        filter: blur(7px);
+    }
+
+    .benditoai-gsap-cards__title {
+        font-size: clamp(2.35rem, 10vw, 3.65rem);
+        line-height: 0.98;
+    }
+
+    .benditoai-gsap-cards__summary {
+        max-width: min(92vw, 520px);
+        margin-top: 22px;
+        font-size: clamp(0.72rem, 3.2vw, 0.98rem);
+        line-height: 1.18;
+    }
+
+    .benditoai-gsap-cards__detail p {
+        max-width: min(92vw, 520px);
+        margin-top: 24px;
+        font-size: clamp(0.98rem, 4.3vw, 1.15rem);
+        line-height: 1.32;
+    }
+
+    .benditoai-gsap-cards__steps {
+        left: 14px;
+        bottom: 18px;
+    }
+}
+
+@media (max-width: 520px) {
+    .benditoai-gsap-cards__copy {
+        padding-bottom: 10vh;
+    }
+
+    .benditoai-gsap-cards__copy::before {
+        left: -36vw;
+        bottom: -13vh;
+        width: 170vw;
+        height: 66vh;
+    }
+
+    .benditoai-gsap-cards__title {
+        font-size: clamp(2.05rem, 11vw, 3.05rem);
+    }
+
+    .benditoai-gsap-cards__image-panel {
+        left: 10vw;
+        width: 118vw;
+        height: 100vh;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .benditoai-gsap-cards,
+    .benditoai-gsap-cards * {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
