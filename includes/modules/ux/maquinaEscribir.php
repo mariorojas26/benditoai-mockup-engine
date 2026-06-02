@@ -111,9 +111,6 @@ function maquina_texto_shortcode($atts) {
         </div>
 
         <div class="maquina-hero-inner">
-            <div class="maquina-badge">
-                ✨ Powered by Gemini Nano Banana Pro
-            </div>
 
             <h1 class="maquina-titulo">
                 <?php echo $titulo; ?><br>

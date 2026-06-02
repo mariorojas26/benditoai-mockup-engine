@@ -25,9 +25,9 @@
     min-height: 100vh;
     overflow: hidden;
     background:
-        linear-gradient(90deg, rgba(2, 0, 6, 0.96) 0%, rgba(2, 0, 6, 0.62) 34%, rgba(2, 0, 6, 0.08) 64%, rgba(2, 0, 6, 0.5) 100%),
-        radial-gradient(circle at 70% 42%, rgba(124, 58, 255, 0.1), transparent 38%),
-        #020006;
+    linear-gradient(90deg, rgba(2, 0, 6, 0.96) 0%, rgba(2, 0, 6, 0.62) 34%, rgba(2, 0, 6, 0.08) 64%, rgba(2, 0, 6, 0.5) 100%),
+    radial-gradient(circle at 70% 42%, rgba(124, 58, 255, 0.1), transparent 38%),
+    #020006;
 }
 
 .benditoai-gsap-cards.has-gsap .benditoai-gsap-cards__pin {
