@@ -115,16 +115,11 @@ function benditoai_gsap_cards_shortcode($atts) {
             <div class="benditoai-gsap-cards__stage" role="list" aria-label="Pasos principales">
                 <?php foreach ($cards as $index => $card) : ?>
                     <article
-                        class="benditoai-gsap-cards__scene<?php echo $index === 0 ? ' is-active' : ''; ?>"
+                        class="benditoai-gsap-cards__scene<?php echo $index % 2 === 1 ? ' is-reversed' : ''; ?><?php echo $index === 0 ? ' is-active' : ''; ?>"
                         data-scene-index="<?php echo esc_attr($index); ?>"
                         role="listitem"
                         aria-current="<?php echo $index === 0 ? 'step' : 'false'; ?>"
                     >
-                        <div class="benditoai-gsap-cards__text benditoai-gsap-cards__text--left">
-                            <p class="benditoai-gsap-cards__eyebrow"><?php echo esc_html($card['eyebrow']); ?></p>
-                            <h3 class="benditoai-gsap-cards__title"><?php echo esc_html($card['title']); ?></h3>
-                        </div>
-
                         <figure class="benditoai-gsap-cards__figure">
                             <picture>
                                 <source media="(max-width: 768px)" srcset="<?php echo $card['image_mobile']; ?>" />
@@ -136,7 +131,9 @@ function benditoai_gsap_cards_shortcode($atts) {
                             </picture>
                         </figure>
 
-                        <div class="benditoai-gsap-cards__text benditoai-gsap-cards__text--right">
+                        <div class="benditoai-gsap-cards__copy">
+                            <p class="benditoai-gsap-cards__eyebrow"><?php echo esc_html($card['eyebrow']); ?></p>
+                            <h3 class="benditoai-gsap-cards__title"><?php echo esc_html($card['title']); ?></h3>
                             <p class="benditoai-gsap-cards__summary"><?php echo esc_html($card['summary']); ?></p>
                             <p class="benditoai-gsap-cards__content"><?php echo esc_html($card['content']); ?></p>
                         </div>

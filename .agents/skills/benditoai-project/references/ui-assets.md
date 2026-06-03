@@ -58,7 +58,7 @@ Bad BenditoAI UI:
 - `assets/images/peinados/`: hairstyle JPGs named exactly by label.
 - `assets/images/estilosDeModelo/`: style references and thumbnails used in model history/edit outfit flow.
 - `assets/images/carrouselSkills/`: skill carousel images, with fallbacks in `cardsSkills.php`.
-- `[benditoai_gsap_cards]` renders the "como funciona" GSAP scroll scene. It uses `assets/css/gsap-cards.css` plus `assets/js/home/gsap-cards.js`: each step has left/right text and a centered image card; while scrolling, the image enters from above, centers with the texts fading in, then exits downward as the next image enters. The last step holds before the section releases. Defaults use `assets/images/1crea.png`, `assets/images/crea2.png`, and `assets/images/crea3.png`; override desktop images with `image_1`, `image_2`, `image_3` and mobile fallbacks with `image_mobile_1`, `image_mobile_2`, `image_mobile_3`.
+- `[benditoai_gsap_cards]` renders the "como funciona" GSAP scroll scene. It uses `assets/css/gsap-cards.css` plus `assets/js/home/gsap-cards.js`: each step has one image card and one copy block; desktop alternates image/text sides per step, the image enters from above, centers, then exits downward as the next step enters from above on the opposite side. The last step holds before the section releases. Defaults use `assets/images/1crea.png`, `assets/images/crea2.png`, and `assets/images/crea3.png`; override desktop images with `image_1`, `image_2`, `image_3` and mobile fallbacks with `image_mobile_1`, `image_mobile_2`, `image_mobile_3`.
 - Icons such as download/edit/delete are under `assets/images/`.
 
 ## Responsive Notes

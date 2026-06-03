@@ -21,6 +21,10 @@
         return window.innerHeight || document.documentElement.clientHeight || 1;
     }
 
+    function getVisualHeight() {
+        return Math.max(1, getViewportHeight());
+    }
+
     function getScrollDistance(section) {
         const desktopVh = parseInt(section.dataset.scrollVh || "260", 10);
         const mobileVh = parseInt(section.dataset.scrollVhMobile || "310", 10);
@@ -30,7 +34,10 @@
     }
 
     function setSectionHeight(section) {
-        section.style.setProperty("--bai-gsap-scroll-height", (getViewportHeight() + getScrollDistance(section)) + "px");
+        const visualHeight = getVisualHeight();
+
+        section.style.setProperty("--bai-gsap-visual-height", visualHeight + "px");
+        section.style.setProperty("--bai-gsap-scroll-height", (visualHeight + getScrollDistance(section)) + "px");
     }
 
     function getStage(progress, totalItems) {
@@ -82,8 +89,8 @@
             const imageY = -offset * travelDistance;
             const imageScale = 1 - Math.min(distance, 1) * 0.08;
             const imageBlur = Math.min(distance, 1) * 5;
-            const leftText = scene.querySelector(".benditoai-gsap-cards__text--left");
-            const rightText = scene.querySelector(".benditoai-gsap-cards__text--right");
+            const isReversed = scene.classList.contains("is-reversed");
+            const copy = scene.querySelector(".benditoai-gsap-cards__copy");
             const figure = scene.querySelector(".benditoai-gsap-cards__figure");
 
             gsap.set(scene, {
@@ -103,22 +110,11 @@
                 });
             }
 
-            if (leftText) {
-                gsap.set(leftText, {
+            if (copy) {
+                gsap.set(copy, {
                     autoAlpha: textOpacity,
-                    x: MOBILE_QUERY.matches ? 0 : -28 + textOpacity * 28,
+                    x: MOBILE_QUERY.matches ? 0 : (isReversed ? -34 : 34) * (1 - textOpacity),
                     y: MOBILE_QUERY.matches ? 18 - textOpacity * 18 : 0,
-                    filter: "blur(" + ((1 - textOpacity) * 5).toFixed(2) + "px)",
-                    force3D: true,
-                    overwrite: true,
-                });
-            }
-
-            if (rightText) {
-                gsap.set(rightText, {
-                    autoAlpha: textOpacity,
-                    x: MOBILE_QUERY.matches ? 0 : 28 - textOpacity * 28,
-                    y: MOBILE_QUERY.matches ? -18 + textOpacity * 18 : 0,
                     filter: "blur(" + ((1 - textOpacity) * 5).toFixed(2) + "px)",
                     force3D: true,
                     overwrite: true,
