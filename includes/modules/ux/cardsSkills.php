@@ -26,8 +26,8 @@ function benditoai_cards_skills_shortcode($atts) {
     <section
         id="<?php echo esc_attr($uid); ?>"
         class="cards-skills-scroll-wrapper"
-        data-scroll-vh="220"
-        data-scroll-vh-mobile="290"
+        data-scroll-vh="150"
+        data-scroll-vh-mobile="190"
         aria-label="Herramientas BenditoAI"
     >
         <div class="cards-skills-scroll-pin">
@@ -97,8 +97,8 @@ function benditoai_cards_skills_shortcode($atts) {
             return x * x * (3 - 2 * x);
         };
 
-        const HOLD_UNITS = 0.34;
-        const TRANSITION_UNITS = 0.68;
+        const HOLD_UNITS = 0.24;
+        const TRANSITION_UNITS = 0.58;
 
         const getViewportHeight = function () {
             if (window.visualViewport && window.visualViewport.height) {
@@ -124,7 +124,7 @@ function benditoai_cards_skills_shortcode($atts) {
             const mobileVh = parseInt(root.dataset.scrollVhMobile || "290", 10);
             const selectedVh = mobileQuery.matches ? mobileVh : desktopVh;
 
-            return Math.round(getViewportHeight() * (Math.max(selectedVh, 170) / 100));
+            return Math.round(getViewportHeight() * (Math.max(selectedVh, 130) / 100));
         };
 
         const setSectionHeight = function () {
@@ -285,11 +285,15 @@ function benditoai_cards_skills_shortcode($atts) {
         setSectionHeight();
         renderScene(0);
 
+        let isStepScrolling = false;
+        let stepScrollTween = null;
+
         const timeline = gsap.timeline({
             defaults: {
                 ease: "none",
             },
             onUpdate: function () {
+                if (isStepScrolling) return;
                 renderScene(this.progress());
             },
             scrollTrigger: {
@@ -302,7 +306,7 @@ function benditoai_cards_skills_shortcode($atts) {
                 },
                 pin: pin,
                 pinSpacing: true,
-                scrub: 0.48,
+                scrub: 0.34,
                 anticipatePin: 1,
                 invalidateOnRefresh: true,
                 onRefreshInit: setSectionHeight,
@@ -322,15 +326,43 @@ function benditoai_cards_skills_shortcode($atts) {
 
                 const targetProgress = getProgressForStep(index);
                 const scroller = document.scrollingElement || document.documentElement;
-                const targetScroll = timeline.scrollTrigger.start + (timeline.scrollTrigger.end - timeline.scrollTrigger.start) * targetProgress;
+                const scrollTrigger = timeline.scrollTrigger;
+                const currentScroll = scroller.scrollTop || window.pageYOffset || 0;
+                const scrollRange = Math.max(1, scrollTrigger.end - scrollTrigger.start);
+                const currentProgress = clamp((currentScroll - scrollTrigger.start) / scrollRange, 0, 1);
+                const targetScroll = scrollTrigger.start + scrollRange * targetProgress;
+                const tweenState = {
+                    progress: currentProgress,
+                    scroll: currentScroll,
+                };
+                const tweenDuration = clamp(Math.abs(targetProgress - currentProgress) * 0.34, 0.16, 0.32);
 
-                gsap.to(scroller, {
-                    scrollTop: targetScroll,
-                    duration: 0.8,
-                    ease: "power3.inOut",
-                    overwrite: "auto",
+                if (stepScrollTween) {
+                    stepScrollTween.kill();
+                }
+
+                isStepScrolling = true;
+                setActive(index);
+
+                stepScrollTween = gsap.to(tweenState, {
+                    progress: targetProgress,
+                    scroll: targetScroll,
+                    duration: tweenDuration,
+                    ease: "power2.out",
+                    overwrite: true,
                     onUpdate: function () {
+                        scroller.scrollTop = tweenState.scroll;
+                        timeline.progress(tweenState.progress, true);
+                        renderScene(tweenState.progress);
                         ScrollTrigger.update();
+                    },
+                    onComplete: function () {
+                        scroller.scrollTop = targetScroll;
+                        timeline.progress(targetProgress, true);
+                        renderScene(targetProgress);
+                        ScrollTrigger.update();
+                        isStepScrolling = false;
+                        stepScrollTween = null;
                     },
                 });
             });

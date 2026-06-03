@@ -2,12 +2,15 @@
     const SELECTOR = ".benditoai-gsap-cards";
     const MOBILE_QUERY = window.matchMedia("(max-width: 768px)");
     const REDUCED_MOTION_QUERY = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const SLIDE_SPACING = 152;
-    const SHARPNESS_HOLD = 0.22;
-    const EXIT_HOLD_PROGRESS = 0.1;
+    const LAST_HOLD_UNITS = 0.45;
 
     function clamp(value, min, max) {
         return Math.min(max, Math.max(min, value));
+    }
+
+    function smoothstep(value) {
+        const x = clamp(value, 0, 1);
+        return x * x * (3 - 2 * x);
     }
 
     function getViewportHeight() {
@@ -19,11 +22,11 @@
     }
 
     function getScrollDistance(section) {
-        const desktopVh = parseInt(section.dataset.scrollVh || "180", 10);
-        const mobileVh = parseInt(section.dataset.scrollVhMobile || "220", 10);
+        const desktopVh = parseInt(section.dataset.scrollVh || "260", 10);
+        const mobileVh = parseInt(section.dataset.scrollVhMobile || "310", 10);
         const selectedVh = MOBILE_QUERY.matches ? mobileVh : desktopVh;
 
-        return Math.round(getViewportHeight() * (Math.max(selectedVh, 140) / 100));
+        return Math.round(getViewportHeight() * (Math.max(selectedVh, 190) / 100));
     }
 
     function setSectionHeight(section) {
@@ -35,170 +38,92 @@
             return 0;
         }
 
-        return clamp(progress, 0, 1) * (totalItems - 1);
+        const travelUnits = (totalItems - 1) + LAST_HOLD_UNITS;
+        return Math.min(totalItems - 1, clamp(progress, 0, 1) * travelUnits);
     }
 
-    function getAnimatedProgress(progress) {
-        return clamp(progress / (1 - EXIT_HOLD_PROGRESS), 0, 1);
-    }
-
-    function getTimelineProgressForCard(index, totalItems) {
-        if (totalItems <= 1) {
-            return 0;
+    function setActive(section, scenes, activeIndex) {
+        if (section.dataset.activeIndex === String(activeIndex)) {
+            return;
         }
 
-        return clamp((index / (totalItems - 1)) * (1 - EXIT_HOLD_PROGRESS), 0, 1);
-    }
+        section.dataset.activeIndex = String(activeIndex);
 
-    function scrollToTimelineProgress(scrollTrigger, progress, gsap, ScrollTrigger) {
-        const scroller = document.scrollingElement || document.documentElement;
-        const targetScroll = scrollTrigger.start + (scrollTrigger.end - scrollTrigger.start) * clamp(progress, 0, 1);
-
-        gsap.to(scroller, {
-            scrollTop: targetScroll,
-            duration: 0.9,
-            ease: "power3.inOut",
-            overwrite: "auto",
-            onUpdate: function () {
-                ScrollTrigger.update();
-            },
-        });
-    }
-
-    function setActive(section, index) {
-        const cards = section.querySelectorAll(".benditoai-gsap-cards__card");
-        const panels = section.querySelectorAll(".benditoai-gsap-cards__image-panel");
-        const tiles = section.querySelectorAll(".benditoai-gsap-cards__steps-tile");
-
-        section.dataset.activeIndex = String(index);
-
-        cards.forEach(function (card, cardIndex) {
-            const isActive = cardIndex === index;
-            card.classList.toggle("is-active", isActive);
-            card.setAttribute("aria-current", isActive ? "step" : "false");
-        });
-
-        panels.forEach(function (panel, panelIndex) {
-            const isActive = panelIndex === index;
-            panel.classList.toggle("is-active", isActive);
-            panel.setAttribute("aria-hidden", isActive ? "false" : "true");
-        });
-
-        tiles.forEach(function (tile, tileIndex) {
-            const isActive = tileIndex === index;
-            tile.classList.toggle("is-active", isActive);
-            tile.setAttribute("aria-current", isActive ? "step" : "false");
+        scenes.forEach(function (scene, index) {
+            const active = index === activeIndex;
+            scene.classList.toggle("is-active", active);
+            scene.setAttribute("aria-current", active ? "step" : "false");
         });
     }
 
     function initStatic(section) {
         section.classList.add("is-static");
-        const cards = section.querySelectorAll(".benditoai-gsap-cards__card");
-        const panels = section.querySelectorAll(".benditoai-gsap-cards__image-panel");
-
-        cards.forEach(function (card, index) {
-            card.classList.add("is-active");
-            card.removeAttribute("aria-current");
-
-            const panel = panels[index];
-            if (panel && !card.querySelector(".benditoai-gsap-cards__static-image")) {
-                const image = panel.querySelector("img");
-                const clone = image ? image.cloneNode(false) : null;
-
-                if (clone) {
-                    clone.className = "benditoai-gsap-cards__static-image";
-                    clone.loading = "lazy";
-                    card.appendChild(clone);
-                }
-            }
+        section.querySelectorAll(".benditoai-gsap-cards__scene").forEach(function (scene) {
+            scene.classList.add("is-active");
+            scene.removeAttribute("aria-current");
         });
     }
 
-    function renderScene(section, cards, panels, panelImages, progress, gsap) {
-        const stage = getStage(progress, panels.length);
-        const activeIndex = clamp(Math.round(stage), 0, panels.length - 1);
-        const stepProgress = panels.length > 1 ? clamp(stage / (panels.length - 1), 0, 1) : 0;
+    function renderScene(section, scenes, progress, gsap) {
+        const stage = getStage(progress, scenes.length);
+        const activeIndex = clamp(Math.round(stage), 0, scenes.length - 1);
+        const viewportHeight = getViewportHeight();
+        const travelDistance = MOBILE_QUERY.matches ? viewportHeight * 0.72 : viewportHeight * 0.78;
 
-        section.style.setProperty("--bai-steps-progress", stepProgress.toFixed(4));
-        section.querySelectorAll(".bai-gsap-stepper__dot").forEach(function (dot, index) {
-            const dotProgress = clamp(1 - Math.abs(index - stage), 0, 1);
+        setActive(section, scenes, activeIndex);
 
-            dot.style.setProperty("--bai-gsap-dot-progress", dotProgress.toFixed(4));
-        });
-
-        if (section.dataset.activeIndex !== String(activeIndex)) {
-            setActive(section, activeIndex);
-        }
-
-        panels.forEach(function (panel, index) {
+        scenes.forEach(function (scene, index) {
             const offset = index - stage;
-            const rawDistance = Math.abs(offset);
-            const distance = Math.min(rawDistance, 1);
-            const easedDistance = clamp((distance - SHARPNESS_HOLD) / (1 - SHARPNESS_HOLD), 0, 1);
-            const visible = rawDistance < 1.04 || index === activeIndex;
-            const carouselOffset = clamp(offset, -1.35, 1.35);
-            const direction = clamp(offset, -1, 1);
-            const leftAmount = clamp(-offset, 0, 1);
-            const opacity = clamp(1 - easedDistance * 0.62, 0, 1);
-            const brightness = clamp(1 - easedDistance * 0.34 - leftAmount * 0.2, 0.38, 1);
-            const saturate = clamp(1.02 - easedDistance * 0.18 - leftAmount * 0.1, 0.76, 1.02);
-            const blur = easedDistance * 6 + leftAmount * 2.8;
-            const glassOpacity = clamp(easedDistance * 0.62 + leftAmount * 0.22, 0, 0.9);
+            const distance = Math.abs(offset);
+            const visible = distance < 0.82 || index === activeIndex;
+            const centered = smoothstep(1 - clamp(distance / 0.48, 0, 1));
+            const imageOpacity = visible ? smoothstep(1 - clamp(distance / 0.76, 0, 1)) : 0;
+            const textOpacity = smoothstep(centered);
+            const imageY = -offset * travelDistance;
+            const imageScale = 1 - Math.min(distance, 1) * 0.08;
+            const imageBlur = Math.min(distance, 1) * 5;
+            const leftText = scene.querySelector(".benditoai-gsap-cards__text--left");
+            const rightText = scene.querySelector(".benditoai-gsap-cards__text--right");
+            const figure = scene.querySelector(".benditoai-gsap-cards__figure");
 
-            panel.style.setProperty("--bai-glass-opacity", glassOpacity.toFixed(3));
-
-            gsap.set(panel, {
-                autoAlpha: visible ? opacity : 0,
-                xPercent: carouselOffset * SLIDE_SPACING,
-                yPercent: -50,
-                scale: 1 - distance * 0.06,
-                rotation: 0,
-                rotationX: 0,
-                rotateY: 0,
-                rotateZ: 0,
-                skewX: 0,
-                skewY: 0,
-                filter: "brightness(" + brightness.toFixed(3) + ") saturate(" + saturate.toFixed(3) + ") blur(" + blur.toFixed(2) + "px)",
-                force3D: true,
+            gsap.set(scene, {
+                autoAlpha: visible ? 1 : 0,
+                pointerEvents: visible ? "auto" : "none",
                 overwrite: true,
             });
-        });
 
-        panelImages.forEach(function (image, index) {
-            const offset = index - stage;
-            const distance = Math.min(Math.abs(offset), 1);
-            const easedDistance = clamp((distance - SHARPNESS_HOLD) / (1 - SHARPNESS_HOLD), 0, 1);
-            const carouselOffset = clamp(offset, -1.35, 1.35);
-
-            if (!image) {
-                return;
+            if (figure) {
+                gsap.set(figure, {
+                    autoAlpha: imageOpacity,
+                    y: imageY,
+                    scale: imageScale,
+                    filter: "blur(" + imageBlur.toFixed(2) + "px)",
+                    force3D: true,
+                    overwrite: true,
+                });
             }
 
-            gsap.set(image, {
-                xPercent: carouselOffset * 1.4,
-                scale: 1.01 + easedDistance * 0.025,
-                rotation: 0,
-                rotationX: 0,
-                rotationY: 0,
-                rotationZ: 0,
-                skewX: 0,
-                skewY: 0,
-                force3D: true,
-                overwrite: true,
-            });
-        });
+            if (leftText) {
+                gsap.set(leftText, {
+                    autoAlpha: textOpacity,
+                    x: MOBILE_QUERY.matches ? 0 : -28 + textOpacity * 28,
+                    y: MOBILE_QUERY.matches ? 18 - textOpacity * 18 : 0,
+                    filter: "blur(" + ((1 - textOpacity) * 5).toFixed(2) + "px)",
+                    force3D: true,
+                    overwrite: true,
+                });
+            }
 
-        cards.forEach(function (card, index) {
-            const offset = index - stage;
-            const distance = Math.min(Math.abs(offset), 1);
-            const direction = clamp(offset, -1, 1);
-            const opacity = distance < 0.42 ? clamp(1 - distance / 0.42, 0, 1) : 0;
-
-            gsap.set(card, {
-                autoAlpha: opacity,
-                x: direction * 18 * distance,
-                overwrite: true,
-            });
+            if (rightText) {
+                gsap.set(rightText, {
+                    autoAlpha: textOpacity,
+                    x: MOBILE_QUERY.matches ? 0 : 28 - textOpacity * 28,
+                    y: MOBILE_QUERY.matches ? -18 + textOpacity * 18 : 0,
+                    filter: "blur(" + ((1 - textOpacity) * 5).toFixed(2) + "px)",
+                    force3D: true,
+                    overwrite: true,
+                });
+            }
         });
     }
 
@@ -209,10 +134,9 @@
 
         section.dataset.gsapCardsInitialized = "true";
 
-        const cards = Array.from(section.querySelectorAll(".benditoai-gsap-cards__card"));
-        const panels = Array.from(section.querySelectorAll(".benditoai-gsap-cards__image-panel"));
+        const scenes = Array.from(section.querySelectorAll(".benditoai-gsap-cards__scene"));
 
-        if (!cards.length || cards.length !== panels.length) {
+        if (!scenes.length) {
             return;
         }
 
@@ -223,22 +147,19 @@
 
         const gsap = window.gsap;
         const ScrollTrigger = window.ScrollTrigger;
-        const panelImages = panels.map(function (panel) {
-            return panel.querySelector("img");
-        });
+        const pin = section.querySelector(".benditoai-gsap-cards__pin") || section;
 
         gsap.registerPlugin(ScrollTrigger);
         section.classList.add("has-gsap");
         setSectionHeight(section);
-        renderScene(section, cards, panels, panelImages, 0, gsap);
+        renderScene(section, scenes, 0, gsap);
 
-        const pin = section.querySelector(".benditoai-gsap-cards__pin") || section;
         const timeline = gsap.timeline({
             defaults: {
                 ease: "none",
             },
             onUpdate: function () {
-                renderScene(section, cards, panels, panelImages, getAnimatedProgress(this.progress()), gsap);
+                renderScene(section, scenes, this.progress(), gsap);
             },
             scrollTrigger: {
                 trigger: section,
@@ -248,7 +169,7 @@
                 },
                 pin: pin,
                 pinSpacing: true,
-                scrub: 1.05,
+                scrub: 0.62,
                 anticipatePin: 1,
                 invalidateOnRefresh: true,
                 refreshPriority: 1,
@@ -256,7 +177,7 @@
                     setSectionHeight(section);
                 },
                 onRefresh: function (self) {
-                    renderScene(section, cards, panels, panelImages, getAnimatedProgress(self.progress), gsap);
+                    renderScene(section, scenes, self.progress, gsap);
                 },
             },
         });
@@ -264,18 +185,6 @@
         timeline.to({}, {
             duration: 1,
         });
-
-        section.querySelectorAll(".bai-gsap-stepper__dot").forEach(function (dot, index) {
-            dot.addEventListener("click", function () {
-                if (!timeline.scrollTrigger) {
-                    return;
-                }
-
-                const targetProgress = getTimelineProgressForCard(index, panels.length);
-                scrollToTimelineProgress(timeline.scrollTrigger, targetProgress, gsap, ScrollTrigger);
-            });
-        });
-
     }
 
     function init() {
@@ -289,6 +198,7 @@
 
         window.addEventListener("resize", function () {
             sections.forEach(setSectionHeight);
+
             if (window.ScrollTrigger) {
                 window.ScrollTrigger.refresh();
             }
@@ -297,6 +207,7 @@
         if (window.visualViewport) {
             window.visualViewport.addEventListener("resize", function () {
                 sections.forEach(setSectionHeight);
+
                 if (window.ScrollTrigger) {
                     window.ScrollTrigger.refresh();
                 }
