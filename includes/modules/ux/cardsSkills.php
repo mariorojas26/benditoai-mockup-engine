@@ -5,19 +5,13 @@ if (!defined('ABSPATH')) {
 
 function benditoai_cards_skills_shortcode($atts) {
     wp_enqueue_script('benditoai-gsap-scrolltrigger');
-    wp_enqueue_style(
-        'benditoai-fashion-font',
-        'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,600;1,700&display=swap',
-        array(),
-        null
-    );
 
     $uid = function_exists('wp_unique_id') ? wp_unique_id('cards-skills-scroll-') : uniqid('cards-skills-scroll-', true);
 
     $frases = array(
-        'Crea tu modelo, ',
-        'vistelo con tu marca',
-        'lanzalo a una campaña',
+        '1. Crea tu modelo, ',
+        '2. Vistelo con tu marca',
+        '3. Vende con el',
         '¿Que esperas para crear?',
     );
 
@@ -32,7 +26,6 @@ function benditoai_cards_skills_shortcode($atts) {
     >
         <div class="cards-skills-scroll-pin">
             <div class="cards-skills-scroll-inner">
-                <p class="cards-skills-scroll-eyebrow">Bendito AI</p>
 
                 <div class="cards-skills-scroll-stage" role="list" aria-live="polite">
                     <?php foreach ($frases as $index => $frase) : ?>
@@ -42,17 +35,7 @@ function benditoai_cards_skills_shortcode($atts) {
                             role="listitem"
                             aria-current="<?php echo $index === 0 ? 'step' : 'false'; ?>"
                         >
-                            <h2 class="cards-skills-scroll-title">
-                                <?php if ($index === 0) : ?>
-                                    Crea tu <span class="cards-skills-scroll-fashion">modelo</span>,
-                                <?php elseif ($index === 1) : ?>
-                                    <span class="cards-skills-scroll-fashion">vistelo</span> con tu marca
-                                <?php elseif ($index === 2) : ?>
-                                    lanzalo a una <span class="cards-skills-scroll-fashion">campa&ntilde;a</span>
-                                <?php else : ?>
-                                    &iquest;Que esperas para <span class="cards-skills-scroll-fashion">crear</span>?
-                                <?php endif; ?>
-                            </h2>
+                            <h2 class="cards-skills-scroll-title"><?php echo esc_html($frase); ?></h2>
                         </article>
                     <?php endforeach; ?>
                 </div>
