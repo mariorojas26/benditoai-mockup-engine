@@ -62,6 +62,7 @@ benditoai_require_files(array(
     'includes/core/prompts.php',
     'includes/core/browser-theme.php',
     'includes/core/free-plan-watermark.php',
+    'includes/core/performance-assets.php',
 
     'includes/services/gemini/gemini-api.php',
     'includes/services/gemini/gemini-api-text.php',
@@ -228,6 +229,12 @@ add_filter('script_loader_tag', function($tag, $handle) {
 /* SCRIPT DE MODELOS AI */
 
 function benditoai_modelos_ai_scripts() {
+    if (!benditoai_page_has_shortcode(array(
+        'benditoai_modelos_ai',
+        'benditoai_modelos_ai_historial',
+    ))) {
+        return;
+    }
 
     $choices_css_path = BENDIDOAI_PLUGIN_PATH . 'assets/vendor/choices/choices.min.css';
     $choices_js_path = BENDIDOAI_PLUGIN_PATH . 'assets/vendor/choices/choices.min.js';

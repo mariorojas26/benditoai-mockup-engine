@@ -14,21 +14,23 @@ function benditoai_before_after_shortcode($atts) {
     $unique_id = 'benditoai_ba_' . uniqid();
 
     // rutas
-    $before = (strpos($atts['before'], 'http') === 0)
-        ? $atts['before']
-        : BENDIDOAI_PLUGIN_URL . 'assets/images/' . $atts['before'];
+    $before_source = (strpos($atts['before'], 'http') === 0) ? $atts['before'] : 'assets/images/' . ltrim($atts['before'], '/');
+    $after_source = (strpos($atts['after'], 'http') === 0) ? $atts['after'] : 'assets/images/' . ltrim($atts['after'], '/');
+    $before_mobile_source = !empty($atts['before_mobile']) ? 'assets/images/' . ltrim($atts['before_mobile'], '/') : '';
+    $after_mobile_source = !empty($atts['after_mobile']) ? 'assets/images/' . ltrim($atts['after_mobile'], '/') : '';
 
-    $after = (strpos($atts['after'], 'http') === 0)
-        ? $atts['after']
-        : BENDIDOAI_PLUGIN_URL . 'assets/images/' . $atts['after'];
-
-    $before_mobile = !empty($atts['before_mobile'])
-        ? BENDIDOAI_PLUGIN_URL . 'assets/images/' . $atts['before_mobile']
-        : '';
-
-    $after_mobile = !empty($atts['after_mobile'])
-        ? BENDIDOAI_PLUGIN_URL . 'assets/images/' . $atts['after_mobile']
-        : '';
+    $before = function_exists('benditoai_get_image_asset')
+        ? benditoai_get_image_asset($before_source, 'assets/images/antesba.png')
+        : array('url' => BENDIDOAI_PLUGIN_URL . 'assets/images/' . $atts['before'], 'webp_url' => '', 'width' => '', 'height' => '');
+    $after = function_exists('benditoai_get_image_asset')
+        ? benditoai_get_image_asset($after_source, 'assets/images/despuesba.png')
+        : array('url' => BENDIDOAI_PLUGIN_URL . 'assets/images/' . $atts['after'], 'webp_url' => '', 'width' => '', 'height' => '');
+    $before_mobile = $before_mobile_source && function_exists('benditoai_get_image_asset')
+        ? benditoai_get_image_asset($before_mobile_source, $before_source)
+        : null;
+    $after_mobile = $after_mobile_source && function_exists('benditoai_get_image_asset')
+        ? benditoai_get_image_asset($after_mobile_source, $after_source)
+        : null;
 
     ob_start();
 ?>
@@ -37,19 +39,31 @@ function benditoai_before_after_shortcode($atts) {
 
     <!-- BEFORE -->
     <picture>
-        <?php if ($before_mobile): ?>
-            <source media="(max-width: 768px)" srcset="<?php echo esc_url($before_mobile); ?>">
+        <?php if (!empty($before_mobile['webp_url'])): ?>
+            <source media="(max-width: 768px)" srcset="<?php echo esc_url($before_mobile['webp_url']); ?>" type="image/webp">
         <?php endif; ?>
-        <img src="<?php echo esc_url($before); ?>" class="benditoai-ba-img">
+        <?php if (!empty($before['webp_url'])): ?>
+            <source srcset="<?php echo esc_url($before['webp_url']); ?>" type="image/webp">
+        <?php endif; ?>
+        <?php if (!empty($before_mobile['url'])): ?>
+            <source media="(max-width: 768px)" srcset="<?php echo esc_url($before_mobile['url']); ?>">
+        <?php endif; ?>
+        <img src="<?php echo esc_url($before['url']); ?>" class="benditoai-ba-img" alt="" loading="lazy" decoding="async"<?php echo function_exists('benditoai_image_dimension_attrs') ? benditoai_image_dimension_attrs($before) : ''; ?>>
     </picture>
 
     <!-- AFTER -->
     <div class="benditoai-ba-overlay">
         <picture>
-            <?php if ($after_mobile): ?>
-                <source media="(max-width: 768px)" srcset="<?php echo esc_url($after_mobile); ?>">
+            <?php if (!empty($after_mobile['webp_url'])): ?>
+                <source media="(max-width: 768px)" srcset="<?php echo esc_url($after_mobile['webp_url']); ?>" type="image/webp">
             <?php endif; ?>
-            <img src="<?php echo esc_url($after); ?>" class="benditoai-ba-img-after">
+            <?php if (!empty($after['webp_url'])): ?>
+                <source srcset="<?php echo esc_url($after['webp_url']); ?>" type="image/webp">
+            <?php endif; ?>
+            <?php if (!empty($after_mobile['url'])): ?>
+                <source media="(max-width: 768px)" srcset="<?php echo esc_url($after_mobile['url']); ?>">
+            <?php endif; ?>
+            <img src="<?php echo esc_url($after['url']); ?>" class="benditoai-ba-img-after" alt="" loading="lazy" decoding="async"<?php echo function_exists('benditoai_image_dimension_attrs') ? benditoai_image_dimension_attrs($after) : ''; ?>>
         </picture>
     </div>
 

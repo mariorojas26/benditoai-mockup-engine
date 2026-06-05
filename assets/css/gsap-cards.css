@@ -322,26 +322,50 @@
         position: absolute;
         inset: 0;
         background:
-            linear-gradient(90deg, rgba(2, 0, 6, 0.56), rgba(2, 0, 6, 0.16), rgba(2, 0, 6, 0.56)),
-            linear-gradient(180deg, rgba(2, 0, 6, 0.12), rgba(2, 0, 6, 0.42));
+            linear-gradient(90deg, rgba(2, 0, 6, 0.28), rgba(2, 0, 6, 0.04), rgba(2, 0, 6, 0.28)),
+            linear-gradient(180deg, rgba(2, 0, 6, 0.06) 0%, rgba(2, 0, 6, 0.08) 56%, rgba(2, 0, 6, 0.16) 100%);
         pointer-events: none;
     }
 
     .benditoai-gsap-cards__scene[data-scene-index="2"] .benditoai-gsap-cards__copy {
         grid-column: 1;
         grid-row: 1;
-        width: 620px;
+        width: min(900px, calc(100% - 96px));
         min-height: auto;
         justify-self: center;
+        align-self: end;
+        margin-bottom: clamp(22px, 4.5vh, 48px);
         text-align: center;
-        gap: 18px;
-        text-shadow: 0 18px 48px rgba(0, 0, 0, 0.74);
+        gap: 14px;
+        text-shadow: 0 16px 42px rgba(0, 0, 0, 0.74);
     }
 
     .benditoai-gsap-cards__scene[data-scene-index="2"] .benditoai-gsap-cards__title,
     .benditoai-gsap-cards__scene[data-scene-index="2"] .benditoai-gsap-cards__summary,
     .benditoai-gsap-cards__scene[data-scene-index="2"] .benditoai-gsap-cards__content {
         max-width: 100%;
+    }
+
+    .benditoai-gsap-cards__scene[data-scene-index="2"] .benditoai-gsap-cards__eyebrow,
+    .benditoai-gsap-cards__scene[data-scene-index="2"] .benditoai-gsap-cards__content {
+        display: none;
+    }
+
+    .benditoai-gsap-cards__scene[data-scene-index="2"] .benditoai-gsap-cards__title {
+        width: min(760px, 100%);
+        margin-inline: auto !important;
+        font-size: clamp(50px, 5.8vw, 94px) !important;
+        line-height: 0.92;
+    }
+
+    .benditoai-gsap-cards__scene[data-scene-index="2"] .benditoai-gsap-cards__summary {
+        width: min(520px, 100%);
+        margin-inline: auto !important;
+        color: rgba(236, 232, 255, 0.88) !important;
+        font-size: clamp(16px, 1.45vw, 23px) !important;
+        line-height: 1.22;
+        font-weight: 560;
+        text-transform: none;
     }
 }
 

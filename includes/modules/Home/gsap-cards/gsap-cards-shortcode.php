@@ -57,15 +57,15 @@ function benditoai_gsap_cards_shortcode($atts) {
         'alt_2' => 'Modelo AI usando ropa de una marca',
 
         'eyebrow_3' => 'Paso 03',
-        'title_3' => 'Lanzalo a una campana',
-        'summary_3' => 'Genera imagenes para redes, anuncios y catalogo.',
-        'content_3' => 'Crea piezas visuales consistentes con tu modelo y acelera la forma en que presentas tu producto.',
+        'title_3' => 'Lanzalo a una campaña',
+        'summary_3' => 'Convierte tu modelo en piezas listas para vender.',
+        'content_3' => '',
         'image_3' => 'assets/images/modeltestfull.jpeg',
         'image_mobile_3' => 'assets/images/modeltest3.jpeg',
         'alt_3' => 'Campana visual creada con BenditoAI',
 
-        'scroll_vh' => 260,
-        'scroll_vh_mobile' => 310,
+        'scroll_vh' => 220,
+        'scroll_vh_mobile' => 250,
         'class' => '',
     );
 
@@ -91,8 +91,12 @@ function benditoai_gsap_cards_shortcode($atts) {
             'title' => (string) $atts['title_' . $i],
             'summary' => (string) $atts['summary_' . $i],
             'content' => (string) $atts['content_' . $i],
-            'image' => benditoai_gsap_cards_asset_url($atts['image_' . $i], $fallback_image),
-            'image_mobile' => benditoai_gsap_cards_asset_url($atts['image_mobile_' . $i], $fallback_mobile_image),
+            'image' => function_exists('benditoai_get_image_asset')
+                ? benditoai_get_image_asset($atts['image_' . $i], $fallback_image, array('allow_external' => false))
+                : array('url' => benditoai_gsap_cards_asset_url($atts['image_' . $i], $fallback_image), 'webp_url' => '', 'width' => '', 'height' => ''),
+            'image_mobile' => function_exists('benditoai_get_image_asset')
+                ? benditoai_get_image_asset($atts['image_mobile_' . $i], $fallback_mobile_image, array('allow_external' => false))
+                : array('url' => benditoai_gsap_cards_asset_url($atts['image_mobile_' . $i], $fallback_mobile_image), 'webp_url' => '', 'width' => '', 'height' => ''),
             'alt' => (string) $atts['alt_' . $i],
         );
     }
@@ -122,11 +126,19 @@ function benditoai_gsap_cards_shortcode($atts) {
                     >
                         <figure class="benditoai-gsap-cards__figure">
                             <picture>
-                                <source media="(max-width: 768px)" srcset="<?php echo $card['image_mobile']; ?>" />
+                                <?php if (!empty($card['image_mobile']['webp_url'])) : ?>
+                                    <source media="(max-width: 768px)" srcset="<?php echo esc_url($card['image_mobile']['webp_url']); ?>" type="image/webp" />
+                                <?php endif; ?>
+                                <?php if (!empty($card['image']['webp_url'])) : ?>
+                                    <source srcset="<?php echo esc_url($card['image']['webp_url']); ?>" type="image/webp" />
+                                <?php endif; ?>
+                                <source media="(max-width: 768px)" srcset="<?php echo esc_url($card['image_mobile']['url']); ?>" />
                                 <img
-                                    src="<?php echo $card['image']; ?>"
+                                    src="<?php echo esc_url($card['image']['url']); ?>"
                                     alt="<?php echo esc_attr($card['alt']); ?>"
                                     loading="<?php echo $index === 0 ? 'eager' : 'lazy'; ?>"
+                                    decoding="async"
+                                    <?php echo $index === 0 ? 'fetchpriority="high"' : ''; ?><?php echo function_exists('benditoai_image_dimension_attrs') ? benditoai_image_dimension_attrs($card['image']) : ''; ?>
                                 />
                             </picture>
                         </figure>
@@ -134,8 +146,12 @@ function benditoai_gsap_cards_shortcode($atts) {
                         <div class="benditoai-gsap-cards__copy">
                             <p class="benditoai-gsap-cards__eyebrow"><?php echo esc_html($card['eyebrow']); ?></p>
                             <h3 class="benditoai-gsap-cards__title"><?php echo esc_html($card['title']); ?></h3>
-                            <p class="benditoai-gsap-cards__summary"><?php echo esc_html($card['summary']); ?></p>
-                            <p class="benditoai-gsap-cards__content"><?php echo esc_html($card['content']); ?></p>
+                            <?php if (trim($card['summary']) !== '') : ?>
+                                <p class="benditoai-gsap-cards__summary"><?php echo esc_html($card['summary']); ?></p>
+                            <?php endif; ?>
+                            <?php if (trim($card['content']) !== '') : ?>
+                                <p class="benditoai-gsap-cards__content"><?php echo esc_html($card['content']); ?></p>
+                            <?php endif; ?>
                         </div>
                     </article>
                 <?php endforeach; ?>

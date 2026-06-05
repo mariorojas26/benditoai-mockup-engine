@@ -2,7 +2,7 @@
     const SELECTOR = ".benditoai-gsap-cards";
     const MOBILE_QUERY = window.matchMedia("(max-width: 768px)");
     const REDUCED_MOTION_QUERY = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const LAST_HOLD_UNITS = 0.45;
+    const LAST_HOLD_UNITS = 0.18;
 
     function clamp(value, min, max) {
         return Math.min(max, Math.max(min, value));

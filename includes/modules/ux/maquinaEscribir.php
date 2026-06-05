@@ -84,7 +84,9 @@ function maquina_texto_shortcode($atts) {
 
     for ($i = 1; $i <= 4; $i++) {
         $cards[] = array(
-            'image' => maquina_texto_asset_url($atts['card_' . $i . '_image']),
+            'image' => function_exists('benditoai_get_image_asset')
+                ? benditoai_get_image_asset($atts['card_' . $i . '_image'], 'assets/images/1crea.png')
+                : array('url' => maquina_texto_asset_url($atts['card_' . $i . '_image']), 'webp_url' => '', 'width' => '', 'height' => ''),
             'label' => $atts['card_' . $i . '_label'],
             'index' => $i,
         );
@@ -102,7 +104,17 @@ function maquina_texto_shortcode($atts) {
                     <span class="maquina-float-card__hover">
                         <span class="maquina-float-card__body">
                             <span class="maquina-float-card__media">
-                                <img src="<?php echo esc_url($card['image']); ?>" alt="" loading="lazy" decoding="async">
+                                <picture>
+                                    <?php if (!empty($card['image']['webp_url'])) : ?>
+                                        <source srcset="<?php echo esc_url($card['image']['webp_url']); ?>" type="image/webp">
+                                    <?php endif; ?>
+                                    <img
+                                        src="<?php echo esc_url($card['image']['url']); ?>"
+                                        alt=""
+                                        loading="lazy"
+                                        decoding="async"<?php echo function_exists('benditoai_image_dimension_attrs') ? benditoai_image_dimension_attrs($card['image']) : ''; ?>
+                                    >
+                                </picture>
                             </span>
                         </span>
                     </span>

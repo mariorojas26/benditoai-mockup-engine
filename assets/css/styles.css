@@ -3064,10 +3064,11 @@ color: white !important;
     --cards-skills-scroll-height: 360vh;
     --cards-skills-outer-space: 30px;
     --cards-skills-radius: 18px;
+    --cards-skills-shell-width: min(90vw, 1620px);
     --cards-skills-visual-height: calc(100vh - (var(--cards-skills-outer-space) * 2));
-    width: calc(100vw - (var(--cards-skills-outer-space) * 2));
+    width: var(--cards-skills-shell-width);
     min-height: var(--cards-skills-visual-height);
-    margin: var(--cards-skills-outer-space) 0 var(--cards-skills-outer-space) calc(50% - 50vw + var(--cards-skills-outer-space));
+    margin: var(--cards-skills-outer-space) 0 var(--cards-skills-outer-space) calc(50% - min(45vw, 810px));
     border-radius: var(--cards-skills-radius);
     color: #ffffff;
     position: relative;
@@ -3094,7 +3095,10 @@ color: white !important;
     box-sizing: border-box;
     padding: 72px 18px;
     border-radius: var(--cards-skills-radius);
-    background-image: linear-gradient(180deg, rgb(5 2 13) 0%, rgb(5 2 13) 8%, rgba(5, 2, 13, 0.72) 18%, rgba(5, 2, 13, 0) 34%), url(../images/creamod5.jpg);
+    background-image:
+        radial-gradient(120% 180% at 50% 0%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.045) 42%, rgba(5, 2, 13, 0) 68%),
+        linear-gradient(180deg, rgba(5, 2, 13, 0.02) 0%, rgba(5, 2, 13, 0.03) 52%, rgba(5, 2, 13, 0.18) 74%, rgba(5, 2, 13, 0.68) 100%),
+        url(../images/creamod5.jpg);
     background-position: center center;
     background-size: cover;
     background-attachment: fixed;
@@ -3102,6 +3106,15 @@ color: white !important;
     overflow: hidden;
     position: relative;
     z-index: 1;
+}
+
+@supports (background-image: image-set(url("../images/creamod5-1800.webp") type("image/webp"))) {
+    .cards-skills-scroll-pin {
+        background-image:
+            radial-gradient(120% 180% at 50% 0%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.045) 42%, rgba(5, 2, 13, 0) 68%),
+            linear-gradient(180deg, rgba(5, 2, 13, 0.02) 0%, rgba(5, 2, 13, 0.03) 52%, rgba(5, 2, 13, 0.18) 74%, rgba(5, 2, 13, 0.68) 100%),
+            url("../images/creamod5-1800.webp");
+    }
 }
 
 .cards-skills-scroll-inner {

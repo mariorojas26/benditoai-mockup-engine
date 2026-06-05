@@ -28,6 +28,16 @@ Add a small index generator only if it stays deterministic and compact. Useful o
 
 Do not auto-paste full source into references. The point is to route attention, not duplicate the repo.
 
+## Performance Asset Checklist
+
+- Put heavy home/plugin imagery under `assets/images/`; do not point v1 tooling at WordPress uploads without approval.
+- Run `npm run optimize:images -- --dry-run` and review the list before `npm run optimize:images`.
+- Keep JPG/PNG originals and commit generated `.webp` files beside them.
+- For new shortcode images, prefer `benditoai_get_image_asset()` plus `<picture>` and fallback.
+- Add `width`, `height`, `decoding="async"`, and `loading="lazy"` unless the image is truly visible immediately above the fold.
+- Keep `Choices`/model wizard assets conditional to pages with `[benditoai_modelos_ai]` or `[benditoai_modelos_ai_historial]`.
+- After changes, check home desktop/mobile, one non-home page, and model pages if their URLs are known.
+
 ## Header Change Checklist
 
 - Note whether the change belongs to WordPress menu configuration, generated Custom CSS/JS, plugin CSS, or shortcode PHP.

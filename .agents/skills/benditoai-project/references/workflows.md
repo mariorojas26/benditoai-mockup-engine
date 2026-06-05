@@ -54,6 +54,14 @@ If only one side of that loop changes, bugs usually appear later in history card
 - Home widgets and UX cards: `includes/modules/Home`, `includes/modules/ux`, `assets/js/home`.
 - GSAP home components should use scoped CSS/JS and not affect regular page scroll outside their section.
 
+## Performance Image Workflow
+
+- Tooling lives in `package.json` and `tools/optimize-images.mjs`; run `npm install` once, then `npm run optimize:images -- --dry-run` before generating.
+- Conversion rule v1: JPG/JPEG/PNG files over `150 KB` under `assets/images/` get a same-folder `.webp` copy. Originals remain as fallbacks and should stay committed.
+- `creamod5.jpg` also generates `assets/images/creamod5-1800.webp` for the `[benditoai_cards_skills]` background.
+- Preferred PHP wiring: use `benditoai_get_image_asset()` from `includes/core/performance-assets.php`, then render WebP `<source type="image/webp">`, original fallback, `width`, `height`, `decoding="async"`, and conservative `loading`.
+- Keep GSAP timing and ScrollTrigger choreography intact during performance passes; optimize file weight, markup, and loading first.
+
 ## Header Visual Workflow
 
 - WordPress/Astra menu content is configured in WP admin. For visual-only requests, do not change nav labels/order in code.

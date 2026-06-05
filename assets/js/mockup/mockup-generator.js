@@ -117,6 +117,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const selectModelo = document.getElementById("modelo");
     const modeloWrap = document.getElementById("modeloWrap");
 
+    if (!selectModelo || !modeloWrap) {
+        return;
+    }
+
     function toggleModelo() {
 
         if (selectModelo.value === "no") {
@@ -139,6 +143,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const cards = document.querySelectorAll(".benditoai-modelo-card");
     const input = document.getElementById("modeloAvatarInput");
+
+    if (!cards.length || !input) {
+        return;
+    }
 
     cards.forEach(card => {
 
