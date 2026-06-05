@@ -11,9 +11,17 @@
 ## Token UI
 
 - Shortcodes: `[benditoai_tokens]`, `[benditoai_desktop_tokens]`.
+- Header account shortcode: `[benditoai_desktop_user]` renders the desktop account button and includes the current token balance inside its dropdown.
 - Frontend manager: `assets/js/core/tokens.js`.
 - JS functions: `window.benditoaiTokensManager.actualizar(tokens)` and `window.benditoaiActualizarTokensInstantaneo(tokens)`.
 - Refresh endpoint: action `benditoai_get_tokens`.
+
+## Header Account Token Placement
+
+- In the desktop header, the standalone token counter is hidden with CSS and tokens live inside `includes/modules/auth/auth-dropdown.php`.
+- Dropdown order is: `Mis modelos`, `Plan: {plan}`, `Tokens {count}`, `Cerrar sesion`.
+- Admin/unlimited token text can still be computed by PHP, but the header presentation should stay compact and avoid a separate token pill beside the account button.
+- Keep `[benditoai_tokens]` and `[benditoai_desktop_tokens]` available for other pages or admin-controlled placements; avoid duplicating them in the Astra header unless the UX is intentionally changed.
 
 ## Token Rule For AI Actions
 

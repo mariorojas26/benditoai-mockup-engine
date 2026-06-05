@@ -6,6 +6,7 @@
 - A field is renamed across frontend/backend.
 - Asset directories change.
 - Token, plan, or saved outfit rules change.
+- Header/account menu behavior changes, especially if CSS is split between `assets/css/styles.css` and WordPress generated Custom CSS/JS files.
 - A repeated debugging discovery would save future context.
 
 ## Keep It Lean
@@ -26,3 +27,10 @@ Add a small index generator only if it stays deterministic and compact. Useful o
 - last updated timestamp.
 
 Do not auto-paste full source into references. The point is to route attention, not duplicate the repo.
+
+## Header Change Checklist
+
+- Note whether the change belongs to WordPress menu configuration, generated Custom CSS/JS, plugin CSS, or shortcode PHP.
+- If generated CSS files in `wp-content/uploads/custom-css-js/` were edited directly, document the snippet purpose and mirror durable fallback rules in repo CSS when practical.
+- Verify `body.home` and at least one `body:not(.home)` page after header position changes.
+- Keep account button sizing rules documented when changing truncation, max width, padding, or dropdown row order.
