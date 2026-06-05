@@ -222,10 +222,14 @@ function benditoai_desktop_user_shortcode() {
     $display_name = $current_user->display_name ? $current_user->display_name : $current_user->user_login;
     $logout_url = wp_logout_url(home_url());
     $user_id = get_current_user_id();
+    $tokens = function_exists('benditoai_get_user_tokens') ? benditoai_get_user_tokens($user_id) : 0;
+    $tokens_display = number_format((float) $tokens, 0, ',', '.');
     $plan_data = function_exists('benditoai_get_user_plan_data') ? benditoai_get_user_plan_data($user_id) : array('name' => 'Starter');
     $plan_label = isset($plan_data['name']) ? (string) $plan_data['name'] : 'Starter';
     $is_admin = current_user_can('administrator');
     $enabled = get_user_meta($user_id, 'benditoai_admin_unlimited_tokens', true);
+    $is_unlimited = $is_admin && ($enabled === 'yes');
+    $tokens_display = $is_unlimited ? html_entity_decode('&infin;', ENT_QUOTES, 'UTF-8') : $tokens_display;
     $checked = ($enabled === 'yes') ? 'checked' : '';
     $menu_id = 'benditoai-desktop-user-menu-' . wp_unique_id();
 
@@ -262,6 +266,11 @@ function benditoai_desktop_user_shortcode() {
             <div class="benditoai-desktop-user__item benditoai-desktop-user__item--plan" aria-label="Plan actual">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 7.5v9L12 21l8-4.5v-9Z"/><path d="m12 12 8-4.5"/><path d="M12 12v9"/><path d="M12 12 4 7.5"/></svg>
                 <span>Plan: <?php echo esc_html($plan_label); ?></span>
+            </div>
+            <div class="benditoai-desktop-user__item benditoai-desktop-user__item--tokens" aria-label="Tokens disponibles">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 7.5v9L12 21l8-4.5v-9Z"/><path d="m12 12 8-4.5"/><path d="M12 12v9"/><path d="M12 12 4 7.5"/></svg>
+                <span>Tokens</span>
+                <strong class="benditoai-user-tokens"><?php echo esc_html($tokens_display); ?></strong>
             </div>
             <a href="<?php echo esc_url($logout_url); ?>" class="benditoai-desktop-user__item benditoai-desktop-user__item--logout">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17 15 12l-5-5"/><path d="M15 12H3"/><path d="M14 5V4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2v-1"/></svg>

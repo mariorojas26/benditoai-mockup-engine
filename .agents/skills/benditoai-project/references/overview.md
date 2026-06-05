@@ -2,7 +2,7 @@
 
 ## Purpose
 
-`bendidoai-mockup-engine` is a WordPress plugin for AI-assisted commerce visuals: mockups, AI models, model outfits, campaigns, enhance image, remove background, trends, tokens, plans, and UI shortcodes.
+`bendidoai-mockup-engine` is a WordPress plugin for AI-assisted commerce visuals: mockups, AI models, model outfits, campaigns, enhance image, remove background, trends, tokens, plans, account/header UI, and UI shortcodes.
 
 ## Product Context
 
@@ -44,7 +44,15 @@ Frontend UI renders through a shortcode, vanilla JS collects form state, `fetch(
 - Modelos AI: model creation, rasgos/from-scratch flow, reference-photo flow, model history, edits, outfits, and campaign handoff.
 - Campaigns: generate campaign-ready visuals using selected model/outfit context.
 - Utility tools: remove background, enhance image, trends.
-- Account/commerce system: tokens, plans, limits, auth dropdown, redirects.
+- Account/commerce system: tokens, plans, limits, auth dropdown, header account menu, redirects.
+
+## Header And Account Menu
+
+- The WordPress/Astra navigation labels and order are administered from WordPress menus, not from this plugin. Treat code work here as visual behavior only unless the user explicitly asks to change menu content.
+- Header glass/sticky visuals are split between generated Custom CSS/JS plugin files in `wp-content/uploads/custom-css-js/` and repo fallback/shared rules in `assets/css/styles.css`.
+- Current home behavior: `body.home #masthead` is fixed over the hero so the menu floats without leaving a gray band.
+- Current non-home behavior: `body:not(.home) #masthead` is relative and occupies normal space so internal page content is not covered.
+- Desktop account UI is rendered by `[benditoai_desktop_user]` from `includes/modules/auth/auth-dropdown.php`. The dropdown contains model link, plan, tokens, and logout; the standalone desktop token counter is hidden inside the header.
 
 ## Shortcodes
 
@@ -52,7 +60,8 @@ Frontend UI renders through a shortcode, vanilla JS collects form state, `fetch(
 - `[benditoai_modelos_ai]`: model creation wizard.
 - `[benditoai_modelos_ai_historial]`: model history and saved outfits.
 - `[benditoai_campanas_ai]`: campaign creation.
-- `[benditoai_tokens]`, `[benditoai_desktop_tokens]`: token display.
+- `[benditoai_tokens]`, `[benditoai_desktop_tokens]`: token display. The desktop header now hides the standalone counter and shows tokens inside `[benditoai_desktop_user]`.
+- `[benditoai_user_menu]`, `[benditoai_desktop_user]`: authenticated user dropdown/account button.
 - `[benditoai_plan_cards]`: starter/pro/elite subscription cards with customizable copy and media placeholder.
 - `[benditoai_remove_bg]`, `[benditoai_enhance_image]`, `[benditoai_trending]`: tools.
 - `[benditoai_gsap_cards]`: GSAP/ScrollTrigger pinned 3-card Home component with synchronized image transitions and expanding copy.

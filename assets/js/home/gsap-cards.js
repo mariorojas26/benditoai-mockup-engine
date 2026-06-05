@@ -21,8 +21,31 @@
         return window.innerHeight || document.documentElement.clientHeight || 1;
     }
 
-    function getVisualHeight() {
-        return Math.max(1, getViewportHeight());
+    function getHeaderClearance(section) {
+        if (!document.body.classList.contains("home")) {
+            return 0;
+        }
+
+        const header = document.getElementById("masthead");
+        const fallback = MOBILE_QUERY.matches ? 96 : 132;
+
+        if (!header) {
+            return fallback;
+        }
+
+        const rect = header.getBoundingClientRect();
+        const bottom = Math.ceil(rect.bottom || 0);
+        const breathingRoom = MOBILE_QUERY.matches ? 8 : 10;
+
+        return Math.max(0, bottom + breathingRoom, fallback);
+    }
+
+    function getVisualHeight(section) {
+        const bottomRoom = document.body.classList.contains("home")
+            ? (MOBILE_QUERY.matches ? 14 : 24)
+            : 0;
+
+        return Math.max(1, getViewportHeight() - getHeaderClearance(section) - bottomRoom);
     }
 
     function getScrollDistance(section) {
@@ -34,8 +57,10 @@
     }
 
     function setSectionHeight(section) {
-        const visualHeight = getVisualHeight();
+        const headerClearance = getHeaderClearance(section);
+        const visualHeight = getVisualHeight(section);
 
+        section.style.setProperty("--bai-gsap-header-clearance", headerClearance + "px");
         section.style.setProperty("--bai-gsap-visual-height", visualHeight + "px");
         section.style.setProperty("--bai-gsap-scroll-height", (visualHeight + getScrollDistance(section)) + "px");
     }
@@ -159,7 +184,9 @@
             },
             scrollTrigger: {
                 trigger: section,
-                start: "top top",
+                start: function () {
+                    return "top " + getHeaderClearance(section) + "px";
+                },
                 end: function () {
                     return "+=" + getScrollDistance(section);
                 },

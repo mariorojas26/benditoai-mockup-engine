@@ -39,6 +39,18 @@ Bad BenditoAI UI:
 - Generated result cards must support download/edit/delete/use-for-campaign actions when that module expects them.
 - If JS dynamically creates cards, match PHP-rendered classes and data attributes.
 
+## Header And Account Menu UI
+
+- Visual target: dark glass Astra header with subtle border, blur, premium violet active underline, and compact navigation.
+- Header menu labels/order are managed in WordPress admin menus. Keep code/CSS changes visual unless menu content changes are explicitly requested.
+- Main local header CSS lives in the Custom CSS/JS generated files under `wp-content/uploads/custom-css-js/`: `3243.css`, `3244.css`, and `3245.css`. Repo-side fallback and shortcode/account styling lives in `assets/css/styles.css`.
+- Home behavior: `body.home #masthead` is fixed over the hero so the first section starts directly under the glass menu without a gray gap.
+- Non-home behavior: `body:not(.home) #masthead` is relative, centered, and occupies layout space so page content does not sit underneath it.
+- Desktop account markup comes from `[benditoai_desktop_user]` in `includes/modules/auth/auth-dropdown.php`.
+- The desktop header hides `.benditoai-desktop-token-counter`; tokens appear inside the account dropdown after the plan row.
+- Account button UX: width should fit short names, cap at a comfortable max for long names, and use ellipsis only when the name truly exceeds available space. Current selectors are `.benditoai-desktop-user__button`, `.benditoai-desktop-user__name`, and `.benditoai-desktop-user`.
+- Dropdown order: `Mis modelos`, `Plan: {plan}`, `Tokens {count}`, `Cerrar sesion`. Keep the token row subtle and the logout row red.
+
 ## Motion And Scroll
 
 - Use GSAP/ScrollTrigger for complex scroll-linked home/marketing animations.
@@ -59,6 +71,7 @@ Bad BenditoAI UI:
 - `assets/images/estilosDeModelo/`: style references and thumbnails used in model history/edit outfit flow.
 - `assets/images/carrouselSkills/`: skill carousel images, with fallbacks in `cardsSkills.php`.
 - `[benditoai_gsap_cards]` renders the "como funciona" GSAP scroll scene. It uses `assets/css/gsap-cards.css` plus `assets/js/home/gsap-cards.js`: each step has one image card and one copy block; desktop alternates image/text sides per step, the image enters from above, centers, then exits downward as the next step enters from above on the opposite side. The last step holds before the section releases. Defaults use `assets/images/1crea.png`, `assets/images/crea2.png`, and `assets/images/crea3.png`; override desktop images with `image_1`, `image_2`, `image_3` and mobile fallbacks with `image_mobile_1`, `image_mobile_2`, `image_mobile_3`.
+- On the home page, pinned GSAP shortcodes read the fixed `#masthead` height and start below the header so the first scene does not sit under the floating menu. `[benditoai_gsap_cards]` also matches the header width with `min(90vw, 1620px)`, balances the top/bottom stage breathing, and keeps the desktop home overflow visible so image cards can enter from above and exit below without being clipped. The header offset behavior applies to `[benditoai_gsap_cards]` in `assets/js/home/gsap-cards.js` and `[benditoai_cards_skills]` inline in `includes/modules/ux/cardsSkills.php`.
 - Icons such as download/edit/delete are under `assets/images/`.
 
 ## Responsive Notes

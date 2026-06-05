@@ -98,8 +98,31 @@ function benditoai_cards_skills_shortcode($atts) {
             return Number.isFinite(parsedValue) ? parsedValue : 30;
         };
 
+        const getHeaderClearance = function () {
+            if (!document.body.classList.contains("home")) {
+                return 0;
+            }
+
+            const header = document.getElementById("masthead");
+            const fallback = mobileQuery.matches ? 96 : 132;
+
+            if (!header) {
+                return fallback;
+            }
+
+            const rect = header.getBoundingClientRect();
+            const bottom = Math.ceil(rect.bottom || 0);
+            const breathingRoom = mobileQuery.matches ? 8 : 10;
+
+            return Math.max(0, bottom + breathingRoom, fallback);
+        };
+
+        const getPinStartOffset = function () {
+            return Math.max(getOuterSpace(), getHeaderClearance());
+        };
+
         const getVisualHeight = function () {
-            return Math.max(1, getViewportHeight() - (getOuterSpace() * 2));
+            return Math.max(1, getViewportHeight() - getPinStartOffset() - getOuterSpace());
         };
 
         const getScrollDistance = function () {
@@ -111,8 +134,10 @@ function benditoai_cards_skills_shortcode($atts) {
         };
 
         const setSectionHeight = function () {
+            const headerClearance = getHeaderClearance();
             const visualHeight = getVisualHeight();
 
+            root.style.setProperty("--cards-skills-header-clearance", headerClearance + "px");
             root.style.setProperty("--cards-skills-visual-height", visualHeight + "px");
             root.style.setProperty("--cards-skills-scroll-height", (visualHeight + getScrollDistance()) + "px");
         };
@@ -282,7 +307,7 @@ function benditoai_cards_skills_shortcode($atts) {
             scrollTrigger: {
                 trigger: root,
                 start: function () {
-                    return "top " + getOuterSpace() + "px";
+                    return "top " + getPinStartOffset() + "px";
                 },
                 end: function () {
                     return "+=" + getScrollDistance();

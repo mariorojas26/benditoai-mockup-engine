@@ -1,10 +1,11 @@
 .benditoai-gsap-cards {
     --bai-gsap-visual-height: 100vh;
     --bai-gsap-scroll-height: 360vh;
+    --bai-gsap-shell-width: min(90vw, 1620px);
 
-    width: 100vw;
+    width: var(--bai-gsap-shell-width);
     min-height: 100vh;
-    margin: 0 0 0 calc(50% - 50vw);
+    margin: 0 0 0 calc(50% - min(45vw, 810px));
     border-radius: 18px;
     color: #ffffff;
     background: #020006;
@@ -274,16 +275,46 @@
 }
 
 @media (min-width: 769px) {
+    body.home .benditoai-gsap-cards,
+    body.home .benditoai-gsap-cards__pin,
+    body.home .benditoai-gsap-cards__stage {
+        overflow: visible;
+    }
+
+    body.home .benditoai-gsap-cards__stage {
+        height: calc(100% - clamp(44px, 6vh, 68px));
+        max-height: none;
+        min-height: 0;
+    }
+
+    body.home .benditoai-gsap-cards__scene[data-scene-index="0"] {
+        grid-template-columns: minmax(0, 1.16fr) minmax(350px, 0.86fr);
+        gap: clamp(28px, 3vw, 50px);
+        padding-inline: clamp(42px, 5vw, 82px);
+    }
+
+    body.home .benditoai-gsap-cards__scene[data-scene-index="0"] .benditoai-gsap-cards__figure {
+        width: min(82%, 690px);
+        height: 94%;
+    }
+
+    body.home .benditoai-gsap-cards__scene[data-scene-index="0"] .benditoai-gsap-cards__copy {
+        width: min(430px, 100%);
+        min-height: 0;
+        gap: 18px;
+    }
+
     .benditoai-gsap-cards__scene[data-scene-index="2"] {
         grid-template-columns: 1fr;
         gap: 0;
+        padding-inline: 0;
     }
 
     .benditoai-gsap-cards__scene[data-scene-index="2"] .benditoai-gsap-cards__figure {
         grid-column: 1;
         grid-row: 1;
         width: 100%;
-        height: 85%;
+        height: 100%;
     }
 
     .benditoai-gsap-cards__scene[data-scene-index="2"] .benditoai-gsap-cards__figure::after {

@@ -417,32 +417,37 @@ img.benditoai-download-icon {
     display:inline-flex;
     align-items:center;
     justify-content:center;
-    gap:7px;
+    gap:8px;
     text-align:center;
     line-height: 1;
 
-    background: rgba(94, 29, 247, 0.12) !important;
+    background: rgba(11, 8, 25, 0.64) !important;
     color: #ffffff !important;
 
-    min-height:47px;
-    padding:8px 14px;
+    min-height:58px;
+    min-width:132px;
+    padding:0 22px;
 
-    border-radius:12px;
+    border-radius:999px;
 
-    border:1.5px solid rgba(94, 29, 247, 0.30) !important;
+    border:1px solid rgba(255, 255, 255, 0.14) !important;
 
-    font: caption;
-    font-weight:600;
+    font-size:1rem;
+    font-weight:700;
 
-    box-shadow:none !important;
-    transition: all .25s ease;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 14px 32px rgba(0,0,0,0.20) !important;
+    backdrop-filter: blur(14px) saturate(130%);
+    -webkit-backdrop-filter: blur(14px) saturate(130%);
+    transition: background .22s ease, border-color .22s ease, transform .22s ease, box-shadow .22s ease;
     white-space: nowrap;
     box-sizing: border-box;
 }
 
 .benditoai-token-counter-box:hover {
-    background: rgba(94, 29, 247, 0.20) !important;
-    border-color: rgba(94, 29, 247, 0.55) !important;
+    background: rgba(94, 29, 247, 0.18) !important;
+    border-color: rgba(124, 58, 255, 0.55) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 16px 38px rgba(94,29,247,0.22) !important;
+    transform: translateY(-1px);
 }
 
 .benditoai-token-counter-box strong{
@@ -9536,5 +9541,223 @@ body.benditoai-inline-edit-open {
     .maquina-float-card--2,
     .maquina-float-card--4 {
         display: none;
+    }
+}
+
+/* Header shortcode buttons */
+.benditoai-token-counter-box {
+    min-height: 58px;
+    min-width: 132px;
+    padding: 0 22px;
+    border-radius: 999px;
+    background: rgba(11, 8, 25, 0.64) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 14px 32px rgba(0,0,0,0.20) !important;
+    backdrop-filter: blur(14px) saturate(130%);
+    -webkit-backdrop-filter: blur(14px) saturate(130%);
+    color: #ffffff !important;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.benditoai-token-counter-box:hover {
+    background: rgba(94, 29, 247, 0.18) !important;
+    border-color: rgba(124, 58, 255, 0.55) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 16px 38px rgba(94,29,247,0.22) !important;
+    transform: translateY(-1px);
+}
+
+a.benditoai-btn-login {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-height: 58px;
+    padding: 0 28px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #7427ff 0%, #6725ff 48%, #8b35ff 100%) !important;
+    border: 1px solid rgba(255,255,255,0.10) !important;
+    box-shadow: 0 18px 38px rgba(94, 29, 247, 0.32);
+    color: #ffffff !important;
+    fill: #ffffff !important;
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none !important;
+    white-space: nowrap;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
+}
+
+a.benditoai-btn-login::after {
+    content: "->";
+    font-size: 1.35rem;
+    line-height: 1;
+}
+
+a.benditoai-btn-login:hover,
+a.benditoai-btn-login:focus-visible {
+    color: #ffffff !important;
+    filter: brightness(1.08);
+    box-shadow: 0 22px 44px rgba(94, 29, 247, 0.42);
+    transform: translateY(-1px);
+}
+
+.benditoai-desktop-user__button {
+    width: auto !important;
+    max-width: min(320px, 24vw) !important;
+    min-height: 44px !important;
+    padding: 0 14px !important;
+    border-radius: 13px !important;
+    border: 1px solid rgba(255,255,255,0.10) !important;
+    background: linear-gradient(135deg, #7427ff 0%, #6725ff 48%, #8b35ff 100%) !important;
+    box-shadow: 0 12px 24px rgba(94, 29, 247, 0.24) !important;
+    color: #ffffff !important;
+    gap: 8px !important;
+    font-size: .82rem !important;
+    font-weight: 680 !important;
+}
+
+.benditoai-desktop-user__button:hover,
+.benditoai-desktop-user__button:focus-visible,
+.benditoai-desktop-user.active .benditoai-desktop-user__button,
+.benditoai-desktop-user:hover .benditoai-desktop-user__button,
+.benditoai-desktop-user:focus-within .benditoai-desktop-user__button {
+    border-color: rgba(255,255,255,0.16) !important;
+    background: linear-gradient(135deg, #7c2dff 0%, #6d28ff 48%, #9544ff 100%) !important;
+    box-shadow: 0 14px 30px rgba(94, 29, 247, 0.34) !important;
+    color: #ffffff !important;
+    transform: translateY(-1px);
+}
+
+.benditoai-desktop-user__icon {
+    color: #ffffff !important;
+    opacity: 0.92;
+    width: 15px !important;
+    height: 15px !important;
+    flex: 0 0 15px !important;
+}
+
+.benditoai-desktop-user__name {
+    color: #ffffff !important;
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: min(240px, calc(24vw - 56px));
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-transform: uppercase;
+}
+
+#masthead .benditoai-desktop-user {
+    width: auto;
+    max-width: min(320px, 24vw);
+    min-width: 0;
+}
+
+#masthead .ast-header-html-1,
+#masthead .benditoai-desktop-token-counter {
+    display: none !important;
+}
+
+#masthead .benditoai-desktop-user__dropdown {
+    top: calc(100% + 12px) !important;
+    right: 0 !important;
+    min-width: 276px !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(124, 58, 255, 0.28) !important;
+    background: rgba(9, 4, 19, 0.96) !important;
+    box-shadow: 0 24px 54px rgba(0, 0, 0, 0.38) !important;
+    backdrop-filter: blur(16px) saturate(130%);
+    -webkit-backdrop-filter: blur(16px) saturate(130%);
+}
+
+#masthead .benditoai-desktop-user__item {
+    min-height: 64px;
+    padding: 0 22px;
+    gap: 14px;
+    border-bottom-color: rgba(124, 58, 255, 0.18);
+    color: #d8c9ff !important;
+    font-size: 1rem;
+    font-weight: 750;
+}
+
+#masthead .benditoai-desktop-user__item svg {
+    width: 22px;
+    height: 22px;
+    flex-basis: 22px;
+    color: #c8b5ff;
+}
+
+#masthead .benditoai-desktop-user__item--tokens {
+    justify-content: flex-start;
+    color: #ffffff !important;
+    background: rgba(124, 58, 255, 0.10);
+    cursor: default;
+}
+
+#masthead .benditoai-desktop-user__item--tokens:hover {
+    background: rgba(124, 58, 255, 0.14);
+}
+
+#masthead .benditoai-desktop-user__item--tokens strong {
+    margin-left: auto;
+    color: #ffffff !important;
+    font-size: 1.08rem;
+    font-weight: 850;
+    letter-spacing: 0;
+}
+
+#masthead .benditoai-desktop-user__item--admin-toggle {
+    display: none !important;
+}
+
+#masthead .benditoai-desktop-user__item--logout {
+    color: #ff5865 !important;
+}
+
+/* Header overlay fallback: only the home hero uses the floating header. */
+@media (min-width: 922px) {
+    html body.home #masthead.site-header {
+        position: fixed !important;
+        top: 26px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        z-index: 9999 !important;
+    }
+
+    html body.home.admin-bar #masthead.site-header {
+        top: 50px !important;
+    }
+
+    html body:not(.home) #masthead.site-header {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        transform: none !important;
+        margin-top: 26px !important;
+        margin-bottom: 0 !important;
+    }
+}
+
+@media (max-width: 921px) {
+    html body.home #masthead.site-header {
+        position: fixed !important;
+        top: 10px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        z-index: 9999 !important;
+    }
+
+    html body.home.admin-bar #masthead.site-header {
+        top: 42px !important;
+    }
+
+    html body:not(.home) #masthead.site-header {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        transform: none !important;
+        margin-top: 10px !important;
+        margin-bottom: 0 !important;
     }
 }

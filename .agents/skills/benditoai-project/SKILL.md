@@ -37,6 +37,7 @@ The product feeling is: dark premium AI tool, direct-to-commerce, focused on hel
 - File ownership and likely edit targets: read `references/file-map.md`.
 - Model creation, rasgos miniwizard, model history, editing, outfits, and campaign handoff: read `references/modelos-ai.md`.
 - Tokens, plans, limits, and usage rules: read `references/tokens-plans.md`.
+- Header, account dropdown, desktop user button, and token placement in the menu: read `references/overview.md`, `references/file-map.md`, `references/tokens-plans.md`, and `references/ui-assets.md`.
 - Mockups, remove-bg, enhance, trends, and campaigns: read `references/workflows.md`.
 - UI conventions, CSS, asset paths, images, and visual system: read `references/ui-assets.md` and `../../../assets/docs/guia-look-and-feel-card-skills.md` (obligatorio para cualquier UI nueva o refactor UI).
 - Gemini/API calls, prompts, generated media, and persistence: read `references/ai-services.md`.
@@ -59,6 +60,7 @@ The product feeling is: dark premium AI tool, direct-to-commerce, focused on hel
 - Constants: `BENDIDOAI_PLUGIN_PATH`, `BENDIDOAI_PLUGIN_URL`.
 - Shared frontend localized object: `benditoai_ajax` with `ajax_url`, `nonce`, and `plugin_url`.
 - Main global stylesheet: `assets/css/styles.css`.
+- Local WordPress header CSS snippets can be generated under `wp-content/uploads/custom-css-js/`; current header work uses snippets `3243.css`, `3244.css`, and `3245.css` plus repo fallback rules.
 - Model wizard script currently loads from `includes/modules/modelos-ai/modelos-ai-script.js`.
 
 ## Look And Feel Snapshot

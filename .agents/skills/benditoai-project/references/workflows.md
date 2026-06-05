@@ -49,9 +49,18 @@ If only one side of that loop changes, bugs usually appear later in history card
 ## Auth And Home UX
 
 - Auth dropdown/user menu: `includes/modules/auth`.
+- Desktop account/header shortcode: `[benditoai_desktop_user]` in `includes/modules/auth/auth-dropdown.php`; it renders the account button, dropdown, plan row, token row, and logout.
 - Login/register customization and redirects: `auth-redirect.php`.
 - Home widgets and UX cards: `includes/modules/Home`, `includes/modules/ux`, `assets/js/home`.
 - GSAP home components should use scoped CSS/JS and not affect regular page scroll outside their section.
+
+## Header Visual Workflow
+
+- WordPress/Astra menu content is configured in WP admin. For visual-only requests, do not change nav labels/order in code.
+- For header glass/sticky styling, inspect both generated Custom CSS/JS files in `wp-content/uploads/custom-css-js/` and repo fallback rules in `assets/css/styles.css`.
+- For account dropdown markup or row order, edit `includes/modules/auth/auth-dropdown.php`.
+- For token count placement in the header, keep standalone desktop token shortcodes hidden and render tokens inside `[benditoai_desktop_user]`.
+- Verify at least the home page and one non-home page after header changes: home should have fixed overlay behavior; non-home pages should keep header space and not sit underneath it.
 
 ## Cross-Flow Connections
 
