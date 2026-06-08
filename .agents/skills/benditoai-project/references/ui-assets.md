@@ -66,8 +66,8 @@ Bad BenditoAI UI:
 
 ## Asset Paths
 
-- WebP performance variants are generated beside originals under `assets/images/`. Do not delete the original JPG/PNG; shortcodes should serve WebP through `<picture>` or CSS `image-set` with original fallback.
-- Critical home assets with WebP wiring: `[maquina_texto]` floating cards in `assets/images/Home/`, `[benditoai_gsap_cards]` scene images, `[benditoai_cards_skills]` `creamod5-1800.webp` background, and `[benditoai_before_after]` `antesba`/`despuesba` desktop/mobile images.
+- WebP performance variants are generated under the mirrored `assets/images-webp/` folder. Do not delete the original JPG/PNG; shortcodes should serve WebP through `<picture>` or CSS background fallback.
+- Critical home assets with WebP wiring: `[maquina_texto]` floating cards in `assets/images/Home/`, `[benditoai_gsap_cards]` scene images, `[benditoai_cards_skills]` `assets/images-webp/creamod5-1800.webp` background, and `[benditoai_before_after]` `antesba`/`despuesba` desktop/mobile images.
 - `assets/images/rasgosAvatar/`: rasgos thumbnails.
 - `assets/images/peinados/`: hairstyle JPGs named exactly by label.
 - `assets/images/estilosDeModelo/`: style references and thumbnails used in model history/edit outfit flow.

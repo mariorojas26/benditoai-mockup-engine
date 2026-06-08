@@ -44,10 +44,18 @@ function benditoai_get_image_asset($src, $fallback = '', $args = array()) {
 
     $url = BENDIDOAI_PLUGIN_URL . $relative_path;
     $webp_url = '';
-    $webp_path = preg_replace('/\.(jpe?g|png)$/i', '.webp', $absolute_path);
+    $webp_relative_path = preg_replace('/^assets\/images\//', 'assets/images-webp/', $relative_path);
+    $webp_relative_path = preg_replace('/\.(jpe?g|png)$/i', '.webp', $webp_relative_path);
+    $webp_path = $webp_relative_path ? BENDIDOAI_PLUGIN_PATH . $webp_relative_path : '';
 
     if ($webp_path && $webp_path !== $absolute_path && file_exists($webp_path)) {
-        $webp_url = BENDIDOAI_PLUGIN_URL . preg_replace('/\.(jpe?g|png)$/i', '.webp', $relative_path);
+        $webp_url = BENDIDOAI_PLUGIN_URL . $webp_relative_path;
+    } else {
+        $legacy_webp_path = preg_replace('/\.(jpe?g|png)$/i', '.webp', $absolute_path);
+
+        if ($legacy_webp_path && $legacy_webp_path !== $absolute_path && file_exists($legacy_webp_path)) {
+            $webp_url = BENDIDOAI_PLUGIN_URL . preg_replace('/\.(jpe?g|png)$/i', '.webp', $relative_path);
+        }
     }
 
     $width = '';

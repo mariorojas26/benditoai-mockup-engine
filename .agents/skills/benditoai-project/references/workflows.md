@@ -56,9 +56,10 @@ If only one side of that loop changes, bugs usually appear later in history card
 
 ## Performance Image Workflow
 
-- Tooling lives in `package.json` and `tools/optimize-images.mjs`; run `npm install` once, then `npm run optimize:images -- --dry-run` before generating.
-- Conversion rule v1: JPG/JPEG/PNG files over `150 KB` under `assets/images/` get a same-folder `.webp` copy. Originals remain as fallbacks and should stay committed.
-- `creamod5.jpg` also generates `assets/images/creamod5-1800.webp` for the `[benditoai_cards_skills]` background.
+- Tooling lives in `package.json`, `tools/optimize-images.mjs`, and `tools/watch-images.mjs`; run `npm install` once, then `npm run optimize:images -- --dry-run` before generating.
+- Conversion rule v1: JPG/JPEG/PNG files over `150 KB` under `assets/images/` get a mirrored `.webp` copy under `assets/images-webp/`. Originals remain as fallbacks and should stay committed.
+- For automatic local conversion while adding images, run `npm run optimize:images:watch`; it watches `assets/images/` and regenerates WebP copies after new or changed JPG/JPEG/PNG files.
+- `creamod5.jpeg` also generates `assets/images-webp/creamod5-1800.webp` for the `[benditoai_cards_skills]` background.
 - Preferred PHP wiring: use `benditoai_get_image_asset()` from `includes/core/performance-assets.php`, then render WebP `<source type="image/webp">`, original fallback, `width`, `height`, `decoding="async"`, and conservative `loading`.
 - Keep GSAP timing and ScrollTrigger choreography intact during performance passes; optimize file weight, markup, and loading first.
 

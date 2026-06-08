@@ -1,10 +1,11 @@
-import { readdir, stat } from 'node:fs/promises';
+import { mkdir, readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const imagesDir = path.join(rootDir, 'assets', 'images');
+const webpDir = path.join(rootDir, 'assets', 'images-webp');
 const args = new Set(process.argv.slice(2));
 const dryRun = args.has('--dry-run');
 const force = args.has('--force');
@@ -65,6 +66,8 @@ async function convertImage(sourcePath, targetPath, options = {}) {
     return { status: 'dry-run', targetPath };
   }
 
+  await mkdir(path.dirname(targetPath), { recursive: true });
+
   let pipeline = sharp(sourcePath).rotate();
 
   if (options.width) {
@@ -73,6 +76,11 @@ async function convertImage(sourcePath, targetPath, options = {}) {
 
   await pipeline.webp({ quality, effort: 5 }).toFile(targetPath);
   return { status: 'converted', targetPath };
+}
+
+function getTargetPath(sourcePath) {
+  const relativeSource = path.relative(imagesDir, sourcePath);
+  return path.join(webpDir, relativeSource).replace(/\.(jpe?g|png)$/i, '.webp');
 }
 
 const allFiles = await listFiles(imagesDir);
@@ -99,7 +107,7 @@ let skipped = 0;
 let dryRuns = 0;
 
 for (const { filePath, size } of eligibleFiles) {
-  const targetPath = filePath.replace(/\.(jpe?g|png)$/i, '.webp');
+  const targetPath = getTargetPath(filePath);
   const result = await convertImage(filePath, targetPath);
   const sizeKb = Math.round(size / 1024);
 
@@ -114,7 +122,7 @@ const heroBackgroundCandidates = [
   path.join(imagesDir, 'creamod5.jpg'),
   path.join(imagesDir, 'creamod5.jpeg'),
 ];
-const heroBackgroundLarge = path.join(imagesDir, 'creamod5-1800.webp');
+const heroBackgroundLarge = path.join(webpDir, 'creamod5-1800.webp');
 let heroBackground = '';
 
 for (const candidate of heroBackgroundCandidates) {

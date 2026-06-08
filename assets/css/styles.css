@@ -3098,7 +3098,7 @@ color: white !important;
     background-image:
         radial-gradient(120% 180% at 50% 0%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.045) 42%, rgba(5, 2, 13, 0) 68%),
         linear-gradient(180deg, rgba(5, 2, 13, 0.02) 0%, rgba(5, 2, 13, 0.03) 52%, rgba(5, 2, 13, 0.18) 74%, rgba(5, 2, 13, 0.68) 100%),
-        url(../images/creamod5.jpg);
+        url(../images/creamod5.jpeg);
     background-position: center center;
     background-size: cover;
     background-attachment: fixed;
@@ -3108,12 +3108,12 @@ color: white !important;
     z-index: 1;
 }
 
-@supports (background-image: image-set(url("../images/creamod5-1800.webp") type("image/webp"))) {
+@supports (background-image: image-set(url("../images-webp/creamod5-1800.webp") type("image/webp"))) {
     .cards-skills-scroll-pin {
         background-image:
             radial-gradient(120% 180% at 50% 0%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.045) 42%, rgba(5, 2, 13, 0) 68%),
             linear-gradient(180deg, rgba(5, 2, 13, 0.02) 0%, rgba(5, 2, 13, 0.03) 52%, rgba(5, 2, 13, 0.18) 74%, rgba(5, 2, 13, 0.68) 100%),
-            url("../images/creamod5-1800.webp");
+            url("../images-webp/creamod5-1800.webp");
     }
 }
 
@@ -3301,6 +3301,243 @@ color: white !important;
 
     .cards-skills-scroll-stage {
         min-height: min(280px, calc(var(--cards-skills-visual-height) - 182px));
+    }
+}
+
+/* Monster scroll takeover */
+.cards-skills-scroll-wrapper {
+    --cards-skills-active-accent: #9b5cff;
+    --cards-skills-shell-width: min(90vw, 1620px);
+    --cards-skills-frame-top: clamp(210px, 28vh, 300px);
+    --cards-skills-frame-bottom: clamp(260px, 34vh, 360px);
+    --cards-skills-content-left: clamp(88px, 12vw, 220px);
+    overflow: visible;
+}
+
+.cards-skills-scroll-pin {
+    padding: 0;
+    background: #05020d;
+    background-image: none;
+    overflow: visible;
+}
+
+.cards-skills-scroll-visual {
+    width: 100%;
+    height: 100%;
+    min-height: var(--cards-skills-visual-height);
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--cards-skills-radius);
+    background: #05020d;
+    transform: translateZ(0) scale(0.88);
+    transform-origin: center center;
+    will-change: transform;
+    isolation: isolate;
+}
+
+.cards-skills-scroll-bg-stack,
+.cards-skills-scroll-bg {
+    position: absolute;
+    border-radius: inherit;
+}
+
+.cards-skills-scroll-bg-stack {
+    top: var(--cards-skills-frame-live-top, var(--cards-skills-frame-top));
+    right: clamp(0px, 2vw, 36px);
+    bottom: var(--cards-skills-frame-live-bottom, var(--cards-skills-frame-bottom));
+    left: clamp(0px, 2vw, 36px);
+    overflow: hidden;
+    border-radius: clamp(16px, 2vw, 24px);
+    z-index: 0;
+}
+
+.cards-skills-scroll-bg {
+    inset: 0;
+    background-image: var(--cards-skills-bg-image);
+    background-color: #05020d;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateZ(0) scale(1);
+    will-change: transform, opacity;
+    overflow: hidden;
+}
+
+.cards-skills-scroll-bg.is-active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.cards-skills-scroll-visual::before,
+.cards-skills-scroll-visual::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.cards-skills-scroll-visual::before {
+    background:
+        radial-gradient(95% 160% at 50% 0%, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.07) 36%, rgba(5, 2, 13, 0) 60%),
+        linear-gradient(180deg, rgba(5, 2, 13, 0) 0%, rgba(5, 2, 13, 0.04) 45%, rgba(5, 2, 13, 0.28) 78%, rgba(5, 2, 13, 0.72) 100%);
+}
+
+.cards-skills-scroll-visual::after {
+    background: radial-gradient(76% 72% at 76% 78%, rgba(0, 0, 0, 0.04) 0%, rgba(0, 0, 0, 0.34) 100%);
+    opacity: calc(0.34 + (var(--cards-skills-visual-progress, 0) * 0.34));
+}
+
+.cards-skills-scroll-inner {
+    width: 100%;
+    min-height: 100%;
+    height: 100%;
+    display: block;
+    padding: 0;
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.cards-skills-scroll-stage {
+    width: min(600px, calc(100% - var(--cards-skills-content-left) - 36px));
+    min-height: clamp(72px, 12vh, 138px);
+    display: grid;
+    place-items: end start;
+    overflow: visible;
+    position: absolute;
+    left: var(--cards-skills-content-left);
+    right: auto;
+    top: auto;
+    bottom: clamp(96px, 13vh, 148px);
+    transform: none;
+    z-index: 3;
+}
+
+.cards-skills-scroll-phrase {
+    position: absolute;
+    inset: auto auto 0 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0;
+    text-align: left;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform-origin: left bottom;
+}
+
+.cards-skills-scroll-phrase.is-active {
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.cards-skills-scroll-title {
+    width: min(560px, 100%);
+    margin: 0 !important;
+    font-size: clamp(28px, 3.5vw, 58px) !important;
+    line-height: 0.96;
+    font-weight: 850;
+    letter-spacing: 0;
+    text-align: left;
+    text-wrap: balance;
+    text-transform: uppercase;
+    text-shadow: 0 18px 46px rgba(0, 0, 0, 0.5);
+}
+
+.cards-skills-scroll-wrapper .cards-skills-scroll-steps {
+    --bai-gsap-stepper-active: #ffffff;
+    position: absolute;
+    left: var(--cards-skills-content-left);
+    right: auto;
+    bottom: clamp(34px, 5.5vh, 64px);
+    z-index: 12;
+    margin: 0;
+    background: rgba(12, 18, 18, 0.24);
+    border-color: rgba(255, 255, 255, 0.22);
+    box-shadow:
+        0 18px 42px rgba(0, 0, 0, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    -webkit-backdrop-filter: blur(28px) saturate(1.35);
+    backdrop-filter: blur(28px) saturate(1.35);
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+body.benditoai-monster-pin-active .main-header-menu .current-menu-item > a::after,
+body.benditoai-monster-pin-active .main-header-menu .current_page_item > a::after,
+body.benditoai-monster-pin-active .main-header-menu .current-menu-item > .menu-link::after,
+body.benditoai-monster-pin-active .main-header-menu .current_page_item > .menu-link::after,
+body.benditoai-monster-pin-active #masthead .current-menu-item > a::after,
+body.benditoai-monster-pin-active #masthead .current_page_item > a::after,
+body.benditoai-monster-pin-active #masthead .current-menu-item > .menu-link::after,
+body.benditoai-monster-pin-active #masthead .current_page_item > .menu-link::after {
+    background: var(--cards-skills-menu-accent, #50ff91) !important;
+    box-shadow: 0 0 18px color-mix(in srgb, var(--cards-skills-menu-accent, #50ff91) 72%, transparent);
+}
+
+html body.benditoai-monster-pin-active #masthead #ast-hf-menu-1 > .current-menu-item > .menu-link::after,
+html body.benditoai-monster-pin-active #masthead #ast-hf-menu-1 > .current_page_item > .menu-link::after {
+    background: linear-gradient(90deg, var(--cards-skills-menu-accent, #50ff91), #c9ffd8) !important;
+    box-shadow: 0 0 18px color-mix(in srgb, var(--cards-skills-menu-accent, #50ff91) 72%, transparent) !important;
+}
+
+html body.benditoai-monster-pin-active #masthead a.benditoai-btn-login,
+html body.benditoai-monster-pin-active #masthead .benditoai-desktop-user__button {
+    background:
+        linear-gradient(135deg, #0edc73 0%, var(--cards-skills-menu-accent, #50ff91) 48%, #baffc9 100%) !important;
+    border-color: rgba(201, 255, 216, 0.34) !important;
+    box-shadow:
+        0 18px 38px color-mix(in srgb, var(--cards-skills-menu-accent, #50ff91) 32%, transparent),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+    color: #04140a !important;
+    fill: #04140a !important;
+}
+
+html body.benditoai-monster-pin-active #masthead a.benditoai-btn-login:hover,
+html body.benditoai-monster-pin-active #masthead a.benditoai-btn-login:focus-visible,
+html body.benditoai-monster-pin-active #masthead .benditoai-desktop-user__button:hover,
+html body.benditoai-monster-pin-active #masthead .benditoai-desktop-user__button:focus-visible {
+    filter: brightness(1.05) saturate(1.05);
+    box-shadow:
+        0 22px 46px color-mix(in srgb, var(--cards-skills-menu-accent, #50ff91) 42%, transparent),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+
+@media (max-width: 768px) {
+    .cards-skills-scroll-wrapper {
+        --cards-skills-shell-width: min(92vw, 1620px);
+        --cards-skills-frame-top: clamp(148px, 24vh, 230px);
+        --cards-skills-frame-bottom: clamp(210px, 34vh, 300px);
+        --cards-skills-content-left: clamp(34px, 10vw, 72px);
+    }
+
+    .cards-skills-scroll-inner {
+        padding: clamp(22px, 6vw, 34px);
+        gap: 12px;
+    }
+
+    .cards-skills-scroll-stage {
+        width: min(520px, calc(100% - 48px));
+        left: var(--cards-skills-content-left);
+        bottom: clamp(94px, 16vh, 128px);
+        transform: none;
+    }
+
+    .cards-skills-scroll-title {
+        font-size: clamp(28px, 9vw, 44px) !important;
+    }
+}
+
+@media (max-width: 390px) {
+    .cards-skills-scroll-title {
+        font-size: clamp(28px, 9vw, 42px) !important;
     }
 }
 

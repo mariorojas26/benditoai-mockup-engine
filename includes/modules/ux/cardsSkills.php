@@ -8,48 +8,83 @@ function benditoai_cards_skills_shortcode($atts) {
 
     $uid = function_exists('wp_unique_id') ? wp_unique_id('cards-skills-scroll-') : uniqid('cards-skills-scroll-', true);
 
-    $frases = array(
-        '1. Crea tu modelo, ',
-        '2. Vistelo con tu marca',
-        '3. Vende con el',
-        '¿Que esperas para crear?',
+    $scenes = array(
+        array(
+            'title' => 'Crea tu modelo',
+            'image' => 'assets/images/monster.jpeg',
+            'accent' => '#9b5cff',
+        ),
+        array(
+            'title' => 'Vistelo con tu marca',
+            'image' => 'assets/images/monster2.jpeg',
+            'accent' => '#16d9ff',
+        ),
+        array(
+            'title' => 'Lanzalo a una campana',
+            'image' => 'assets/images/monster3.jpeg',
+            'accent' => '#50ff91',
+        ),
     );
+
+    foreach ($scenes as $scene_index => $scene) {
+        $asset = function_exists('benditoai_get_image_asset')
+            ? benditoai_get_image_asset($scene['image'], 'assets/images/monster.jpeg', array('allow_external' => false))
+            : array(
+                'url' => BENDIDOAI_PLUGIN_URL . 'assets/images/monster.jpeg',
+                'webp_url' => '',
+            );
+
+        $scenes[$scene_index]['asset'] = $asset;
+        $scenes[$scene_index]['background_url'] = !empty($asset['webp_url']) ? $asset['webp_url'] : $asset['url'];
+    }
 
     ob_start();
     ?>
     <section
         id="<?php echo esc_attr($uid); ?>"
         class="cards-skills-scroll-wrapper"
-        data-scroll-vh="150"
-        data-scroll-vh-mobile="190"
+        data-scroll-vh="300"
+        data-scroll-vh-mobile="330"
         aria-label="Herramientas BenditoAI"
     >
         <div class="cards-skills-scroll-pin">
-            <div class="cards-skills-scroll-inner">
-
-                <div class="cards-skills-scroll-stage" role="list" aria-live="polite">
-                    <?php foreach ($frases as $index => $frase) : ?>
-                        <article
-                            class="cards-skills-scroll-phrase<?php echo $index === 0 ? ' is-active' : ''; ?>"
-                            data-phrase-index="<?php echo esc_attr($index); ?>"
-                            role="listitem"
-                            aria-current="<?php echo $index === 0 ? 'step' : 'false'; ?>"
-                        >
-                            <h2 class="cards-skills-scroll-title"><?php echo esc_html($frase); ?></h2>
-                        </article>
+            <div class="cards-skills-scroll-visual">
+                <div class="cards-skills-scroll-bg-stack" aria-hidden="true">
+                    <?php foreach ($scenes as $index => $scene) : ?>
+                        <span
+                            class="cards-skills-scroll-bg<?php echo $index === 0 ? ' is-active' : ''; ?>"
+                            data-bg-index="<?php echo esc_attr($index); ?>"
+                            style="--cards-skills-bg-image: url('<?php echo esc_url($scene['background_url']); ?>');"
+                        ></span>
                     <?php endforeach; ?>
                 </div>
 
-                <div class="cards-skills-scroll-steps bai-gsap-stepper" aria-label="Progreso" role="list">
-                    <?php foreach ($frases as $index => $frase) : ?>
-                        <button
-                            type="button"
-                            class="cards-skills-scroll-step bai-gsap-stepper__dot<?php echo $index === 0 ? ' is-active' : ''; ?>"
-                            data-step-index="<?php echo esc_attr($index); ?>"
-                            aria-label="<?php echo esc_attr('Frase ' . ($index + 1)); ?>"
-                            aria-current="<?php echo $index === 0 ? 'step' : 'false'; ?>"
-                        ></button>
-                    <?php endforeach; ?>
+                <div class="cards-skills-scroll-inner">
+                    <div class="cards-skills-scroll-stage" role="list" aria-live="polite">
+                        <?php foreach ($scenes as $index => $scene) : ?>
+                            <article
+                                class="cards-skills-scroll-phrase<?php echo $index === 0 ? ' is-active' : ''; ?>"
+                                data-phrase-index="<?php echo esc_attr($index); ?>"
+                                data-accent="<?php echo esc_attr($scene['accent']); ?>"
+                                role="listitem"
+                                aria-current="<?php echo $index === 0 ? 'step' : 'false'; ?>"
+                            >
+                                <h2 class="cards-skills-scroll-title"><?php echo esc_html($scene['title']); ?></h2>
+                            </article>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <div class="cards-skills-scroll-steps bai-gsap-stepper" aria-label="Progreso" role="list">
+                        <?php foreach ($scenes as $index => $scene) : ?>
+                            <button
+                                type="button"
+                                class="cards-skills-scroll-step bai-gsap-stepper__dot<?php echo $index === 0 ? ' is-active' : ''; ?>"
+                                data-step-index="<?php echo esc_attr($index); ?>"
+                                aria-label="<?php echo esc_attr('Escena ' . ($index + 1)); ?>"
+                                aria-current="<?php echo $index === 0 ? 'step' : 'false'; ?>"
+                            ></button>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             </div>
         </div>
@@ -64,7 +99,8 @@ function benditoai_cards_skills_shortcode($atts) {
 
         const phrases = Array.from(root.querySelectorAll(".cards-skills-scroll-phrase"));
         const steps = Array.from(root.querySelectorAll(".cards-skills-scroll-step"));
-        const stageEl = root.querySelector(".cards-skills-scroll-stage");
+        const backgrounds = Array.from(root.querySelectorAll(".cards-skills-scroll-bg"));
+        const visual = root.querySelector(".cards-skills-scroll-visual");
         const pin = root.querySelector(".cards-skills-scroll-pin") || root;
         const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         const mobileQuery = window.matchMedia("(max-width: 768px)");
@@ -80,8 +116,8 @@ function benditoai_cards_skills_shortcode($atts) {
             return x * x * (3 - 2 * x);
         };
 
-        const HOLD_UNITS = 0.24;
-        const TRANSITION_UNITS = 0.58;
+        const INTRO_PROGRESS = 0.18;
+        const OUTRO_PROGRESS = 0.18;
 
         const getViewportHeight = function () {
             if (window.visualViewport && window.visualViewport.height) {
@@ -126,11 +162,31 @@ function benditoai_cards_skills_shortcode($atts) {
         };
 
         const getScrollDistance = function () {
-            const desktopVh = parseInt(root.dataset.scrollVh || "220", 10);
-            const mobileVh = parseInt(root.dataset.scrollVhMobile || "290", 10);
+            const desktopVh = parseInt(root.dataset.scrollVh || "300", 10);
+            const mobileVh = parseInt(root.dataset.scrollVhMobile || "330", 10);
             const selectedVh = mobileQuery.matches ? mobileVh : desktopVh;
 
-            return Math.round(getViewportHeight() * (Math.max(selectedVh, 130) / 100));
+            return Math.round(getViewportHeight() * (Math.max(selectedVh, 220) / 100));
+        };
+
+        const getFullScale = function () {
+            const rect = root.getBoundingClientRect();
+            const viewportWidth = window.innerWidth || document.documentElement.clientWidth || rect.width || 1;
+            const viewportHeight = getViewportHeight();
+            const shellWidth = Math.max(1, rect.width || viewportWidth);
+            const visualHeight = Math.max(1, getVisualHeight());
+            const edgeBleed = mobileQuery.matches ? 1.02 : 1.015;
+            const widthScale = (viewportWidth / shellWidth) * edgeBleed;
+            const heightScale = (viewportHeight / visualHeight) * edgeBleed;
+
+            return Math.max(1.16, widthScale, heightScale);
+        };
+
+        const getFullYOffset = function () {
+            const topBleed = getPinStartOffset();
+            const yOffset = mobileQuery.matches ? topBleed * 0.28 : topBleed * 0.35;
+
+            return -Math.max(mobileQuery.matches ? 16 : 24, yOffset);
         };
 
         const setSectionHeight = function () {
@@ -142,7 +198,36 @@ function benditoai_cards_skills_shortcode($atts) {
             root.style.setProperty("--cards-skills-scroll-height", (visualHeight + getScrollDistance()) + "px");
         };
 
+        const getCssPixelValue = function (propertyName) {
+            const parsedValue = parseFloat(window.getComputedStyle(root).getPropertyValue(propertyName));
+
+            return Number.isFinite(parsedValue) ? parsedValue : 0;
+        };
+
+        const setAccent = function (activeIndex) {
+            const phrase = phrases[activeIndex];
+            const accent = phrase ? phrase.dataset.accent || "#9b5cff" : "#9b5cff";
+
+            root.style.setProperty("--cards-skills-active-accent", accent);
+            document.body.style.setProperty("--cards-skills-active-accent", accent);
+        };
+
+        const setMonsterMode = function (enabled) {
+            document.body.classList.toggle("benditoai-monster-pin-active", enabled);
+
+            if (enabled) {
+                document.body.style.setProperty("--cards-skills-menu-accent", "#50ff91");
+            }
+
+            if (!enabled) {
+                document.body.style.removeProperty("--cards-skills-menu-accent");
+                document.body.style.removeProperty("--cards-skills-active-accent");
+            }
+        };
+
         const setActive = function (activeIndex) {
+            setAccent(activeIndex);
+
             phrases.forEach(function (phrase, index) {
                 const active = index === activeIndex;
                 phrase.classList.toggle("is-active", active);
@@ -156,103 +241,80 @@ function benditoai_cards_skills_shortcode($atts) {
             });
         };
 
-        const getTotalUnits = function () {
-            return (phrases.length * HOLD_UNITS) + ((phrases.length - 1) * TRANSITION_UNITS);
-        };
-
-        const getSceneState = function (progress) {
-            const totalUnits = getTotalUnits();
-            const virtualProgress = clamp(progress, 0, 1) * totalUnits;
-            const phraseBlock = HOLD_UNITS + TRANSITION_UNITS;
-
-            for (let index = 0; index < phrases.length; index += 1) {
-                const holdStart = index * phraseBlock;
-                const transitionStart = holdStart + HOLD_UNITS;
-                const transitionEnd = transitionStart + TRANSITION_UNITS;
-                const isLast = index === phrases.length - 1;
-
-                if (isLast || virtualProgress < transitionStart) {
-                    return {
-                        currentIndex: index,
-                        nextIndex: Math.min(index + 1, phrases.length - 1),
-                        transitionProgress: 0,
-                        rawTransitionProgress: 0,
-                        totalUnits: totalUnits,
-                    };
-                }
-
-                if (virtualProgress < transitionEnd) {
-                    const rawTransitionProgress = (virtualProgress - transitionStart) / TRANSITION_UNITS;
-
-                    return {
-                        currentIndex: index,
-                        nextIndex: Math.min(index + 1, phrases.length - 1),
-                        transitionProgress: smoothstep(rawTransitionProgress),
-                        rawTransitionProgress: rawTransitionProgress,
-                        totalUnits: totalUnits,
-                    };
-                }
-            }
-
-            return {
-                currentIndex: phrases.length - 1,
-                nextIndex: phrases.length - 1,
-                transitionProgress: 0,
-                rawTransitionProgress: 0,
-                totalUnits: totalUnits,
-            };
+        const getSceneProgress = function (progress) {
+            return clamp((progress - INTRO_PROGRESS) / (1 - INTRO_PROGRESS - OUTRO_PROGRESS), 0, 1);
         };
 
         const getProgressForStep = function (index) {
-            const totalUnits = getTotalUnits();
-            const phraseBlock = HOLD_UNITS + TRANSITION_UNITS;
-            const targetUnits = Math.min(index * phraseBlock, totalUnits);
+            if (phrases.length <= 1) return INTRO_PROGRESS;
 
-            return clamp(targetUnits / totalUnits, 0, 1);
+            return clamp(
+                INTRO_PROGRESS + ((1 - INTRO_PROGRESS - OUTRO_PROGRESS) * (index / (phrases.length - 1))),
+                0,
+                1
+            );
         };
 
         const renderScene = function (progress) {
-            const scene = getSceneState(progress);
-            const currentIndex = scene.currentIndex;
-            const nextIndex = scene.nextIndex;
-            const transitionProgress = scene.transitionProgress;
-            const activeIndex = transitionProgress > 0.58 ? nextIndex : currentIndex;
-            const currentTitle = phrases[currentIndex] ? phrases[currentIndex].querySelector(".cards-skills-scroll-title") : null;
-            const nextTitle = phrases[nextIndex] ? phrases[nextIndex].querySelector(".cards-skills-scroll-title") : null;
-            const currentHeight = currentTitle ? currentTitle.getBoundingClientRect().height : 96;
-            const nextHeight = nextTitle ? nextTitle.getBoundingClientRect().height : currentHeight;
-            const stageHeight = (stageEl && stageEl.clientHeight) || 250;
-            const travelDistance = Math.min(
-                stageHeight * 0.42,
-                Math.max(96, ((currentHeight + nextHeight) / 2) * 0.62)
-            );
+            const clampedProgress = clamp(progress, 0, 1);
+            const sceneProgress = getSceneProgress(clampedProgress);
+            const scenePosition = phrases.length <= 1 ? 0 : sceneProgress * (phrases.length - 1);
+            const activeIndex = clamp(Math.round(scenePosition), 0, phrases.length - 1);
+            const growProgress = smoothstep(clampedProgress / INTRO_PROGRESS);
+            const shrinkGuard = smoothstep((1 - clampedProgress) / OUTRO_PROGRESS);
+            const visualProgress = Math.min(growProgress, shrinkGuard);
+            const startScale = mobileQuery.matches ? 0.82 : 0.78;
+            const fullScale = getFullScale();
+            const visualScale = startScale + ((fullScale - startScale) * visualProgress);
+            const visualY = getFullYOffset() * visualProgress;
+            const visualRadius = 18 - (visualProgress * 18);
+            const textVisibility = smoothstep((visualProgress - 0.68) / 0.26);
+            const frameProgress = smoothstep((visualProgress - 0.03) / 0.28);
+            const frameTop = getCssPixelValue("--cards-skills-frame-top");
+            const frameBottom = getCssPixelValue("--cards-skills-frame-bottom");
+            const liveFrameTop = visualProgress > 0.4 ? 0 : frameTop * (1 - frameProgress);
+            const liveFrameBottom = visualProgress > 0.4 ? 0 : frameBottom * (1 - frameProgress);
+            const visualHeight = getVisualHeight();
+            const initialStageTop = Math.max(1, visualHeight - frameBottom);
+            const fullStageTop = visualHeight * 0.56;
+            const stageTop = initialStageTop + ((fullStageTop - initialStageTop) * frameProgress);
 
-            root.style.setProperty("--cards-skills-stage-progress", clamp(progress, 0, 1).toFixed(4));
+            root.style.setProperty("--cards-skills-stage-progress", clampedProgress.toFixed(4));
+            root.style.setProperty("--cards-skills-visual-progress", visualProgress.toFixed(4));
+            root.style.setProperty("--cards-skills-text-visibility", textVisibility.toFixed(4));
+            root.style.setProperty("--cards-skills-frame-live-top", liveFrameTop.toFixed(2) + "px");
+            root.style.setProperty("--cards-skills-frame-live-bottom", liveFrameBottom.toFixed(2) + "px");
+            root.style.setProperty("--cards-skills-frame-progress", frameProgress.toFixed(4));
+            root.style.setProperty("--cards-skills-stage-top", stageTop.toFixed(2) + "px");
             setActive(activeIndex);
+            setMonsterMode(visualProgress > 0.74 && clampedProgress < 0.96);
+
+            if (visual && window.gsap) {
+                window.gsap.set(visual, {
+                    y: visualY,
+                    scale: visualScale,
+                    borderRadius: visualRadius + "px",
+                    force3D: true,
+                    overwrite: true,
+                });
+            } else if (visual) {
+                visual.style.transform = "translate3d(0, " + visualY.toFixed(2) + "px, 0) scale(" + visualScale.toFixed(4) + ")";
+                visual.style.borderRadius = visualRadius.toFixed(2) + "px";
+            }
 
             steps.forEach(function (step, index) {
                 const stepProgress = getProgressForStep(index);
-                const dotProgress = clamp(1 - Math.abs(stepProgress - progress) * phrases.length, 0, 1);
+                const dotProgress = clamp(1 - Math.abs(stepProgress - clampedProgress) * phrases.length, 0, 1);
                 step.style.setProperty("--bai-gsap-dot-progress", dotProgress.toFixed(4));
             });
 
             phrases.forEach(function (phrase, index) {
-                let opacity = 0;
-                let y = travelDistance;
-                let scale = 0.62;
-                let blur = 8;
-
-                if (index === currentIndex) {
-                    opacity = 1 - smoothstep((transitionProgress - 0.5) / 0.5) * 0.88;
-                    y = -transitionProgress * travelDistance;
-                    scale = 1 - transitionProgress * 0.38;
-                    blur = transitionProgress * 9;
-                } else if (index === nextIndex && nextIndex !== currentIndex) {
-                    opacity = smoothstep((transitionProgress - 0.08) / 0.68);
-                    y = (1 - transitionProgress) * travelDistance;
-                    scale = 0.62 + transitionProgress * 0.38;
-                    blur = (1 - transitionProgress) * 9;
-                }
+                const distance = Math.abs(index - scenePosition);
+                const sceneOpacity = smoothstep(1 - (distance / 0.68));
+                const opacity = sceneOpacity * textVisibility;
+                const y = clamp((index - scenePosition) * 34, -42, 42) + ((1 - textVisibility) * 18);
+                const scale = 0.94 + (opacity * 0.06);
+                const blur = (1 - opacity) * 7;
 
                 if (window.gsap) {
                     window.gsap.set(phrase, {
@@ -270,12 +332,33 @@ function benditoai_cards_skills_shortcode($atts) {
                     phrase.style.filter = "blur(" + blur.toFixed(2) + "px)";
                 }
             });
+
+            backgrounds.forEach(function (background, index) {
+                const distance = Math.abs(index - scenePosition);
+                const opacity = smoothstep(1 - (distance / 0.74));
+
+                background.classList.toggle("is-active", index === activeIndex);
+
+                if (window.gsap) {
+                    window.gsap.set(background, {
+                        autoAlpha: opacity,
+                        scale: 1,
+                        force3D: true,
+                        overwrite: true,
+                    });
+                } else {
+                    background.style.opacity = opacity.toFixed(3);
+                    background.style.visibility = opacity > 0 ? "visible" : "hidden";
+                    background.style.transform = "translateZ(0) scale(1)";
+                }
+            });
         };
 
         const initStatic = function () {
             root.classList.add("is-static");
-            phrases.forEach(function (phrase) {
-                phrase.classList.add("is-active");
+            setMonsterMode(false);
+            phrases.forEach(function (phrase, index) {
+                phrase.classList.toggle("is-active", index === 0);
                 phrase.removeAttribute("aria-current");
             });
         };
@@ -320,6 +403,20 @@ function benditoai_cards_skills_shortcode($atts) {
                 onRefreshInit: setSectionHeight,
                 onRefresh: function (self) {
                     renderScene(self.progress);
+                },
+                onEnter: function () {
+                    setMonsterMode(true);
+                },
+                onEnterBack: function () {
+                    setMonsterMode(true);
+                },
+                onLeave: function () {
+                    setMonsterMode(false);
+                    renderScene(1);
+                },
+                onLeaveBack: function () {
+                    setMonsterMode(false);
+                    renderScene(0);
                 },
             },
         });

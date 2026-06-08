@@ -32,7 +32,8 @@ Do not auto-paste full source into references. The point is to route attention, 
 
 - Put heavy home/plugin imagery under `assets/images/`; do not point v1 tooling at WordPress uploads without approval.
 - Run `npm run optimize:images -- --dry-run` and review the list before `npm run optimize:images`.
-- Keep JPG/PNG originals and commit generated `.webp` files beside them.
+- Keep JPG/PNG originals and commit generated `.webp` files under `assets/images-webp/`.
+- Use `npm run optimize:images:watch` during asset-heavy editing so new images in `assets/images/` are converted automatically.
 - For new shortcode images, prefer `benditoai_get_image_asset()` plus `<picture>` and fallback.
 - Add `width`, `height`, `decoding="async"`, and `loading="lazy"` unless the image is truly visible immediately above the fold.
 - Keep `Choices`/model wizard assets conditional to pages with `[benditoai_modelos_ai]` or `[benditoai_modelos_ai_historial]`.
