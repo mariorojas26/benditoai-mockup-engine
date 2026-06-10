@@ -215,7 +215,7 @@ function benditoai_desktop_user_shortcode() {
 
         $login_url = wp_login_url(get_permalink());
 
-        return '<a href="' . esc_url($login_url) . '" class="benditoai-btn-login benditoai-desktop-user-login">Iniciar sesi&oacute;n</a>';
+        return '<a href="' . esc_url($login_url) . '" class="benditoai-btn-login benditoai-desktop-user-login"><span>Iniciar sesi&oacute;n</span></a>';
     }
 
     $current_user = wp_get_current_user();

@@ -116,6 +116,26 @@ function benditoai_cards_skills_shortcode($atts) {
             return x * x * (3 - 2 * x);
         };
 
+        const buildLiquidClip = function (phase, progress) {
+            const points = [];
+            const steps = 32;
+            const baseY = 12 + ((1 - progress) * 2);
+            const amplitude = 2.6 + (progress * 1.2);
+
+            for (let index = 0; index <= steps; index += 1) {
+                const x = (index / steps) * 100;
+                const waveA = Math.sin((index / steps) * Math.PI * 2 + phase);
+                const waveB = Math.sin((index / steps) * Math.PI * 4 + phase * 0.62) * 0.28;
+                const y = baseY + ((waveA + waveB) * amplitude);
+
+                points.push(x.toFixed(2) + "% " + clamp(y, 8, 18).toFixed(2) + "%");
+            }
+
+            points.push("100% 100%", "0% 100%");
+
+            return "polygon(" + points.join(", ") + ")";
+        };
+
         const INTRO_PROGRESS = 0.18;
         const OUTRO_PROGRESS = 0.18;
 
@@ -212,14 +232,60 @@ function benditoai_cards_skills_shortcode($atts) {
             document.body.style.setProperty("--cards-skills-active-accent", accent);
         };
 
-        const setMonsterMode = function (enabled) {
-            document.body.classList.toggle("benditoai-monster-pin-active", enabled);
+        const setMonsterMode = function (enabled, progress, phase) {
+            const menuProgress = enabled ? clamp(progress || 0, 0, 1) : 0;
+            const menuInverseProgress = 1 - menuProgress;
+            const wavePhase = Number.isFinite(phase) ? phase : menuProgress * Math.PI * 4;
+            const liquidX = Math.sin(wavePhase) * (5 + (menuProgress * 6));
+            const liquidRotate = Math.sin(wavePhase + 1.15) * (1.35 + (menuProgress * 1.2));
+            const liquidScaleX = 1.04 + (Math.cos(wavePhase * 0.72) * 0.035);
+            const liquidScaleY = 1 + (Math.sin(wavePhase * 0.82) * 0.018);
+            const liquidGlowAX = 24 + (Math.sin(wavePhase * 0.9) * 16);
+            const liquidGlowBX = 74 + (Math.cos(wavePhase * 0.8) * 14);
+            const liquidGlowY = 9 + (Math.sin(wavePhase * 0.65) * 3);
+            const liquidClip = buildLiquidClip(wavePhase, menuProgress);
 
             if (enabled) {
+                document.body.style.setProperty("--cards-skills-menu-progress", menuProgress.toFixed(4));
+                document.body.style.setProperty("--cards-skills-menu-progress-pct", (menuProgress * 100).toFixed(2) + "%");
+                document.body.style.setProperty("--cards-skills-menu-progress-inverse-pct", (menuInverseProgress * 100).toFixed(2) + "%");
+                document.body.style.setProperty("--cards-skills-menu-liquid-y", (102 - (menuProgress * 112)).toFixed(2) + "%");
+                document.body.style.setProperty("--cards-skills-menu-liquid-x", liquidX.toFixed(2) + "%");
+                document.body.style.setProperty("--cards-skills-menu-liquid-rotate", liquidRotate.toFixed(2) + "deg");
+                document.body.style.setProperty("--cards-skills-menu-liquid-scale-x", liquidScaleX.toFixed(3));
+                document.body.style.setProperty("--cards-skills-menu-liquid-scale-y", liquidScaleY.toFixed(3));
+                document.body.style.setProperty("--cards-skills-menu-liquid-glow-a-x", liquidGlowAX.toFixed(2) + "%");
+                document.body.style.setProperty("--cards-skills-menu-liquid-glow-b-x", liquidGlowBX.toFixed(2) + "%");
+                document.body.style.setProperty("--cards-skills-menu-liquid-glow-y", liquidGlowY.toFixed(2) + "%");
+                document.body.style.setProperty("--cards-skills-menu-liquid-clip", liquidClip);
+                document.body.style.setProperty("--cards-skills-menu-shadow-alpha", (menuProgress * 0.32).toFixed(3));
+                document.body.style.setProperty("--cards-skills-menu-hover-shadow-alpha", (menuProgress * 0.42).toFixed(3));
+                document.body.style.setProperty("--cards-skills-menu-inset-alpha", (menuProgress * 0.18).toFixed(3));
+                document.body.style.setProperty("--cards-skills-menu-hover-inset-alpha", (menuProgress * 0.2).toFixed(3));
+                document.body.style.setProperty("--cards-skills-menu-underline-shadow-alpha", (menuProgress * 0.72).toFixed(3));
                 document.body.style.setProperty("--cards-skills-menu-accent", "#50ff91");
             }
 
+            document.body.classList.toggle("benditoai-monster-pin-active", enabled);
+
             if (!enabled) {
+                document.body.style.removeProperty("--cards-skills-menu-progress");
+                document.body.style.removeProperty("--cards-skills-menu-progress-pct");
+                document.body.style.removeProperty("--cards-skills-menu-progress-inverse-pct");
+                document.body.style.removeProperty("--cards-skills-menu-liquid-y");
+                document.body.style.removeProperty("--cards-skills-menu-liquid-x");
+                document.body.style.removeProperty("--cards-skills-menu-liquid-rotate");
+                document.body.style.removeProperty("--cards-skills-menu-liquid-scale-x");
+                document.body.style.removeProperty("--cards-skills-menu-liquid-scale-y");
+                document.body.style.removeProperty("--cards-skills-menu-liquid-glow-a-x");
+                document.body.style.removeProperty("--cards-skills-menu-liquid-glow-b-x");
+                document.body.style.removeProperty("--cards-skills-menu-liquid-glow-y");
+                document.body.style.removeProperty("--cards-skills-menu-liquid-clip");
+                document.body.style.removeProperty("--cards-skills-menu-shadow-alpha");
+                document.body.style.removeProperty("--cards-skills-menu-hover-shadow-alpha");
+                document.body.style.removeProperty("--cards-skills-menu-inset-alpha");
+                document.body.style.removeProperty("--cards-skills-menu-hover-inset-alpha");
+                document.body.style.removeProperty("--cards-skills-menu-underline-shadow-alpha");
                 document.body.style.removeProperty("--cards-skills-menu-accent");
                 document.body.style.removeProperty("--cards-skills-active-accent");
             }
@@ -278,6 +344,8 @@ function benditoai_cards_skills_shortcode($atts) {
             const initialStageTop = Math.max(1, visualHeight - frameBottom);
             const fullStageTop = visualHeight * 0.56;
             const stageTop = initialStageTop + ((fullStageTop - initialStageTop) * frameProgress);
+            const menuProgress = clampedProgress < 0.96 ? smoothstep((visualProgress - 0.32) / 0.5) : 0;
+            const menuWavePhase = (clampedProgress * Math.PI * 7) + (scenePosition * 0.85);
 
             root.style.setProperty("--cards-skills-stage-progress", clampedProgress.toFixed(4));
             root.style.setProperty("--cards-skills-visual-progress", visualProgress.toFixed(4));
@@ -287,7 +355,7 @@ function benditoai_cards_skills_shortcode($atts) {
             root.style.setProperty("--cards-skills-frame-progress", frameProgress.toFixed(4));
             root.style.setProperty("--cards-skills-stage-top", stageTop.toFixed(2) + "px");
             setActive(activeIndex);
-            setMonsterMode(visualProgress > 0.74 && clampedProgress < 0.96);
+            setMonsterMode(menuProgress > 0.001, menuProgress, menuWavePhase);
 
             if (visual && window.gsap) {
                 window.gsap.set(visual, {
@@ -405,10 +473,10 @@ function benditoai_cards_skills_shortcode($atts) {
                     renderScene(self.progress);
                 },
                 onEnter: function () {
-                    setMonsterMode(true);
+                    setMonsterMode(true, 0, 0);
                 },
                 onEnterBack: function () {
-                    setMonsterMode(true);
+                    setMonsterMode(true, 0, 0);
                 },
                 onLeave: function () {
                     setMonsterMode(false);

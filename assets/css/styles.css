@@ -21,8 +21,7 @@
     max-width: 900px;
     margin: 60px auto;
     padding: 40px;
-    background:
-        linear-gradient(180deg, #07030f 0%, #07030f 64%, #04010a 84%, #020006 100%);
+    background: transparent;
     border-radius: var(--bendito-radius);
     box-shadow: none;
     color: var(--bendito-text);
@@ -2195,7 +2194,8 @@ button.benditoai-toggle-info:active {
     min-height: 90vh;
     height: 90dvh;
     min-height: 90dvh;
-    background: transparent;
+    background:
+        linear-gradient(180deg, #07030f 0%, #07030f 64%, #04010a 84%, #020006 100%);
     position: relative;
     padding: 0 clamp(20px, 2.2vw, 34px) clamp(18px, 3.2vh, 42px);
     overflow: hidden;
@@ -2222,7 +2222,8 @@ button.benditoai-toggle-info:active {
         linear-gradient(180deg, rgba(7, 3, 15, 0) 0%, rgba(7, 3, 15, 0) 58%, rgba(2, 0, 6, 0.72) 100%),
         linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
-    background-size: 52px 52px;
+    background-size: 100% 100%, 52px 52px, 52px 52px;
+    background-repeat: no-repeat, repeat, repeat;
     pointer-events: none;
 }
 
@@ -3469,26 +3470,96 @@ body.benditoai-monster-pin-active #masthead .current-menu-item > a::after,
 body.benditoai-monster-pin-active #masthead .current_page_item > a::after,
 body.benditoai-monster-pin-active #masthead .current-menu-item > .menu-link::after,
 body.benditoai-monster-pin-active #masthead .current_page_item > .menu-link::after {
-    background: var(--cards-skills-menu-accent, #50ff91) !important;
-    box-shadow: 0 0 18px color-mix(in srgb, var(--cards-skills-menu-accent, #50ff91) 72%, transparent);
+    background: color-mix(
+        in srgb,
+        #7c3aff var(--cards-skills-menu-progress-inverse-pct, 100%),
+        var(--cards-skills-menu-accent, #50ff91) var(--cards-skills-menu-progress-pct, 0%)
+    ) !important;
+    box-shadow: 0 0 18px rgb(80 255 145 / var(--cards-skills-menu-underline-shadow-alpha, 0));
 }
 
 html body.benditoai-monster-pin-active #masthead #ast-hf-menu-1 > .current-menu-item > .menu-link::after,
 html body.benditoai-monster-pin-active #masthead #ast-hf-menu-1 > .current_page_item > .menu-link::after {
-    background: linear-gradient(90deg, var(--cards-skills-menu-accent, #50ff91), #c9ffd8) !important;
-    box-shadow: 0 0 18px color-mix(in srgb, var(--cards-skills-menu-accent, #50ff91) 72%, transparent) !important;
+    background: linear-gradient(
+        90deg,
+        color-mix(
+            in srgb,
+            #7c3aff var(--cards-skills-menu-progress-inverse-pct, 100%),
+            var(--cards-skills-menu-accent, #50ff91) var(--cards-skills-menu-progress-pct, 0%)
+        ),
+        color-mix(
+            in srgb,
+            #a78bfa var(--cards-skills-menu-progress-inverse-pct, 100%),
+            #c9ffd8 var(--cards-skills-menu-progress-pct, 0%)
+        )
+    ) !important;
+    box-shadow: 0 0 18px rgb(80 255 145 / var(--cards-skills-menu-underline-shadow-alpha, 0)) !important;
 }
 
 html body.benditoai-monster-pin-active #masthead a.benditoai-btn-login,
 html body.benditoai-monster-pin-active #masthead .benditoai-desktop-user__button {
-    background:
-        linear-gradient(135deg, #0edc73 0%, var(--cards-skills-menu-accent, #50ff91) 48%, #baffc9 100%) !important;
-    border-color: rgba(201, 255, 216, 0.34) !important;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background: linear-gradient(135deg, #7427ff 0%, #6725ff 48%, #8b35ff 100%) !important;
+    border-color: color-mix(
+        in srgb,
+        rgba(94, 29, 247, 0.7) var(--cards-skills-menu-progress-inverse-pct, 100%),
+        rgba(201, 255, 216, 0.34) var(--cards-skills-menu-progress-pct, 0%)
+    ) !important;
     box-shadow:
-        0 18px 38px color-mix(in srgb, var(--cards-skills-menu-accent, #50ff91) 32%, transparent),
-        inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
-    color: #04140a !important;
-    fill: #04140a !important;
+        0 18px 38px rgb(80 255 145 / var(--cards-skills-menu-shadow-alpha, 0)),
+        inset 0 1px 0 rgba(255, 255, 255, var(--cards-skills-menu-inset-alpha, 0)) !important;
+    color: color-mix(
+        in srgb,
+        #a78bfa var(--cards-skills-menu-progress-inverse-pct, 100%),
+        #04140a var(--cards-skills-menu-progress-pct, 0%)
+    ) !important;
+    fill: color-mix(
+        in srgb,
+        #a78bfa var(--cards-skills-menu-progress-inverse-pct, 100%),
+        #04140a var(--cards-skills-menu-progress-pct, 0%)
+    ) !important;
+}
+
+html body.benditoai-monster-pin-active #masthead a.benditoai-btn-login::before,
+html body.benditoai-monster-pin-active #masthead .benditoai-desktop-user__button::before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    left: -18%;
+    right: -18%;
+    bottom: -22%;
+    height: 142%;
+    pointer-events: none;
+    border-radius: 48% 52% 0 0 / 14% 16% 0 0;
+    background:
+        radial-gradient(42% 18% at var(--cards-skills-menu-liquid-glow-a-x, 24%) var(--cards-skills-menu-liquid-glow-y, 9%), rgba(255, 255, 255, 0.42) 0 36%, transparent 70%),
+        radial-gradient(34% 16% at var(--cards-skills-menu-liquid-glow-b-x, 74%) calc(var(--cards-skills-menu-liquid-glow-y, 9%) + 1%), rgba(255, 255, 255, 0.22) 0 30%, transparent 72%),
+        linear-gradient(135deg, #0edc73 0%, var(--cards-skills-menu-accent, #50ff91) 52%, #baffc9 100%);
+    -webkit-clip-path: var(--cards-skills-menu-liquid-clip, polygon(0% 13%, 12.5% 11%, 25% 13%, 37.5% 15%, 50% 13%, 62.5% 11%, 75% 13%, 87.5% 15%, 100% 13%, 100% 100%, 0% 100%));
+    clip-path: var(--cards-skills-menu-liquid-clip, polygon(0% 13%, 12.5% 11%, 25% 13%, 37.5% 15%, 50% 13%, 62.5% 11%, 75% 13%, 87.5% 15%, 100% 13%, 100% 100%, 0% 100%));
+    transform:
+        translate3d(var(--cards-skills-menu-liquid-x, 0%), var(--cards-skills-menu-liquid-y, 102%), 0)
+        rotate(var(--cards-skills-menu-liquid-rotate, -1deg))
+        scale(var(--cards-skills-menu-liquid-scale-x, 1.04), var(--cards-skills-menu-liquid-scale-y, 1));
+    transform-origin: center bottom;
+    transition: transform 0.08s linear;
+    will-change: transform, background, clip-path;
+}
+
+html body.benditoai-monster-pin-active #masthead a.benditoai-btn-login > *,
+html body.benditoai-monster-pin-active #masthead a.benditoai-btn-login::after,
+html body.benditoai-monster-pin-active #masthead .benditoai-desktop-user__button > * {
+    position: relative;
+    z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html body.benditoai-monster-pin-active #masthead a.benditoai-btn-login::before,
+    html body.benditoai-monster-pin-active #masthead .benditoai-desktop-user__button::before {
+        transition: none;
+    }
 }
 
 html body.benditoai-monster-pin-active #masthead a.benditoai-btn-login:hover,
@@ -3497,8 +3568,8 @@ html body.benditoai-monster-pin-active #masthead .benditoai-desktop-user__button
 html body.benditoai-monster-pin-active #masthead .benditoai-desktop-user__button:focus-visible {
     filter: brightness(1.05) saturate(1.05);
     box-shadow:
-        0 22px 46px color-mix(in srgb, var(--cards-skills-menu-accent, #50ff91) 42%, transparent),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+        0 22px 46px rgb(80 255 145 / var(--cards-skills-menu-hover-shadow-alpha, 0)),
+        inset 0 1px 0 rgba(255, 255, 255, var(--cards-skills-menu-hover-inset-alpha, 0)) !important;
 }
 
 @media (max-width: 768px) {
