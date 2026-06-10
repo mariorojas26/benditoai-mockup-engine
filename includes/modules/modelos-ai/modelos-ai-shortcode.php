@@ -3354,6 +3354,21 @@ function benditoai_modelos_ai_shortcode() {
         animation: none !important;
     }
 }
+
+/* Elementor owns the section background for the modelos shortcode. */
+.benditoai-modelos-wizard,
+.benditoai-modelos-wizard .baiw-shell,
+.benditoai-modelos-wizard .baiw-config-stage,
+.benditoai-modelos-wizard .baiw-result-stage {
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+}
+
+.benditoai-modelos-wizard .baiw-shell::before {
+    background: none !important;
+    background-image: none !important;
+}
 </style>
 
 <?php

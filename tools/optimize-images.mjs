@@ -118,33 +118,4 @@ for (const { filePath, size } of eligibleFiles) {
   console.log(`${result.status}: ${toRelative(filePath)} (${sizeKb} KB) -> ${toRelative(targetPath)}`);
 }
 
-const heroBackgroundCandidates = [
-  path.join(imagesDir, 'creamod5.jpg'),
-  path.join(imagesDir, 'creamod5.jpeg'),
-];
-const heroBackgroundLarge = path.join(webpDir, 'creamod5-1800.webp');
-let heroBackground = '';
-
-for (const candidate of heroBackgroundCandidates) {
-  try {
-    await stat(candidate);
-    heroBackground = candidate;
-    break;
-  } catch {
-    // Try the next supported original extension.
-  }
-}
-
-if (heroBackground) {
-  const result = await convertImage(heroBackground, heroBackgroundLarge, { width: 1800 });
-
-  if (result.status === 'converted') converted += 1;
-  if (result.status === 'skipped-current') skipped += 1;
-  if (result.status === 'dry-run') dryRuns += 1;
-
-  console.log(`${result.status}: ${toRelative(heroBackground)} -> ${toRelative(heroBackgroundLarge)} (1800px)`);
-} else {
-  console.warn('warning: assets/images/creamod5.jpg or creamod5.jpeg not found; skipped 1800px background variant');
-}
-
 console.log(`summary: ${converted} converted, ${dryRuns} dry-run, ${skipped} skipped-current, ${eligibleFiles.length} eligible sources`);

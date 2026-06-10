@@ -21,9 +21,10 @@
     max-width: 900px;
     margin: 60px auto;
     padding: 40px;
-    background: var(--bendito-card);
+    background:
+        linear-gradient(180deg, #07030f 0%, #07030f 64%, #04010a 84%, #020006 100%);
     border-radius: var(--bendito-radius);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    box-shadow: none;
     color: var(--bendito-text);
 }
 
@@ -2194,7 +2195,7 @@ button.benditoai-toggle-info:active {
     min-height: 90vh;
     height: 90dvh;
     min-height: 90dvh;
-    background: #07030F;
+    background: transparent;
     position: relative;
     padding: 0 clamp(20px, 2.2vw, 34px) clamp(18px, 3.2vh, 42px);
     overflow: hidden;
@@ -2218,6 +2219,7 @@ button.benditoai-toggle-info:active {
     position: absolute;
     inset: 0;
     background-image:
+        linear-gradient(180deg, rgba(7, 3, 15, 0) 0%, rgba(7, 3, 15, 0) 58%, rgba(2, 0, 6, 0.72) 100%),
         linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
     background-size: 52px 52px;
@@ -2943,7 +2945,7 @@ color: white !important;
     position: relative;
     width: 100%;
     height: 360vh;
-    background: #000;
+    background: transparent;
     isolation: isolate;
     overflow: visible;
     touch-action: pan-y;
@@ -2956,14 +2958,14 @@ color: white !important;
     height: var(--bsv-vh);
     min-height: 100svh;
     overflow: hidden;
-    background: #000;
+    background: transparent;
 }
 
 .benditoai-scroll-video__viewport {
     position: relative;
     width: 100%;
     height: 100%;
-    background: #000;
+    background: transparent;
     overflow: hidden;
 }
 
@@ -3095,10 +3097,8 @@ color: white !important;
     box-sizing: border-box;
     padding: 72px 18px;
     border-radius: var(--cards-skills-radius);
-    background-image:
-        radial-gradient(120% 180% at 50% 0%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.045) 42%, rgba(5, 2, 13, 0) 68%),
-        linear-gradient(180deg, rgba(5, 2, 13, 0.02) 0%, rgba(5, 2, 13, 0.03) 52%, rgba(5, 2, 13, 0.18) 74%, rgba(5, 2, 13, 0.68) 100%),
-        url(../images/creamod5.jpeg);
+    background: transparent;
+    background-image: none;
     background-position: center center;
     background-size: cover;
     background-attachment: fixed;
@@ -3106,15 +3106,6 @@ color: white !important;
     overflow: hidden;
     position: relative;
     z-index: 1;
-}
-
-@supports (background-image: image-set(url("../images-webp/creamod5-1800.webp") type("image/webp"))) {
-    .cards-skills-scroll-pin {
-        background-image:
-            radial-gradient(120% 180% at 50% 0%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.045) 42%, rgba(5, 2, 13, 0) 68%),
-            linear-gradient(180deg, rgba(5, 2, 13, 0.02) 0%, rgba(5, 2, 13, 0.03) 52%, rgba(5, 2, 13, 0.18) 74%, rgba(5, 2, 13, 0.68) 100%),
-            url("../images-webp/creamod5-1800.webp");
-    }
 }
 
 .cards-skills-scroll-inner {
@@ -3316,7 +3307,7 @@ color: white !important;
 
 .cards-skills-scroll-pin {
     padding: 0;
-    background: #05020d;
+    background: transparent;
     background-image: none;
     overflow: visible;
 }
@@ -3328,7 +3319,7 @@ color: white !important;
     position: relative;
     overflow: hidden;
     border-radius: var(--cards-skills-radius);
-    background: #05020d;
+    background: transparent;
     transform: translateZ(0) scale(0.88);
     transform-origin: center center;
     will-change: transform;
@@ -3565,9 +3556,9 @@ html body.benditoai-monster-pin-active #masthead .benditoai-desktop-user__button
     padding: 18px;
     border: 1px solid rgba(124, 58, 255, 0.3);
     border-radius: 16px;
-    background: linear-gradient(180deg, var(--bai-history-panel-top), var(--bai-history-panel-bottom));
+    background: transparent;
     color: var(--bai-history-text);
-    box-shadow: 0 14px 34px rgba(8, 2, 22, 0.28);
+    box-shadow: none;
 }
 
 .benditoai-historial-title {
@@ -8944,9 +8935,9 @@ body.benditoai-inline-edit-open {
     padding: 40px;
     border-radius: 0px;
     border: 1px solid var(--plan-border-soft);
-    background: radial-gradient(circle at 14% 8%, rgba(124, 58, 255, 0.22), transparent 42%), radial-gradient(circle at 82% 80%, rgba(37, 101, 255, 0.14), transparent 44%), linear-gradient(180deg, rgba(10, 8, 27, 0.98), rgba(7, 5, 20, 0.99));
+    background: transparent;
     color: var(--plan-text);
-    box-shadow: 0 24px 58px rgba(3, 3, 14, 0.48);
+    box-shadow: none;
     position: relative;
 }
 
@@ -9963,6 +9954,27 @@ a.benditoai-btn-login:focus-visible {
 
 #masthead .benditoai-desktop-user__item--logout {
     color: #ff5865 !important;
+}
+
+/* Elementor owns page backgrounds for shortcode sections. */
+.benditoai-wrapper,
+.benditoai-wrapper-modelos,
+.benditoai-wrapper-tendencia,
+.benditoai-wizard,
+.benditoai-modelos-ai-shell,
+.benditoai-ba-wrapper,
+.benditoai-scroll-video,
+.benditoai-scroll-video__sticky,
+.benditoai-scroll-video__viewport,
+.cards-skills-scroll-wrapper,
+.cards-skills-scroll-pin,
+.cards-skills-scroll-visual,
+.benditoai-historial-wrapper,
+.benditoai-wrapper-historia-modelos,
+.benditoai-plan-showcase {
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none;
 }
 
 /* Header overlay fallback: only the home hero uses the floating header. */

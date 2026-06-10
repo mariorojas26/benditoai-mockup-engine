@@ -8,7 +8,7 @@
     margin: 0 0 0 calc(50% - min(45vw, 810px));
     border-radius: 18px;
     color: #ffffff;
-    background: #020006;
+    background: transparent;
     overflow: clip;
     isolation: isolate;
 }
@@ -33,9 +33,7 @@
     top: 0;
     overflow: hidden;
     border-radius: inherit;
-    background:
-        radial-gradient(circle at 50% 44%, rgba(124, 58, 255, 0.12), transparent 34%),
-        linear-gradient(180deg, rgba(2, 0, 6, 0.98), rgba(7, 2, 19, 0.96));
+    background: transparent;
 }
 
 .benditoai-gsap-cards.has-gsap .benditoai-gsap-cards__pin {
