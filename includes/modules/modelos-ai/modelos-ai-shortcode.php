@@ -10,7 +10,7 @@ function benditoai_modelos_ai_shortcode() {
         return '<div class="benditoai-auth-message">Debes iniciar sesion para usar esta herramienta.</div>';
     }
 
-    $campaign_url = apply_filters('benditoai_modelos_ai_campaign_url', home_url('/crea-campana/'));
+    $campaign_url = apply_filters('benditoai_modelos_ai_campaign_url', home_url('/campanas/'));
     $rasgos_avatar_base_url = trailingslashit(BENDIDOAI_PLUGIN_URL . 'assets/images/rasgosAvatar/');
 
     $rasgos_gender_options = array(

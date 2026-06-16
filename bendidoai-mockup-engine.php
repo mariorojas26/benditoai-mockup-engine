@@ -159,6 +159,67 @@ function benditoai_enqueue_assets() {
         )
     );
 
+    $conditional_scripts = array(
+        'benditoai-mockup-generator' => 'assets/js/mockup/mockup-generator.js',
+        'benditoai-camiseta-toggle' => 'assets/js/mockup/camiseta-toggle.js',
+        'benditoai-remove-bg' => 'assets/js/remove-bg/remove-bg.js',
+        'benditoai-enhance-image' => 'assets/js/enhance/enhance-image.js',
+        'benditoai-trending-generator' => 'assets/js/trending/trending-generator.js',
+        'benditoai-trending-ui' => 'assets/js/trending/trending-ui.js',
+        'benditoai-modelo-delete' => 'assets/js/modelos/delete-modelo.js',
+        'benditoai-modelo-edit' => 'assets/js/modelos/edit-modelo.js',
+        'benditoai-saved-outfits' => 'assets/js/modelos/saved-outfits.js',
+        'benditoai-use-for-campana-bridge' => 'assets/js/modelos/use-for-campana-bridge.js',
+        'benditoai-campanas-ai' => 'assets/js/campanas/campanas-ai-script.js',
+        'benditoai-whatsapp-chat-assistant' => 'assets/js/home/whatsapp-chat-assistant.js',
+    );
+
+    foreach ($conditional_scripts as $handle => $relative_path) {
+        $script_path = BENDIDOAI_PLUGIN_PATH . $relative_path;
+        $script_version = file_exists($script_path) ? (string) filemtime($script_path) : '1.0';
+
+        wp_register_script(
+            $handle,
+            BENDIDOAI_PLUGIN_URL . $relative_path,
+            array('benditoai-main'),
+            $script_version,
+            true
+        );
+    }
+
+    if (benditoai_page_has_shortcode(array('benditoai_crear_mockup'))) {
+        wp_enqueue_script('benditoai-mockup-generator');
+        wp_enqueue_script('benditoai-camiseta-toggle');
+    }
+
+    if (benditoai_page_has_shortcode(array('benditoai_remove_bg'))) {
+        wp_enqueue_script('benditoai-remove-bg');
+    }
+
+    if (benditoai_page_has_shortcode(array('benditoai_enhance_image'))) {
+        wp_enqueue_script('benditoai-enhance-image');
+    }
+
+    if (benditoai_page_has_shortcode(array('benditoai_trending'))) {
+        wp_enqueue_script('benditoai-trending-generator');
+        wp_enqueue_script('benditoai-trending-ui');
+    }
+
+    if (benditoai_page_has_shortcode(array('benditoai_modelos_ai_historial'))) {
+        wp_enqueue_script('benditoai-modelo-delete');
+        wp_enqueue_script('benditoai-modelo-edit');
+        wp_enqueue_script('benditoai-saved-outfits');
+        wp_enqueue_script('benditoai-use-for-campana-bridge');
+    }
+
+    if (benditoai_page_has_shortcode(array('benditoai_campanas_ai'))) {
+        wp_enqueue_script('benditoai-campanas-ai');
+    }
+
+    if (is_front_page()) {
+        wp_enqueue_script('benditoai-whatsapp-chat-assistant');
+    }
+
     $scroll_video_script_path = BENDIDOAI_PLUGIN_PATH . 'assets/js/scroll-video.js';
     $scroll_video_script_version = file_exists($scroll_video_script_path) ? (string) filemtime($scroll_video_script_path) : '1.0';
 
@@ -167,7 +228,7 @@ function benditoai_enqueue_assets() {
         BENDIDOAI_PLUGIN_URL . 'assets/js/scroll-video.js',
         array(),
         $scroll_video_script_version,
-        true
+        true 
     );
 
     $gsap_cards_style_path = BENDIDOAI_PLUGIN_PATH . 'assets/css/gsap-cards.css';

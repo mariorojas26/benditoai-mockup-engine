@@ -8,7 +8,7 @@ Start from the user-facing feature, then read the matching shortcode, JS, CSS, e
 
 ## Core
 
-- `bendidoai-mockup-engine.php`: bootstrap, requires, enqueues, localized JS data.
+- `bendidoai-mockup-engine.php`: bootstrap, requires, enqueues, localized JS data, and conditional feature-script registry.
 - `includes/core/install.php`: DB schema and upgrades.
 - `includes/core/prompts.php`: shared mockup prompt templates.
 - `includes/core/variables.php`: prompt variable catalogs and product/model metadata.
@@ -27,7 +27,7 @@ Start from the user-facing feature, then read the matching shortcode, JS, CSS, e
 
 - `assets/js/modelos/edit-modelo.js`: model/outfit edit UI behavior.
 - `assets/js/modelos/saved-outfits.js`: saved outfit panel, save/delete/rename/select, events.
-- `assets/js/modelos/use-for-campana-bridge.js`: stores selected model/outfit for campaign flow.
+- `assets/js/modelos/use-for-campana-bridge.js`: stores selected model/outfit for campaign flow and falls back to `/campanas/`.
 - `assets/js/modelos/delete-modelo.js`: delete action.
 
 ## Other Tools
@@ -69,6 +69,7 @@ Start from the user-facing feature, then read the matching shortcode, JS, CSS, e
 ## Styling And Assets
 
 - `assets/css/styles.css`: global plugin CSS and many shared components.
+- `assets/js/benditoai-main.js`: global JS bootstrap only. Feature modules are registered/enqueued conditionally from `bendidoai_enqueue_assets()`.
 - `assets/css/gsap-cards.css`: scoped styles for `[benditoai_gsap_cards]`.
 - `assets/js/home/gsap-cards.js`: GSAP/ScrollTrigger timeline for the Home scroll cards component.
 - `wp-content/uploads/custom-css-js/*.css`: local WordPress Custom CSS/JS generated styles. Header visual QA lives here in the local site, while `assets/css/styles.css` keeps plugin-side account/header fallback rules.

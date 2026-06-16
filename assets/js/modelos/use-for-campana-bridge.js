@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
             button.dataset.campaignUrl ||
             wrapper?.dataset.campaignUrl ||
             window.benditoaiCampaignUrl ||
-            "/crea-campana/"
+            "/campanas/"
         );
     };
 

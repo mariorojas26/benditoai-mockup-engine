@@ -22,7 +22,7 @@ Most user journeys follow this chain:
 
 - `bendidoai-mockup-engine.php` defines `BENDIDOAI_PLUGIN_PATH` and `BENDIDOAI_PLUGIN_URL`.
 - It requires core/module PHP files and enqueues global assets.
-- `benditoai_enqueue_assets()` loads shared CSS/JS and localizes `benditoai_ajax`.
+- `benditoai_enqueue_assets()` loads shared CSS/JS, localizes `benditoai_ajax`, and conditionally enqueues feature JS by shortcode/front-page context. Keep `assets/js/benditoai-main.js` global-only: tokens, request manager, and auth dropdown. Mockup, remove-bg, enhance, trends, model history, campaigns, and home chat scripts load only where needed.
 - `includes/core/performance-assets.php` centralizes local image asset resolution, optional WebP lookup, dimensions, and shortcode presence checks.
 - `benditoai_modelos_ai_scripts()` loads Choices vendor assets and `includes/modules/modelos-ai/modelos-ai-script.js` only on singular pages that contain `[benditoai_modelos_ai]` or `[benditoai_modelos_ai_historial]`.
 - `includes/core/install.php` creates/upgrades database tables on `plugins_loaded`.
@@ -43,6 +43,7 @@ Frontend UI renders through a shortcode, vanilla JS collects form state, `fetch(
 - Home/marketing UX: explanatory and animated shortcodes, including GSAP cards.
 - Mockup generator: product/reference image inputs and prompt-driven commercial output.
 - Modelos AI: model creation, rasgos/from-scratch flow, reference-photo flow, model history, edits, outfits, and campaign handoff.
+- Modelos AI campaign handoff defaults to `home_url('/campanas/')` through `benditoai_modelos_ai_campaign_url`; keep the JS fallback in `assets/js/modelos/use-for-campana-bridge.js` aligned with that URL.
 - Campaigns: generate campaign-ready visuals using selected model/outfit context.
 - Utility tools: remove background, enhance image, trends.
 - Account/commerce system: tokens, plans, limits, auth dropdown, header account menu, redirects.

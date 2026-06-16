@@ -91,7 +91,7 @@ function benditoai_modelos_ai_historial_shortcode() {
     );
 
     $sin_modelos = (!is_array($historial) || count($historial) === 0);
-    $campaign_url = apply_filters('benditoai_modelos_ai_campaign_url', home_url('/crea-campana/'));
+    $campaign_url = apply_filters('benditoai_modelos_ai_campaign_url', home_url('/campanas/'));
     $icon_download = BENDIDOAI_PLUGIN_URL . 'assets/images/icon-download.png';
     $icon_edit = BENDIDOAI_PLUGIN_URL . 'assets/images/icon-edit.png';
     $icon_delete = BENDIDOAI_PLUGIN_URL . 'assets/images/icon-delete.png';
